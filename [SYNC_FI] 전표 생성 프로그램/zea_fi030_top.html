@@ -1,0 +1,241 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI030_TOP</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZEA_FI030_TOP</h2>
+<h3> Description: Include ZEA_GL_DISPLAY_TOP</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Include&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_GL_DISPLAY_TOP<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+TABLES: ZEA_BKPF, ZEA_BSEG, ZEA_SKB1, ZEA_TBSL,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_FIT700,&nbsp;ZEA_FIT800,&nbsp;ZEA_TCURR.<br />
+<br />
+DATA: " 전표 헤더<br />
+&nbsp;&nbsp;GS_BKPF&nbsp;TYPE&nbsp;ZEA_BKPF,<br />
+&nbsp;&nbsp;GT_BKPF&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;ZEA_BKPF,<br />
+<br />
+&nbsp;&nbsp;"&nbsp;전표&nbsp;아이템<br />
+&nbsp;&nbsp;GS_BSEG&nbsp;TYPE&nbsp;ZEA_BSEG,<br />
+&nbsp;&nbsp;GT_BSEG&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;ZEA_BSEG,<br />
+<br />
+&nbsp;&nbsp;"&nbsp;전기키<br />
+&nbsp;&nbsp;GS_TBSL&nbsp;TYPE&nbsp;ZEA_TBSL,<br />
+&nbsp;&nbsp;GT_TBSL&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;ZEA_TBSL,<br />
+<br />
+&nbsp;&nbsp;"&nbsp;GL마스터<br />
+&nbsp;&nbsp;GS_SKB1&nbsp;TYPE&nbsp;ZEA_SKB1,<br />
+&nbsp;&nbsp;GT_SKB1&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;ZEA_SKB1,<br />
+<br />
+&nbsp;&nbsp;"&nbsp;BP마스터<br />
+&nbsp;&nbsp;GS_SKA1&nbsp;TYPE&nbsp;ZEA_SKA1,<br />
+&nbsp;&nbsp;GT_SKA1&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;ZEA_SKA1.<br />
+<br />
+DATA: GS_FIT700 TYPE ZEA_FIT700,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_FIT700&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;ZEA_FIT700,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_FIT800&nbsp;TYPE&nbsp;ZEA_FIT800,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_FIT800&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;ZEA_FIT800.<br />
+<br />
+DATA : GS_TCURR TYPE ZEA_TCURR,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_TCURR&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;ZEA_TCURR.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;JOIN&nbsp;-&nbsp;헤더&nbsp;아이템&nbsp;+&nbsp;전기키<br />
+   </div>
+   <div class="code">
+DATA: BEGIN OF GS_DATA.<br />
+&nbsp;&nbsp;include&nbsp;structure&nbsp;<a&nbsp;href&nbsp;="zea_bseg/dictionary-zea_bseg.html">ZEA_BSEG</a>.<br />
+DATA:<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INDI_CD&nbsp;TYPE&nbsp;ZEA_TBSL-INDI_CD,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;END&nbsp;OF&nbsp;GS_DATA,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_DATA&nbsp;LIKE&nbsp;TABLE&nbsp;OF&nbsp;GS_DATA.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;&nbsp;Line&nbsp;Item&nbsp;변수<br />
+   </div>
+   <div class="code">
+DATA: GV_ITNUM TYPE N3.<br />
+<br />
+" 100번 화면 입력필드와 통신하기 위한 변수 선언<br />
+DATA: BEGIN OF S0100,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUM_S&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR&nbsp;VALUE&nbsp;0,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUM_H&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR&nbsp;VALUE&nbsp;0,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DIFFERENC&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR&nbsp;VALUE&nbsp;0,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;S_WAERS&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-D_WAERS,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;H_WAERS&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-D_WAERS,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TAX&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;C,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;END&nbsp;OF&nbsp;S0100.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;&nbsp;100번&nbsp;스크린&nbsp;Status&nbsp;icon<br />
+   </div>
+   <div class="code">
+DATA: STATUS_ICON TYPE C LENGTH 132." Status Icon은 항상 길이가 문자 132<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;팝업&nbsp;매크로에&nbsp;사용<br />
+   </div>
+   <div class="code">
+DATA: GV_LINES  TYPE SY-TFILL,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_ANSWER&nbsp;TYPE&nbsp;CHAR1,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_CHANGED&nbsp;TYPE&nbsp;C.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;Range&nbsp;변수<br />
+   </div>
+   <div class="code">
+DATA: GV_BELNR_NUMBER TYPE ZEA_BKPF-BELNR. " 전표번호<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_ITNUM_NUMBER&nbsp;TYPE&nbsp;ZEA_BSEG-ITNUM.&nbsp;"&nbsp;Line&nbsp;Item<br />
+<br />
+*&nbsp;--&nbsp;100번&nbsp;화면변수<br />
+   </div>
+   <div class="code">
+DATA: OK_CODE TYPE SY-UCOMM.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--<br />
+   </div>
+   <div class="code">
+DATA: GS_DEL_KEYS TYPE LVC_S_ROW,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_DEL_KEYS&nbsp;TYPE&nbsp;LVC_T_ROW.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;ALV&nbsp;관련&nbsp;변수<br />
+*DATA:&nbsp;GO_CONTAINER&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_CUSTOM_CONTAINER,<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GO_ALV_GRID&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_ALV_GRID.<br />
+<br />
+   </div>
+   <div class="code">
+DATA : GO_CONTAINER     TYPE REF TO CL_GUI_DOCKING_CONTAINER,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GO_ALV_GRID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_ALV_GRID,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GO_RIGHT_CONTAINER&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_DOCKING_CONTAINER,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GO_DYNDOC_ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_DD_DOCUMENT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GO_HTML_CNTRL&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_HTML_VIEWER.<br />
+<br />
+<br />
+DATA: GV_SAVE     TYPE C,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_VARIANT&nbsp;&nbsp;TYPE&nbsp;DISVARIANT,<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_LAYOUT&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_S_LAYO,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_FIELDCAT&nbsp;TYPE&nbsp;LVC_T_FCAT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_FIELDCAT&nbsp;TYPE&nbsp;LVC_S_FCAT.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;250번&nbsp;팝업&nbsp;:&nbsp;사진&nbsp;업로드를&nbsp;위한&nbsp;변수&nbsp;선언<br />
+   </div>
+   <div class="code">
+DATA: URL              TYPE CNDP_URL,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PIC1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_PICTURE,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CONTAINER1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_CUSTOM_CONTAINER,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_WWWTAB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LIKE&nbsp;WWWPARAMS&nbsp;OCCURS&nbsp;0&nbsp;WITH&nbsp;HEADER&nbsp;LINE.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;300번&nbsp;팝업&nbsp;:&nbsp;ALV<br />
+   </div>
+   <div class="code">
+DATA : GO_CONTAINER300     TYPE REF TO CL_GUI_CUSTOM_CONTAINER,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GO_ALV_GRID300&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_ALV_GRID.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------*<br />
+*&nbsp;Confirm&nbsp;Pop-Up&nbsp;[확인창]<br />
+*----------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+DEFINE _MC_POPUP_CONFIRM.<br />
+&nbsp;&nbsp;CALL&nbsp;FUNCTION&nbsp;'POPUP_TO_CONFIRM'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TITLEBAR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&1<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DISPLAY_CANCEL_BUTTON&nbsp;=&nbsp;''<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TEXT_QUESTION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TEXT_BUTTON_1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'YES'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ICON_BUTTON_1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'@2K@'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TEXT_BUTTON_2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'NO'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ICON_BUTTON_2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'@2O@&nbsp;'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ANSWER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&3<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TEXT_NOT_FOUND&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2.<br />
+END-OF-DEFINITION.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

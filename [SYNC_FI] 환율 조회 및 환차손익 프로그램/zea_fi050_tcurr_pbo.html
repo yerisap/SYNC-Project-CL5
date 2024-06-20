@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI050_TCURR_PBO</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZEA_FI050_TCURR_PBO</h2>
+<h3> Description: Include ZEA_FI050_TUCRR_PBO</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Include&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_FI050_TUCRR_PBO<br />
+*&---------------------------------------------------------------------*<br />
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Module&nbsp;STATUS_0100&nbsp;OUTPUT<br />
+*&---------------------------------------------------------------------*<br />
+*&<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE STATUS_0100 OUTPUT.<br />
+&nbsp;&nbsp;SET&nbsp;PF-STATUS&nbsp;'S0100'.<br />
+&nbsp;&nbsp;SET&nbsp;TITLEBAR&nbsp;'T0100'.&nbsp;"&nbsp;[FI]&nbsp;환율&nbsp;레포트<br />
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Module&nbsp;INIT_0100&nbsp;OUTPUT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE INIT_ALV_0100 OUTPUT.<br />
+<br />
+&nbsp;&nbsp;IF&nbsp;CCON1&nbsp;IS&nbsp;INITIAL&nbsp;AND&nbsp;CCON2&nbsp;IS&nbsp;INITIAL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;CREATE_OBJECT_O100.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;SET_ALV_LAYOUT_0100.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;SET_ALV_FIELDCAT_0100.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;SET_ALV_EVENT_0100.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;DISPLAY_ALV_0100.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&--&nbsp;INIT_DATA&nbsp;--------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;"&nbsp;PARMETER&nbsp;값&nbsp;전달<br />
+&nbsp;&nbsp;ZEA_TCURR-TCURR&nbsp;=&nbsp;PA_TCURR.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&--&nbsp;그래프&nbsp;구현&nbsp;&nbsp;-----------------------------------------------------*<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;DATA:<br />
+&nbsp;&nbsp;&nbsp;&nbsp;LV_COUNTER&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;STRING,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;LV_FIELD_NAME&nbsp;TYPE&nbsp;FIELDNAME,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;LV_LAST_INDEX&nbsp;TYPE&nbsp;I.<br />
+&nbsp;&nbsp;LV_COUNTER&nbsp;=&nbsp;1.&nbsp;"&nbsp;초기값&nbsp;설정<br />
+<br />
+&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_TCURR&nbsp;ASSIGNING&nbsp;FIELD-SYMBOL(&lt;FS_TCURR&gt;).<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;GRVALWA1.&nbsp;"&nbsp;--&gt;&nbsp;알&nbsp;수&nbsp;있는&nbsp;점&nbsp;:&nbsp;가장&nbsp;마지막&nbsp;줄의&nbsp;정보가&nbsp;그래프에&nbsp;나온다.&nbsp;따라서&nbsp;CLEAR하지&nbsp;않는다.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;GRVALWA1-ROWTXT&nbsp;=&nbsp;&lt;FS_TCURR&gt;-TCURR.&nbsp;"&nbsp;변경통화<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GRVALWA2-ROWTXT&nbsp;=&nbsp;'AVG'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;평균환율<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;--&nbsp;아래에서는&nbsp;'GRVALWA1-VAL+숫자'를&nbsp;생성한다.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CONCATENATE&nbsp;'GRVALWA1-VAL'&nbsp;LV_COUNTER&nbsp;INTO&nbsp;LV_FIELD_NAME.&nbsp;"&nbsp;필드&nbsp;이름&nbsp;생성<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ASSIGN&nbsp;(LV_FIELD_NAME)&nbsp;TO&nbsp;FIELD-SYMBOL(&lt;FS_FIELD&gt;).&nbsp;"&nbsp;필드&nbsp;기호로&nbsp;접근<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;=&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;FS_FIELD&gt;&nbsp;=&nbsp;&lt;FS_TCURR&gt;-UKURS.&nbsp;&nbsp;&nbsp;"&nbsp;필드&nbsp;기호를&nbsp;통한&nbsp;환율&nbsp;값&nbsp;할당<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;--&nbsp;아래에서는&nbsp;'GRVALWA1-VAL+숫자'를&nbsp;생성한다.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CONCATENATE&nbsp;'GRVALWA2-VAL'&nbsp;LV_COUNTER&nbsp;INTO&nbsp;LV_FIELD_NAME.&nbsp;"&nbsp;필드&nbsp;이름&nbsp;생성<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ASSIGN&nbsp;(LV_FIELD_NAME)&nbsp;TO&nbsp;FIELD-SYMBOL(&lt;FS_FIELD2&gt;).&nbsp;"&nbsp;필드&nbsp;기호로&nbsp;접근<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;=&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;FS_FIELD2&gt;&nbsp;=&nbsp;&lt;FS_TCURR&gt;-AVERAGE.&nbsp;"&nbsp;필드&nbsp;기호를&nbsp;통한&nbsp;평균환율&nbsp;값&nbsp;할당<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GRVALWA1&nbsp;TO&nbsp;GRVAL1.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GRVALWA2&nbsp;TO&nbsp;GRVAL1.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;&lt;FS_TCURR&gt;-GDATU&nbsp;TO&nbsp;COL1_TEXTS.&nbsp;&nbsp;&nbsp;"&nbsp;효력&nbsp;시작일을&nbsp;COLUMN_TEXTS에&nbsp;추가<br />
+&nbsp;&nbsp;&nbsp;&nbsp;LV_COUNTER&nbsp;=&nbsp;LV_COUNTER&nbsp;+&nbsp;1.&nbsp;"&nbsp;카운터&nbsp;값&nbsp;증가<br />
+&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*Function&nbsp;module&nbsp;to&nbsp;display&nbsp;graph&nbsp;(ALV&nbsp;Cont&nbsp;1)<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CALL&nbsp;FUNCTION&nbsp;'GFW_PRES_SHOW_MULT'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WIDTH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;100<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PARENT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;CCON2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PRESENTATION_TYPE&nbsp;=&nbsp;GFW_PRESTYPE_LINES<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SHOW&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GFW_TRUE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;X_AXIS_TITLE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'한국수출입은행&nbsp;고시환율'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;See&nbsp;GFW_PRES_SHOW<br />
+&nbsp;&nbsp;&nbsp;&nbsp;TABLES<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VALUES&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GRVAL1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COLUMN_TEXTS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;COL1_TEXTS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ERROR_OCCURRED&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+**&nbsp;[&nbsp;PRESENTATION_TYPE&nbsp;]<br />
+**꺾은선형&nbsp;차트&nbsp;-&nbsp;gfw_prestype_lines<br />
+**면적&nbsp;차트&nbsp;-&nbsp;&nbsp;gfw_prestype_area<br />
+**수평&nbsp;막대&nbsp;차트&nbsp;-&nbsp;gfw_prestype_horizontal_bars<br />
+**수직&nbsp;막대&nbsp;차트&nbsp;-&nbsp;gfw_prestype_vertical_bars<br />
+**원형&nbsp;차트&nbsp;-&nbsp;gfw_prestype_pie_chart<br />
+**시간축&nbsp;차트.&nbsp;-&nbsp;gfw_prestype_time_axis<br />
+<br />
+<br />
+   </div>
+   <div class="code">
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Module&nbsp;STATUS_0150&nbsp;OUTPUT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE STATUS_0150 OUTPUT.<br />
+&nbsp;&nbsp;SET&nbsp;PF-STATUS&nbsp;'S0150'.<br />
+&nbsp;&nbsp;SET&nbsp;TITLEBAR&nbsp;'T0150'.&nbsp;"&nbsp;환율&nbsp;계산<br />
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Module&nbsp;CLEAR_OK_CODE&nbsp;OUTPUT<br />
+*&---------------------------------------------------------------------*<br />
+*&<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE CLEAR_OK_CODE OUTPUT.<br />
+&nbsp;&nbsp;CLEAR&nbsp;OK_CODE.<br />
+ENDMODULE.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI020_SCR</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZEA_FI020_SCR</h2>
+<h3> Description: Include ZALV_GRID_DISPLAY_SCR</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Include&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZALV_GRID_DISPLAY_SCR<br />
+*&---------------------------------------------------------------------*<br />
+<br />
+   </div>
+   <div class="code">
+SELECTION-SCREEN SKIP 1. "Selection Screen에서 1줄 건너띄기<br />
+<br />
+SELECTION-SCREEN BEGIN OF BLOCK B01 WITH FRAME TITLE TEXT-T01.<br />
+<br />
+&nbsp;&nbsp;SELECT-OPTIONS:<br />
+&nbsp;&nbsp;&nbsp;&nbsp;SO_DONUM&nbsp;FOR&nbsp;&nbsp;GS_DATA-BELNR&nbsp;NO&nbsp;INTERVALS&nbsp;NO-EXTENSION&nbsp;,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;SO_Coco&nbsp;&nbsp;FOR&nbsp;GS_DATA-BUKRS&nbsp;MEMORY&nbsp;ID&nbsp;Coco&nbsp;NO&nbsp;INTERVALS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NO-EXTENSION<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OBLIGATORY<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DEFAULT&nbsp;'1000',<br />
+&nbsp;&nbsp;SO_FISY&nbsp;FOR&nbsp;GS_DATA-GJAHR&nbsp;NO&nbsp;INTERVALS&nbsp;NO-EXTENSION&nbsp;&nbsp;OBLIGATORY<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DEFAULT&nbsp;'2024'&nbsp;.<br />
+<br />
+SELECTION-SCREEN END OF BLOCK B01.<br />
+<br />
+<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;PARAMETERS&nbsp;PA_LAYO&nbsp;TYPE&nbsp;DISVARIANT.<br />
+*EX--------------------------------------------------------------------*<br />
+*SELECTION-SCREEN&nbsp;BEGIN&nbsp;OF&nbsp;TABBED&nbsp;BLOCK&nbsp;TAB_BLOCK&nbsp;FOR&nbsp;10&nbsp;LINES.<br />
+*SELECTION-SCREEN&nbsp;TAB&nbsp;(20)&nbsp;TAB1&nbsp;USER-COMMAND&nbsp;COMM1&nbsp;DEFAULT&nbsp;SCREEN&nbsp;1100.<br />
+*SELECTION-SCREEN&nbsp;TAB&nbsp;(20)&nbsp;TAB2&nbsp;USER-COMMAND&nbsp;COMM2&nbsp;DEFAULT&nbsp;SCREEN&nbsp;1200.<br />
+*SELECTION-SCREEN&nbsp;TAB&nbsp;(20)&nbsp;TAB3&nbsp;USER-COMMAND&nbsp;COMM3&nbsp;DEFAULT&nbsp;SCREEN&nbsp;1300.<br />
+*SELECTION-SCREEN&nbsp;END&nbsp;OF&nbsp;BLOCK&nbsp;TAB_BLOCK.<br />
+*<br />
+*SELECTION-SCREEN&nbsp;BEGIN&nbsp;OF&nbsp;SCREEN&nbsp;1100&nbsp;AS&nbsp;SUBSCREEN.<br />
+*SELECT-OPTIONS:<br />
+*&nbsp;&nbsp;SO_CAR&nbsp;&nbsp;FOR&nbsp;GS_FLIGHT-CARRID&nbsp;MEMORY&nbsp;ID&nbsp;CAR,<br />
+*&nbsp;&nbsp;SO_CON&nbsp;&nbsp;FOR&nbsp;GS_FLIGHT-CONNID.<br />
+*<br />
+*SELECTION-SCREEN&nbsp;PUSHBUTTON&nbsp;/35(20)&nbsp;BUTTXT&nbsp;USER-COMMAND&nbsp;CLICK_DETAIL.<br />
+*<br />
+*"&nbsp;TEXT-T02:&nbsp;City&nbsp;about&nbsp;flight<br />
+*SELECTION-SCREEN&nbsp;BEGIN&nbsp;OF&nbsp;BLOCK&nbsp;CITY&nbsp;WITH&nbsp;FRAME&nbsp;TITLE&nbsp;TEXT-T02.<br />
+*SELECT-OPTIONS:<br />
+*&nbsp;&nbsp;SO_CITYF&nbsp;FOR&nbsp;GS_FLIGHT-CITYFROM&nbsp;MODIF&nbsp;ID&nbsp;CTY,<br />
+*&nbsp;&nbsp;SO_CITYT&nbsp;FOR&nbsp;GS_FLIGHT-CITYTO&nbsp;&nbsp;&nbsp;MODIF&nbsp;ID&nbsp;CTY.<br />
+*SELECTION-SCREEN&nbsp;END&nbsp;OF&nbsp;BLOCK&nbsp;CITY.<br />
+*SELECTION-SCREEN&nbsp;END&nbsp;OF&nbsp;SCREEN&nbsp;1100.<br />
+*<br />
+*SELECTION-SCREEN&nbsp;BEGIN&nbsp;OF&nbsp;SCREEN&nbsp;1200&nbsp;AS&nbsp;SUBSCREEN.<br />
+*SELECT-OPTIONS:<br />
+*&nbsp;&nbsp;SO_DAY&nbsp;&nbsp;FOR&nbsp;GS_FLIGHT-FLDATE&nbsp;NO-EXTENSION.<br />
+*SELECTION-SCREEN&nbsp;END&nbsp;OF&nbsp;SCREEN&nbsp;1200.<br />
+*<br />
+*SELECTION-SCREEN&nbsp;BEGIN&nbsp;OF&nbsp;SCREEN&nbsp;1300&nbsp;AS&nbsp;SUBSCREEN.<br />
+*<br />
+*SELECTION-SCREEN&nbsp;BEGIN&nbsp;OF&nbsp;BLOCK&nbsp;CHECK.<br />
+*<br />
+*PARAMETERS:<br />
+*&nbsp;&nbsp;PA_RA1&nbsp;&nbsp;RADIOBUTTON&nbsp;GROUP&nbsp;RAG1,"&nbsp;USER-COMMAND&nbsp;MODE,&nbsp;"&nbsp;Read&nbsp;all&nbsp;flights<br />
+*&nbsp;&nbsp;PA_RA2&nbsp;&nbsp;RADIOBUTTON&nbsp;GROUP&nbsp;RAG1,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Read&nbsp;only&nbsp;domestic&nbsp;flights<br />
+*&nbsp;&nbsp;PA_RA3&nbsp;&nbsp;RADIOBUTTON&nbsp;GROUP&nbsp;RAG1&nbsp;DEFAULT&nbsp;'X'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Read&nbsp;only&nbsp;international&nbsp;flights<br />
+*<br />
+*PARAMETERS:<br />
+*&nbsp;&nbsp;PA_CTRFR&nbsp;LIKE&nbsp;GS_FLIGHT-COUNTRYFR.<br />
+*<br />
+*SELECTION-SCREEN&nbsp;END&nbsp;OF&nbsp;BLOCK&nbsp;CHECK.<br />
+*<br />
+*SELECTION-SCREEN&nbsp;END&nbsp;OF&nbsp;SCREEN&nbsp;1300.<br />
+<br />
+*EX------------------------------------------------------------------*<br />
+*SELECTION-SCREEN&nbsp;BEGIN&nbsp;OF&nbsp;BLOCK&nbsp;B01&nbsp;WITH&nbsp;FRAME&nbsp;TITLE&nbsp;TEXT-T01.<br />
+*<br />
+*SELECT-OPTIONS&nbsp;SO_DAY&nbsp;FOR&nbsp;SFLIGHT-FLDATE&nbsp;OBLIGATORY<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NO-EXTENSION.<br />
+*<br />
+*SELECTION-SCREEN&nbsp;SKIP&nbsp;1.&nbsp;"&nbsp;1줄&nbsp;건너뛰기<br />
+*<br />
+*SELECTION-SCREEN&nbsp;BEGIN&nbsp;OF&nbsp;BLOCK&nbsp;B02&nbsp;WITH&nbsp;FRAME<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TITLE&nbsp;TEXT-T02<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NO&nbsp;INTERVALS.<br />
+*PARAMETERS&nbsp;PA_CTRF&nbsp;&nbsp;TYPE&nbsp;SPFLI-COUNTRYFR&nbsp;OBLIGATORY.<br />
+*SELECT-OPTIONS&nbsp;SO_CITYF&nbsp;FOR&nbsp;SPFLI-CITYFROM&nbsp;NO&nbsp;INTERVALS.<br />
+*SELECTION-SCREEN&nbsp;END&nbsp;OF&nbsp;BLOCK&nbsp;B02.<br />
+*<br />
+*SELECTION-SCREEN&nbsp;BEGIN&nbsp;OF&nbsp;BLOCK&nbsp;B03&nbsp;WITH&nbsp;FRAME<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TITLE&nbsp;TEXT-T03<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NO&nbsp;INTERVALS.<br />
+*PARAMETERS&nbsp;PA_CTRT&nbsp;&nbsp;TYPE&nbsp;SPFLI-COUNTRYTO&nbsp;OBLIGATORY.<br />
+*SELECT-OPTIONS&nbsp;SO_CITYT&nbsp;FOR&nbsp;SPFLI-CITYTO&nbsp;NO&nbsp;INTERVALS.<br />
+*SELECTION-SCREEN&nbsp;END&nbsp;OF&nbsp;BLOCK&nbsp;B03.<br />
+*<br />
+*SELECTION-SCREEN&nbsp;END&nbsp;OF&nbsp;BLOCK&nbsp;B01.<br />
+*--------------------------------------------------------------------*<br />
+<br />
+*EX------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+" TEXT-T01 : Execute Mode<br />
+   </div>
+   <div class="codeComment">
+*SELECTION-SCREEN&nbsp;BEGIN&nbsp;OF&nbsp;BLOCK&nbsp;B01&nbsp;WITH&nbsp;FRAME&nbsp;TITLE&nbsp;TEXT-T01.<br />
+*SELECTION-SCREEN&nbsp;BEGIN&nbsp;OF&nbsp;LINE.<br />
+*<br />
+*PARAMETERS&nbsp;PA_INS&nbsp;RADIOBUTTON&nbsp;GROUP&nbsp;RAG1.<br />
+*"&nbsp;TEXT-L01:&nbsp;Insert&nbsp;Data<br />
+*SELECTION-SCREEN&nbsp;COMMENT&nbsp;(15)&nbsp;TEXT-L01&nbsp;FOR&nbsp;FIELD&nbsp;PA_INS.<br />
+*<br />
+*PARAMETERS&nbsp;PA_SEL&nbsp;RADIOBUTTON&nbsp;GROUP&nbsp;RAG1.<br />
+*"&nbsp;TEXT-L02:&nbsp;Select&nbsp;Data<br />
+*SELECTION-SCREEN&nbsp;COMMENT&nbsp;(15)&nbsp;TEXT-L02&nbsp;FOR&nbsp;FIELD&nbsp;PA_SEL.<br />
+*<br />
+*PARAMETERS&nbsp;PA_DEL&nbsp;RADIOBUTTON&nbsp;GROUP&nbsp;RAG1.<br />
+*"&nbsp;TEXT-L03:&nbsp;Delete&nbsp;All&nbsp;Data<br />
+*SELECTION-SCREEN&nbsp;COMMENT&nbsp;(15)&nbsp;TEXT-L03&nbsp;FOR&nbsp;FIELD&nbsp;PA_DEL.<br />
+*<br />
+*SELECTION-SCREEN&nbsp;END&nbsp;OF&nbsp;LINE.<br />
+*SELECTION-SCREEN&nbsp;END&nbsp;OF&nbsp;BLOCK&nbsp;B01.<br />
+*<br />
+*"&nbsp;TEXT-T02&nbsp;:&nbsp;Selection&nbsp;Options<br />
+*SELECTION-SCREEN&nbsp;BEGIN&nbsp;OF&nbsp;BLOCK&nbsp;B02&nbsp;WITH&nbsp;FRAME&nbsp;TITLE&nbsp;TEXT-T02.<br />
+*SELECT-OPTIONS:<br />
+*&nbsp;&nbsp;SO_CAR&nbsp;FOR&nbsp;ZDETAIL_E00_REV-CARRID,<br />
+*&nbsp;&nbsp;SO_CON&nbsp;FOR&nbsp;ZDETAIL_E00_REV-CONNID,<br />
+*&nbsp;&nbsp;SO_DAT&nbsp;FOR&nbsp;ZDETAIL_E00_REV-FLDATE,<br />
+*&nbsp;&nbsp;SO_ODT&nbsp;FOR&nbsp;ZDETAIL_E00_REV-ORDER_DATE.<br />
+*SELECTION-SCREEN&nbsp;END&nbsp;OF&nbsp;BLOCK&nbsp;B02.<br />
+*<br />
+*"&nbsp;TEXT-T03&nbsp;:&nbsp;Additional&nbsp;Options<br />
+*SELECTION-SCREEN&nbsp;BEGIN&nbsp;OF&nbsp;BLOCK&nbsp;B03&nbsp;WITH&nbsp;FRAME&nbsp;TITLE&nbsp;TEXT-T03.<br />
+*SELECT-OPTIONS:<br />
+*&nbsp;&nbsp;SO_CTRF&nbsp;FOR&nbsp;ZDETAIL_E00_REV-COUNTRYFR&nbsp;NO&nbsp;INTERVALS&nbsp;NO-EXTENSION,<br />
+*&nbsp;&nbsp;SO_CITF&nbsp;FOR&nbsp;ZDETAIL_E00_REV-CITYFROM&nbsp;&nbsp;NO&nbsp;INTERVALS&nbsp;NO-EXTENSION,<br />
+*&nbsp;&nbsp;SO_CTRT&nbsp;FOR&nbsp;ZDETAIL_E00_REV-COUNTRYTO&nbsp;NO&nbsp;INTERVALS&nbsp;NO-EXTENSION,<br />
+*&nbsp;&nbsp;SO_CITT&nbsp;FOR&nbsp;ZDETAIL_E00_REV-CITYTO&nbsp;&nbsp;&nbsp;&nbsp;NO&nbsp;INTERVALS&nbsp;NO-EXTENSION.<br />
+*PARAMETERS<br />
+*&nbsp;&nbsp;PA_INCL&nbsp;AS&nbsp;CHECKBOX.<br />
+*SELECTION-SCREEN&nbsp;END&nbsp;OF&nbsp;BLOCK&nbsp;B03.<br />
+*--------------------------------------------------------------------*<br />
+<br />
+*EX------------------------------------------------------------------*<br />
+*SELECTION-SCREEN&nbsp;BEGIN&nbsp;OF&nbsp;BLOCK&nbsp;B01&nbsp;WITH&nbsp;FRAME&nbsp;TITLE&nbsp;TEXT-T01.<br />
+*<br />
+*&nbsp;&nbsp;SELECT-OPTIONS:&nbsp;SO_CAR&nbsp;FOR&nbsp;ZFLIGHT_E23-CARRID,<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SO_CON&nbsp;FOR&nbsp;ZFLIGHT_E23-CONNID,<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SO_DAT&nbsp;FOR&nbsp;ZFLIGHT_E23-FLDATE&nbsp;NO-EXTENSION.<br />
+*<br />
+*&nbsp;&nbsp;SELECTION-SCREEN&nbsp;SKIP&nbsp;1.<br />
+*<br />
+*&nbsp;&nbsp;PARAMETERS:&nbsp;P_MAX&nbsp;TYPE&nbsp;I.<br />
+*<br />
+*SELECTION-SCREEN&nbsp;END&nbsp;OF&nbsp;BLOCK&nbsp;B01.<br />
+*<br />
+*SELECTION-SCREEN&nbsp;SKIP&nbsp;1.<br />
+*<br />
+*SELECTION-SCREEN&nbsp;PUSHBUTTON&nbsp;/1(30)&nbsp;BUTTXT&nbsp;USER-COMMAND&nbsp;CLICK_DETAIL.<br />
+*<br />
+*SELECTION-SCREEN&nbsp;BEGIN&nbsp;OF&nbsp;BLOCK&nbsp;B02&nbsp;WITH&nbsp;FRAME&nbsp;TITLE&nbsp;TEXT-T02.<br />
+*<br />
+*&nbsp;&nbsp;PARAMETERS&nbsp;:&nbsp;PA_RAD1&nbsp;RADIOBUTTON&nbsp;GROUP&nbsp;RD1&nbsp;MODIF&nbsp;ID&nbsp;MOD<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USER-COMMAND&nbsp;RG1,<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PA_RAD2&nbsp;RADIOBUTTON&nbsp;GROUP&nbsp;RD1&nbsp;MODIF&nbsp;ID&nbsp;MOD,<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PA_RAD3&nbsp;RADIOBUTTON&nbsp;GROUP&nbsp;RD1&nbsp;MODIF&nbsp;ID&nbsp;MOD,<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PA_RAD4&nbsp;RADIOBUTTON&nbsp;GROUP&nbsp;RD1&nbsp;MODIF&nbsp;ID&nbsp;MOD&nbsp;DEFAULT&nbsp;'X'.<br />
+*<br />
+*SELECTION-SCREEN&nbsp;END&nbsp;OF&nbsp;BLOCK&nbsp;B02.<br />
+*--------------------------------------------------------------------*<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

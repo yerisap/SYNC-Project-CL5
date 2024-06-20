@@ -1,0 +1,351 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI070_TOP</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZEA_FI070_TOP</h2>
+<h3> Description: Include ZMEETROOMTOP</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Include&nbsp;ZEA_OPEN_MANG_TOP<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+REPORT ZEA_OPEN_MANG_TOP MESSAGE-ID ZEA_MSG_FI.<br />
+<br />
+CLASS LCL_EVENT_HANDLER DEFINITION DEFERRED.<br />
+   </div>
+   <div class="codeComment">
+**********************************************************************<br />
+*&nbsp;TABLES<br />
+**********************************************************************<br />
+   </div>
+   <div class="code">
+TABLES : ZEA_FIT800 , "Vendor 원장 테이블<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BKPF&nbsp;,&nbsp;&nbsp;&nbsp;"전표&nbsp;헤더&nbsp;테이블<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG&nbsp;,&nbsp;&nbsp;&nbsp;"전표&nbsp;아이템&nbsp;테이블<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_LFA1&nbsp;,&nbsp;&nbsp;&nbsp;"벤더&nbsp;마스터&nbsp;테이블<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_SKA1&nbsp;,&nbsp;&nbsp;&nbsp;"비즈니스&nbsp;마스터&nbsp;테이블<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BKNA&nbsp;,&nbsp;&nbsp;&nbsp;"은행&nbsp;마스터&nbsp;테이블<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_SKB1&nbsp;,&nbsp;&nbsp;&nbsp;&nbsp;"G/L&nbsp;마스터&nbsp;테이블,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_TCURR.<br />
+<br />
+DATA : GT_FIT800 LIKE TABLE OF ZEA_FIT800,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_FIT800&nbsp;TYPE&nbsp;ZEA_FIT800.<br />
+<br />
+DATA : CV_BN TYPE ZEA_FIT800-BELNR ,   "KA전표번호 (KZ: 레퍼런스 값)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_BP&nbsp;TYPE&nbsp;ZEA_FIT800-VENCODE.&nbsp;&nbsp;"KZ전표&nbsp;내&nbsp;Recon&nbsp;값<br />
+<br />
+" FI 환율 테이블<br />
+DATA: GS_TCURR       TYPE ZEA_TCURR,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_TCURR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;ZEA_TCURR,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_COVT_AMOUNT&nbsp;TYPE&nbsp;ZEA_BSEG-WRBTR.<br />
+<br />
+   </div>
+   <div class="codeComment">
+**********************************************************************<br />
+*&nbsp;Class&nbsp;instance<br />
+**********************************************************************<br />
+   </div>
+   <div class="code">
+DATA : GO_CONTAINER     TYPE REF TO CL_GUI_DOCKING_CONTAINER,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GO_ALV_GRID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_ALV_GRID,<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;For&nbsp;Top-of-page&nbsp;-------------------------------------------------*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GO_TOP_CONTAINER&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_DOCKING_CONTAINER,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GO_DYNDOC_ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_DD_DOCUMENT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GO_HTML_CNTRL&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_HTML_VIEWER,<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;For&nbsp;Top-of-ALV&nbsp;-------------------------------------------------*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GO_CONTAINER_2&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_CUSTOM_CONTAINER,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GO_ALV_GRID_2&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_ALV_GRID,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GO_EVENT_HANDLER&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;LCL_EVENT_HANDLER.<br />
+<br />
+   </div>
+   <div class="codeComment">
+**********************************************************************<br />
+*&nbsp;Internal&nbsp;table&nbsp;and&nbsp;Work&nbsp;area<br />
+**********************************************************************<br />
+*--&nbsp;For&nbsp;Display&nbsp;ZEA_FIT800-BLDAT&nbsp;=&nbsp;'KA'<br />
+   </div>
+   <div class="code">
+DATA : BEGIN OF GS_DATA.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;include&nbsp;structure&nbsp;<a&nbsp;href&nbsp;="zea_fit800/dictionary-zea_fit800.html">ZEA_FIT800</a>.<br />
+DATA :   STATUS           TYPE C LENGTH 1,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZLSCH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LIKE&nbsp;ZEA_LFA1-ZLSCH,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MANG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LIKE&nbsp;ZEA_FIT800-BLDAT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GTEXT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;TGSBT-GTEXT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CELL_TAB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_T_STYL,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DROP_DOWN_HANDLE&nbsp;TYPE&nbsp;INT4,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;END&nbsp;OF&nbsp;GS_DATA.<br />
+<br />
+DATA : GT_DATA LIKE TABLE OF GS_DATA.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;For&nbsp;Display&nbsp;ZEA_FIT800-BLDAT&nbsp;=&nbsp;'KZ'<br />
+   </div>
+   <div class="code">
+DATA : BEGIN OF GS_DATA2.<br />
+DATA:<br />
+&nbsp;&nbsp;BSCHL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_FIT800-BSCHL,<br />
+&nbsp;&nbsp;ITNUM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_FIT800-ITNUM,<br />
+&nbsp;&nbsp;STATUS&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;C&nbsp;LENGTH&nbsp;1,<br />
+&nbsp;&nbsp;AUGDT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_FIT800-AUGDT,<br />
+&nbsp;&nbsp;BELNR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_FIT800-BELNR,<br />
+&nbsp;&nbsp;BPCODE&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_FIT800-VENCODE,<br />
+&nbsp;&nbsp;SAKNR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_FIT800-SAKNR,<br />
+&nbsp;&nbsp;DMBTR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_FIT800-DMBTR,<br />
+&nbsp;&nbsp;EATAX&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;zea_FIT800-EATAX,<br />
+&nbsp;&nbsp;D_WAERS&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_FIT800-D_WAERS,<br />
+&nbsp;&nbsp;WRBTR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_FIT800-WRBTR,<br />
+&nbsp;&nbsp;W_WAERS&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_FIT800-W_WAERS,<br />
+&nbsp;&nbsp;APAY_BOOK&nbsp;TYPE&nbsp;ZEA_FIT800-APAY_BOOK.<br />
+<br />
+DATA:<br />
+&nbsp;&nbsp;&nbsp;&nbsp;END&nbsp;OF&nbsp;GS_DATA2.<br />
+<br />
+DATA: GT_DATA2 LIKE TABLE OF GS_DATA2.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;For&nbsp;ALV<br />
+   </div>
+   <div class="code">
+DATA : GS_VARIANT   TYPE DISVARIANT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_VARIANT2&nbsp;&nbsp;TYPE&nbsp;DISVARIANT,<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_FIELDCAT&nbsp;&nbsp;TYPE&nbsp;LVC_T_FCAT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_FIELDCAT&nbsp;&nbsp;TYPE&nbsp;LVC_S_FCAT,<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_FIELDCAT2&nbsp;TYPE&nbsp;LVC_T_FCAT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_FIELDCAT2&nbsp;TYPE&nbsp;LVC_S_FCAT,<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_LAYOUT&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_S_LAYO,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_LAYOUT2&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_S_LAYO.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;ALV&nbsp;Toolbar<br />
+   </div>
+   <div class="code">
+DATA : GS_TOOLBAR      TYPE STB_BUTTON,   " For ALV Toolbar button<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_UI_FUNCTIONS&nbsp;TYPE&nbsp;UI_FUNCTIONS,&nbsp;"&nbsp;Exclude&nbsp;ALV&nbsp;Standard&nbsp;button<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_STABLE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_S_STBL,&nbsp;&nbsp;&nbsp;"&nbsp;Stable&nbsp;when&nbsp;ALV&nbsp;refresh<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_FILTER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_T_FILT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_FILTER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_S_FILT,<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_INDEX_ROWS&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_T_ROW,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_INDEX_ROWS&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_S_ROW,<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_TOOLBAR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;UI_FUNCTIONS,<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_F4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_T_F4,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_F4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_S_F4,<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_SCR_ON&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;CHAR1,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_SAVE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;C,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_SAVE2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;C,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_LINES&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;SY-TFILL,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_ANSWER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;CHAR1,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_CHANGED&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;CHAR1.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;For&nbsp;ALV&nbsp;List&nbsp;box<br />
+   </div>
+   <div class="code">
+DATA : GT_DROP TYPE LVC_T_DROP,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DROP&nbsp;TYPE&nbsp;LVC_S_DROP.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;For&nbsp;select&nbsp;box<br />
+   </div>
+   <div class="code">
+DATA : GS_VRM_NAME  TYPE VRM_ID,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_VRM_POSI&nbsp;&nbsp;TYPE&nbsp;VRM_VALUES,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_VRM_VALUE&nbsp;LIKE&nbsp;LINE&nbsp;OF&nbsp;GS_VRM_POSI.<br />
+DATA : GT_VALUE LIKE T093T OCCURS 0 WITH HEADER LINE.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;"Screen&nbsp;변수&nbsp;-&nbsp;0100<br />
+   </div>
+   <div class="code">
+DATA : DDATE LIKE ZEA_BKPF-BLDAT,      "DDATE : 만기일<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BLDAT&nbsp;LIKE&nbsp;ZEA_BKPF-BLDAT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BUDAT&nbsp;LIKE&nbsp;ZEA_BKPF-BUDAT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XBLNR&nbsp;LIKE&nbsp;ZEA_BKPF-XBLNR,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GJAHR&nbsp;LIKE&nbsp;ZEA_BKPF-GJAHR.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;"Screen&nbsp;변수&nbsp;-&nbsp;0200<br />
+   </div>
+   <div class="code">
+DATA :<br />
+&nbsp;&nbsp;GV_AMOUNT&nbsp;&nbsp;&nbsp;&nbsp;LIKE&nbsp;ZEA_BSEG-DMBTR,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"전표별&nbsp;KA전표&nbsp;금액&nbsp;SUM&nbsp;보관&nbsp;변수<br />
+&nbsp;&nbsp;D_WAERS2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_FIT800-D_WAERS,&nbsp;&nbsp;"지급금액&nbsp;(통화단위)<br />
+&nbsp;&nbsp;D_WAERS3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_FIT800-D_WAERS,&nbsp;&nbsp;"반제금액&nbsp;(통화단위)<br />
+&nbsp;&nbsp;AP_AMOUNT&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_FIT800-DMBTR,&nbsp;&nbsp;&nbsp;&nbsp;"반제금액&nbsp;(통화금액)<br />
+&nbsp;&nbsp;OPEN_AMOUNT&nbsp;&nbsp;TYPE&nbsp;ZEA_FIT800-DMBTR,&nbsp;&nbsp;&nbsp;&nbsp;"총&nbsp;미결액(통화금액)<br />
+&nbsp;&nbsp;OPEN_AMOUNT2&nbsp;TYPE&nbsp;ZEA_FIT800-DMBTR,&nbsp;&nbsp;&nbsp;&nbsp;"지급&nbsp;액&nbsp;&nbsp;(통화금액)<br />
+&nbsp;&nbsp;POST_DATE&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;DATS,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"전기일자<br />
+&nbsp;&nbsp;VENCODE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_FIT800-VENCODE,&nbsp;&nbsp;"공급사&nbsp;코드<br />
+&nbsp;&nbsp;BELNR_200&nbsp;&nbsp;&nbsp;&nbsp;LIKE&nbsp;ZEA_FIT800-BELNR.&nbsp;&nbsp;&nbsp;&nbsp;"선택한&nbsp;라인의&nbsp;전표번호<br />
+<br />
+DATA GV_KR_BELNR TYPE ZEA_FIT800-BELNR.<br />
+DATA GV_EV_BELNR TYPE ZEA_FIT800-BELNR.<br />
+   </div>
+   <div class="codeComment">
+**********************************************************************<br />
+*&nbsp;Common&nbsp;variable<br />
+**********************************************************************<br />
+   </div>
+   <div class="code">
+RANGES GR_GROUP FOR ZEA_SKA1-BPROLE.<br />
+<br />
+DATA : OK_CODE TYPE SY-UCOMM,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_DATE&nbsp;TYPE&nbsp;ZEA_BKPF-BUDAT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_MODE&nbsp;VALUE&nbsp;'D'.<br />
+<br />
+<br />
+<br />
+DEFINE _LAST_DAY.<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;FUNCTION&nbsp;'LAST_DAY_OF_MONTHS'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DAY_IN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LAST_DAY_OF_MONTH&nbsp;=&nbsp;&1.<br />
+<br />
+END-OF-DEFINITION.<br />
+<br />
+   </div>
+   <div class="codeComment">
+**********************************************************************<br />
+*&nbsp;About&nbsp;Toolbar&nbsp;Controll<br />
+**********************************************************************<br />
+   </div>
+   <div class="code">
+DEFINE _ADD_TOOLBAR.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_TOOLBAR.<br />
+&nbsp;&nbsp;MOVE&nbsp;:&nbsp;&1&nbsp;TO&nbsp;GS_TOOLBAR-BUTN_TYPE,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&2&nbsp;TO&nbsp;GS_TOOLBAR-FUNCTION,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&3&nbsp;TO&nbsp;GS_TOOLBAR-ICON,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&4&nbsp;TO&nbsp;GS_TOOLBAR-QUICKINFO,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&5&nbsp;TO&nbsp;GS_TOOLBAR-TEXT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&6&nbsp;TO&nbsp;GS_TOOLBAR-DISABLED.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_TOOLBAR&nbsp;TO&nbsp;PO_OBJECT-&gt;MT_TOOLBAR.<br />
+<br />
+END-OF-DEFINITION.<br />
+<br />
+   </div>
+   <div class="codeComment">
+**********************************************************************<br />
+*&nbsp;Class&nbsp;-&nbsp;Variant<br />
+**********************************************************************<br />
+   </div>
+   <div class="code">
+CONSTANTS: GC_PAY_BOOK TYPE STRING VALUE 'PAY_DAY_BOOKING',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GC_OPEN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;STRING&nbsp;VALUE&nbsp;'DISPLAY_OPEN',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GC_CLEARING&nbsp;TYPE&nbsp;STRING&nbsp;VALUE&nbsp;'DISPAY_CLEARING',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GC_ALL_ITEM&nbsp;TYPE&nbsp;STRING&nbsp;VALUE&nbsp;'DISPLAY_ALL',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GC_PAY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;STRING&nbsp;VALUE&nbsp;'PAY_A/P',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GC_DUEDATE&nbsp;&nbsp;TYPE&nbsp;STRING&nbsp;VALUE&nbsp;&nbsp;'DUEDATE'.<br />
+   </div>
+   <div class="codeComment">
+**********************************************************************<br />
+*&nbsp;Common&nbsp;MACRO<br />
+**********************************************************************<br />
+   </div>
+   <div class="code">
+DEFINE _MC_POPUP_CONFIRM.<br />
+&nbsp;&nbsp;CALL&nbsp;FUNCTION&nbsp;'POPUP_TO_CONFIRM'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TITLEBAR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&1<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DISPLAY_CANCEL_BUTTON&nbsp;=&nbsp;''<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TEXT_QUESTION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TEXT_BUTTON_1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'YES'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ICON_BUTTON_1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'@2K@'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TEXT_BUTTON_2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'NO'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ICON_BUTTON_2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'@2O@&nbsp;'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ANSWER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&3<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TEXT_NOT_FOUND&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2.<br />
+END-OF-DEFINITION.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

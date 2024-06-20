@@ -1,0 +1,1982 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI100_F01</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZEA_FI100_F01</h2>
+<h3> Description: Include ZEA_TR_TEM_F01</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Include&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_TR_TEM_F01<br />
+*&---------------------------------------------------------------------*<br />
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;get_data<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM GET_DATA .<br />
+<br />
+&nbsp;&nbsp;"&nbsp;Internal&nbsp;Table의&nbsp;내용을&nbsp;전부&nbsp;비워둠<br />
+&nbsp;&nbsp;REFRESH&nbsp;GT_DATA[].<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--B/S&nbsp;계정&nbsp;(자산)<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;SELECT<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;B~GJAHR&nbsp;&nbsp;&nbsp;"&nbsp;회계연도<br />
+&nbsp;&nbsp;&nbsp;&nbsp;B~SAKNR&nbsp;&nbsp;&nbsp;"&nbsp;G/L계정&nbsp;(Recon)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;B~BPCODE&nbsp;&nbsp;"BP&nbsp;CODE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;D~INDI_CD&nbsp;"차대변&nbsp;구분자<br />
+&nbsp;&nbsp;&nbsp;&nbsp;C~GLTXT&nbsp;&nbsp;&nbsp;"&nbsp;G/L계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;SUM(&nbsp;B~DMBTR&nbsp;)&nbsp;AS&nbsp;DMBTR&nbsp;"&nbsp;&nbsp;통화금액&nbsp;합계<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;SUM(&nbsp;B~EATAX&nbsp;)&nbsp;AS&nbsp;EATAX&nbsp;"&nbsp;세금&nbsp;합계<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;GT_DATA<br />
+&nbsp;&nbsp;FROM&nbsp;ZEA_BKPF&nbsp;AS&nbsp;A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;A:&nbsp;전표&nbsp;헤더<br />
+&nbsp;INNER&nbsp;JOIN&nbsp;ZEA_BSEG&nbsp;AS&nbsp;B&nbsp;&nbsp;&nbsp;"&nbsp;B:&nbsp;전표&nbsp;아이템<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ON&nbsp;A~BUKRS&nbsp;EQ&nbsp;B~BUKRS<br />
+&nbsp;&nbsp;&nbsp;AND&nbsp;A~BELNR&nbsp;EQ&nbsp;B~BELNR<br />
+&nbsp;&nbsp;&nbsp;AND&nbsp;A~GJAHR&nbsp;EQ&nbsp;B~GJAHR<br />
+&nbsp;INNER&nbsp;JOIN&nbsp;ZEA_SKB1&nbsp;AS&nbsp;C&nbsp;&nbsp;&nbsp;"&nbsp;C:&nbsp;G/L계정마스터<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ON&nbsp;C~BUKRS&nbsp;EQ&nbsp;A~BUKRS<br />
+&nbsp;&nbsp;&nbsp;AND&nbsp;C~SAKNR&nbsp;EQ&nbsp;B~SAKNR<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;AND&nbsp;C~GLTXT&nbsp;EQ&nbsp;B~GLTXT<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;AND&nbsp;C~XBILK&nbsp;EQ&nbsp;'X'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;G/L코드&nbsp;Type&nbsp;-&nbsp;'X':&nbsp;대차대조&nbsp;/&nbsp;''&nbsp;:&nbsp;손익계산<br />
+INNER JOIN ZEA_TBSL AS D     "D : 전기키 테이블<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ON&nbsp;D~BSCHL&nbsp;EQ&nbsp;B~BSCHL<br />
+&nbsp;INNER&nbsp;JOIN&nbsp;ZEA_SKA1&nbsp;AS&nbsp;E&nbsp;&nbsp;&nbsp;"E&nbsp;:&nbsp;BP&nbsp;마스터<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ON&nbsp;B~BPCODE&nbsp;EQ&nbsp;E~BPCODE<br />
+<br />
+&nbsp;&nbsp;WHERE&nbsp;C~SAKNR&nbsp;IN&nbsp;R_SAKNR_1<br />
+&nbsp;&nbsp;GROUP&nbsp;BY&nbsp;B~GJAHR&nbsp;B~SAKNR&nbsp;B~BPCODE&nbsp;D~INDI_CD&nbsp;C~GLTXT&nbsp;.<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;set_fcat<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SET_TREE_FCAT .<br />
+<br />
+&nbsp;&nbsp;GS_LAYOUT-ZEBRA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;GS_LAYOUT-CWIDTH_OPT&nbsp;=&nbsp;'A'.<br />
+&nbsp;&nbsp;GS_LAYOUT-SEL_MODE&nbsp;&nbsp;&nbsp;=&nbsp;'D'.<br />
+<br />
+   </div>
+   <div class="codeComment">
+**&nbsp;&nbsp;PERFORM&nbsp;SET_FCAT&nbsp;USING&nbsp;:<br />
+***&nbsp;계정과목&nbsp;추가&nbsp;필요<br />
+**&nbsp;&nbsp;'X'&nbsp;&nbsp;'계정번호'&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'ZEA_BSEG'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'SAKNR',<br />
+**&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;'계정명'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'ZEA_BSEG'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'GLTXT',<br />
+**&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;'S/H'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;&nbsp;'ZEA_TBSL'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'INDI_CD',<br />
+**&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;'AMOUNT'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'ZEA_BSEG'&nbsp;&nbsp;&nbsp;'DMBTR',<br />
+**&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;'Tax'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'ZEA_BSEG'&nbsp;&nbsp;&nbsp;'EATAX',<br />
+**&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;'CURRENCY'&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'ZEA_BSEG'&nbsp;&nbsp;&nbsp;'D_WAERS',<br />
+**&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;'PLANETYPE'&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'SFLIGHT'&nbsp;&nbsp;&nbsp;'PLANETYPE'.<br />
+<br />
+   </div>
+   <div class="code">
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;set_fcat<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SET_FCAT TABLES PT_FCAT STRUCTURE LVC_S_FCAT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;PV_KEY<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PV_FIELD<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PV_TEXT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PV_REF_TABLE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PV_REF_FIELD.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;PT_FCAT.<br />
+&nbsp;&nbsp;PT_FCAT-KEY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;PV_KEY.<br />
+&nbsp;&nbsp;PT_FCAT-FIELDNAME&nbsp;=&nbsp;PV_FIELD.<br />
+&nbsp;&nbsp;PT_FCAT-COLTEXT&nbsp;&nbsp;&nbsp;=&nbsp;PV_TEXT.<br />
+&nbsp;&nbsp;PT_FCAT-REF_TABLE&nbsp;=&nbsp;PV_REF_TABLE.<br />
+&nbsp;&nbsp;PT_FCAT-REF_FIELD&nbsp;=&nbsp;PV_REF_FIELD.<br />
+<br />
+&nbsp;&nbsp;CASE&nbsp;PV_FIELD.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'T_AMOUNT'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PT_FCAT-CFIELDNAME&nbsp;=&nbsp;'D_WAERS'.<br />
+<br />
+&nbsp;&nbsp;ENDCASE.<br />
+<br />
+&nbsp;&nbsp;APPEND&nbsp;PT_FCAT.<br />
+&nbsp;&nbsp;CLEAR&nbsp;&nbsp;PT_FCAT.<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;create_object<br />
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;text<br />
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;--&gt;&nbsp;&nbsp;p1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
+*&&nbsp;&lt;--&nbsp;&nbsp;p2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM CREATE_OBJECT_1.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*-----&nbsp;자산&nbsp;Container<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CREATE&nbsp;OBJECT&nbsp;GCL_CONTAINER<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SIDE&nbsp;&nbsp;=&nbsp;GCL_CONTAINER-&gt;DOCK_AT_LEFT<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXTENSION&nbsp;=&nbsp;1000<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RATIO&nbsp;=&nbsp;50.<br />
+<br />
+&nbsp;&nbsp;CREATE&nbsp;OBJECT&nbsp;GCL_TREE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_PARENT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GCL_CONTAINER<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_NODE_SELECTION_MODE&nbsp;=&nbsp;CL_GUI_COLUMN_TREE=&gt;NODE_SEL_MODE_MULTIPLE<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_NODE_SELECTION_MODE&nbsp;=&nbsp;CL_GUI_COLUMN_TREE=&gt;ALIGN_AT_LEFT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_ITEM_SELECTION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_NO_HTML_HEADER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_NO_TOOLBAR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;SPACE.<br />
+<br />
+&nbsp;&nbsp;GS_VARIANT-REPORT&nbsp;=&nbsp;SY-REPID.<br />
+&nbsp;&nbsp;GS_VARIANT-HANDLE&nbsp;=&nbsp;'1'.<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GCL_TREE-&gt;SET_TABLE_FOR_FIRST_DISPLAY<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_SAVE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'A'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IS_LAYOUT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GS_LAYOUT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IS_VARIANT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GS_VARIANT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CHANGING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IT_OUTTAB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GT_DISPLAY1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IT_SORT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GT_SORT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IT_FIELDCATALOG&nbsp;=&nbsp;GT_FCAT.<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GCL_TREE-&gt;EXPAND_TREE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_LEVEL&nbsp;=&nbsp;1.<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GCL_TREE-&gt;COLUMN_OPTIMIZE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_START_COLUMN&nbsp;=&nbsp;GCL_TREE-&gt;C_HIERARCHY_COLUMN_NAME<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_END_COLUMN&nbsp;&nbsp;&nbsp;=&nbsp;GCL_TREE-&gt;C_HIERARCHY_COLUMN_NAME.<br />
+<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;set_sort<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SET_SORT TABLES PT_SORT STRUCTURE LVC_S_SORT.<br />
+<br />
+&nbsp;&nbsp;REFRESH&nbsp;PT_SORT.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&---Make&nbsp;Tree&nbsp;of&nbsp;자산-------------------------------------------------*<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;"1.&nbsp;계정과목&nbsp;폴더<br />
+&nbsp;&nbsp;GS_SORT-SPOS&nbsp;=&nbsp;1.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"정렬순서를&nbsp;지정<br />
+&nbsp;&nbsp;GS_SORT-FIELDNAME&nbsp;=&nbsp;'FLTXT'.&nbsp;&nbsp;"자산&nbsp;폴더<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;GS_SORT-SELTEXT&nbsp;=&nbsp;'계정과목'.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;GS_SORT-UP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.&nbsp;&nbsp;"오름차순&nbsp;정렬<br />
+&nbsp;&nbsp;GS_SORT-SUBTOT&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.&nbsp;&nbsp;&nbsp;&nbsp;"중간합&nbsp;구하기<br />
+<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_SORT&nbsp;TO&nbsp;PT_SORT.<br />
+&nbsp;&nbsp;CLEAR&nbsp;&nbsp;GS_SORT.<br />
+<br />
+&nbsp;&nbsp;GS_SORT-SPOS&nbsp;=&nbsp;2.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"정렬순서를&nbsp;지정<br />
+&nbsp;&nbsp;GS_SORT-FIELDNAME&nbsp;=&nbsp;'FLTXT2'.&nbsp;&nbsp;"유동/비유동&nbsp;구분<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;GS_SORT-SELTEXT&nbsp;=&nbsp;'계정과목'.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;GS_SORT-DOWN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.&nbsp;&nbsp;"내림차순&nbsp;정렬(Ex.&nbsp;유동,&nbsp;비유동&nbsp;순)<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;GS_SORT-SUBTOT&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.&nbsp;&nbsp;&nbsp;&nbsp;"중간합&nbsp;구하기<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;APPEND&nbsp;GS_SORT&nbsp;TO&nbsp;PT_SORT.<br />
+&nbsp;&nbsp;CLEAR&nbsp;&nbsp;GS_SORT.<br />
+   </div>
+   <div class="codeComment">
+*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;"2.&nbsp;계정번호<br />
+&nbsp;&nbsp;GS_SORT-SPOS&nbsp;=&nbsp;3.<br />
+&nbsp;&nbsp;GS_SORT-FIELDNAME&nbsp;=&nbsp;'GLTXT'.&nbsp;&nbsp;"계정코드<br />
+&nbsp;&nbsp;GS_SORT-UP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;GS_SORT-SUBTOT&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;APPEND&nbsp;GS_SORT&nbsp;TO&nbsp;PT_SORT.<br />
+&nbsp;&nbsp;CLEAR&nbsp;&nbsp;GS_SORT.<br />
+<br />
+&nbsp;&nbsp;"3.&nbsp;금액<br />
+&nbsp;&nbsp;GS_SORT-SPOS&nbsp;=&nbsp;3.<br />
+&nbsp;&nbsp;GS_SORT-FIELDNAME&nbsp;=&nbsp;'SAKNR'.<br />
+&nbsp;&nbsp;GS_SORT-UP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;GS_SORT-SUBTOT&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;APPEND&nbsp;GS_SORT&nbsp;TO&nbsp;PT_SORT.<br />
+&nbsp;&nbsp;CLEAR&nbsp;&nbsp;GS_SORT.<br />
+<br />
+&nbsp;&nbsp;"4.&nbsp;통화금액<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;GS_SORT-SPOS&nbsp;=&nbsp;3.<br />
+*&nbsp;&nbsp;GS_SORT-FIELDNAME&nbsp;=&nbsp;'T_AMOUNT'.<br />
+*&nbsp;&nbsp;GS_SORT-UP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.<br />
+*&nbsp;&nbsp;GS_SORT-SUBTOT&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.<br />
+<br />
+*&nbsp;&nbsp;APPEND&nbsp;GS_SORT&nbsp;TO&nbsp;PT_SORT.<br />
+*&nbsp;&nbsp;CLEAR&nbsp;&nbsp;GS_SORT.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;"5.&nbsp;H_AMOUNT<br />
+&nbsp;&nbsp;"6.&nbsp;S_AMOUNT<br />
+&nbsp;&nbsp;"위&nbsp;필드는&nbsp;보여주지&nbsp;않음.<br />
+   </div>
+   <div class="codeComment">
+*<br />
+*&nbsp;&nbsp;"7.&nbsp;D_WAERS<br />
+*&nbsp;&nbsp;GS_SORT-SPOS&nbsp;=&nbsp;3.<br />
+*&nbsp;&nbsp;GS_SORT-FIELDNAME&nbsp;=&nbsp;'D_WAERS'.<br />
+*&nbsp;&nbsp;GS_SORT-UP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.<br />
+*&nbsp;&nbsp;GS_SORT-SUBTOT&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.<br />
+*<br />
+*&nbsp;&nbsp;APPEND&nbsp;GS_SORT&nbsp;TO&nbsp;PT_SORT.<br />
+*&nbsp;&nbsp;CLEAR&nbsp;&nbsp;GS_SORT.<br />
+<br />
+<br />
+   </div>
+   <div class="code">
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SET_FIELD_CATALOG<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SET_FIELD_CATALOG  USING    PT_TAB TYPE STANDARD TABLE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;PT_FCAT&nbsp;TYPE&nbsp;LVC_T_FCAT.<br />
+<br />
+&nbsp;&nbsp;DATA:&nbsp;LO_DREF&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;DATA.<br />
+<br />
+&nbsp;&nbsp;CREATE&nbsp;DATA&nbsp;LO_DREF&nbsp;LIKE&nbsp;PT_TAB.<br />
+&nbsp;&nbsp;FIELD-SYMBOLS&nbsp;&lt;LT_TAB&gt;&nbsp;TYPE&nbsp;TABLE.<br />
+&nbsp;&nbsp;ASSIGN&nbsp;LO_DREF-&gt;*&nbsp;TO&nbsp;&lt;LT_TAB&gt;.<br />
+<br />
+&nbsp;&nbsp;TRY.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;CL_SALV_TABLE=&gt;FACTORY<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_SALV_TABLE&nbsp;=&nbsp;DATA(LR_TABLE)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T_TABLE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&lt;LT_TAB&gt;.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CATCH&nbsp;CX_SALV_MSG.&nbsp;"&nbsp;ALV:&nbsp;General&nbsp;Error&nbsp;Class&nbsp;with&nbsp;Message<br />
+&nbsp;&nbsp;ENDTRY.<br />
+<br />
+&nbsp;&nbsp;PT_FCAT&nbsp;=&nbsp;CL_SALV_CONTROLLER_METADATA=&gt;GET_LVC_FIELDCATALOG(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_COLUMNS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;LR_TABLE-&gt;GET_COLUMNS(&nbsp;)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_AGGREGATIONS&nbsp;=&nbsp;LR_TABLE-&gt;GET_AGGREGATIONS(&nbsp;)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;).<br />
+<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;MAKE_FILED_CATALOG<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM MAKE_FILED_CATALOG .<br />
+<br />
+&nbsp;&nbsp;GS_LAYOUT-ZEBRA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;GS_LAYOUT-CWIDTH_OPT&nbsp;=&nbsp;'A'.<br />
+&nbsp;&nbsp;GS_LAYOUT-SEL_MODE&nbsp;&nbsp;&nbsp;=&nbsp;'D'.<br />
+&nbsp;&nbsp;GV_SAVE&nbsp;=&nbsp;'A'.<br />
+<br />
+<br />
+&nbsp;&nbsp;REFRESH&nbsp;GT_FCAT.<br />
+&nbsp;&nbsp;PERFORM&nbsp;SET_FCAT<br />
+&nbsp;&nbsp;TABLES&nbsp;GT_FCAT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;:<br />
+<br />
+&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'FLTXT'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'계정과목'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;',<br />
+&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'FLTXT2'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'유동/비유동'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;',<br />
+&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'GLTXT'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'계정명'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'ZEA_SKB1'&nbsp;&nbsp;&nbsp;&nbsp;'GLTXT',<br />
+&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'SAKNR'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'G/L계정'&nbsp;&nbsp;&nbsp;&nbsp;'ZEA_SKB1'&nbsp;&nbsp;&nbsp;&nbsp;'SAKNR',<br />
+&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'T_AMOUNT'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'Amount'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'ZEA_BSEG'&nbsp;&nbsp;&nbsp;&nbsp;'DMBTR',<br />
+&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'D_WAERS'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'통화코드'&nbsp;&nbsp;&nbsp;'ZEA_BSEG'&nbsp;&nbsp;&nbsp;&nbsp;'D_WAERS'.<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;CREATE_OBJECT2<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM CREATE_OBJECT2 .<br />
+<br />
+   </div>
+   <div class="codeComment">
+*-----&nbsp;부채&nbsp;Container<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CREATE&nbsp;OBJECT&nbsp;GCL_CONTAINER_2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;REPID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;SY-REPID<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DYNNR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;SY-DYNNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SIDE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;CL_GUI_DOCKING_CONTAINER=&gt;DOCK_AT_RIGHT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXTENSION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1000<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CNTL_ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CNTL_SYSTEM_ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CREATE_ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;3<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LIFETIME_ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;4<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LIFETIME_DYNPRO_DYNPRO_LINK&nbsp;=&nbsp;5<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;6.<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;ID&nbsp;SY-MSGID&nbsp;TYPE&nbsp;SY-MSGTY&nbsp;NUMBER&nbsp;SY-MSGNO<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WITH&nbsp;SY-MSGV1&nbsp;SY-MSGV2&nbsp;SY-MSGV3&nbsp;SY-MSGV4.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SET_ALV_FIELDCAT2_0100<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SET_ALV_FIELDCAT2_0100 .<br />
+<br />
+   </div>
+   <div class="codeComment">
+*<br />
+*&nbsp;&nbsp;PERFORM&nbsp;GET_FIELDCAT_0100&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USING&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_DATA2<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;&nbsp;GT_FCAT.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;PERFORM&nbsp;MAKE_FIELDCAT2_0100.<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;GET_FIELDCAT_0100<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM GET_FIELDCAT_0100  USING    PT_TAB TYPE STANDARD TABLE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;PT_FCAT&nbsp;TYPE&nbsp;LVC_T_FCAT.<br />
+<br />
+&nbsp;&nbsp;DATA:&nbsp;LO_DREF&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;DATA.<br />
+<br />
+&nbsp;&nbsp;CREATE&nbsp;DATA&nbsp;LO_DREF&nbsp;LIKE&nbsp;PT_TAB.<br />
+&nbsp;&nbsp;FIELD-SYMBOLS&nbsp;&lt;LT_TAB&gt;&nbsp;TYPE&nbsp;TABLE.<br />
+&nbsp;&nbsp;ASSIGN&nbsp;LO_DREF-&gt;*&nbsp;TO&nbsp;&lt;LT_TAB&gt;.<br />
+<br />
+&nbsp;&nbsp;TRY.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;CL_SALV_TABLE=&gt;FACTORY<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_SALV_TABLE&nbsp;=&nbsp;DATA(LR_TABLE)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T_TABLE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&lt;LT_TAB&gt;.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CATCH&nbsp;CX_SALV_MSG.&nbsp;"&nbsp;ALV:&nbsp;General&nbsp;Error&nbsp;Class&nbsp;with&nbsp;Message<br />
+&nbsp;&nbsp;ENDTRY.<br />
+<br />
+&nbsp;&nbsp;PT_FCAT&nbsp;=&nbsp;CL_SALV_CONTROLLER_METADATA=&gt;GET_LVC_FIELDCATALOG(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_COLUMNS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;LR_TABLE-&gt;GET_COLUMNS(&nbsp;)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_AGGREGATIONS&nbsp;=&nbsp;LR_TABLE-&gt;GET_AGGREGATIONS(&nbsp;)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;).<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;MAKE_FIELDCAT2_0100<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM MAKE_FIELDCAT2_0100 .<br />
+<br />
+&nbsp;&nbsp;GS_LAYOUT-ZEBRA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;GS_LAYOUT-CWIDTH_OPT&nbsp;=&nbsp;'A'.<br />
+&nbsp;&nbsp;GS_LAYOUT-SEL_MODE&nbsp;&nbsp;&nbsp;=&nbsp;'D'.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;PERFORM&nbsp;SET_FCAT&nbsp;USING&nbsp;:<br />
+*&nbsp;&nbsp;&nbsp;'X'&nbsp;&nbsp;&nbsp;'LEVEL0_TEXT'&nbsp;&nbsp;'계정과목'&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'&nbsp;',<br />
+*&nbsp;&nbsp;&nbsp;'X'&nbsp;&nbsp;&nbsp;'SAKNR'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'계정번호'&nbsp;&nbsp;&nbsp;'ZEA_SKB1'&nbsp;&nbsp;&nbsp;'SAKNR',<br />
+*&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'DMBTR'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'ZEA_BSEG'&nbsp;&nbsp;&nbsp;'DMBTR',<br />
+*&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'D_WAERS'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'ZEA_BSEG'&nbsp;&nbsp;&nbsp;'D_WAERS'.<br />
+<br />
+   </div>
+   <div class="code">
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;DISPLAY_ALV2_0100<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM DISPLAY_ALV2_0100 .<br />
+<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GCL_TREE-&gt;SET_TABLE_FOR_FIRST_DISPLAY<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_SAVE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'A'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IS_LAYOUT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GS_LAYOUT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IS_VARIANT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GS_VARIANT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CHANGING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IT_OUTTAB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GT_DATA<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IT_SORT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GT_SORT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IT_FIELDCATALOG&nbsp;=&nbsp;GT_FCAT.<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GCL_TREE-&gt;EXPAND_TREE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_LEVEL&nbsp;=&nbsp;1.<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GCL_TREE-&gt;COLUMN_OPTIMIZE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_START_COLUMN&nbsp;=&nbsp;GCL_TREE-&gt;C_HIERARCHY_COLUMN_NAME<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_END_COLUMN&nbsp;&nbsp;&nbsp;=&nbsp;GCL_TREE-&gt;C_HIERARCHY_COLUMN_NAME.<br />
+<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SET_ALV_LAYOUT2_0100<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SET_ALV_LAYOUT2_0100 .<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_LAYOUT.<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_VARIANT.<br />
+&nbsp;&nbsp;CLEAR&nbsp;GV_SAVE.<br />
+<br />
+&nbsp;&nbsp;GS_VARIANT-REPORT&nbsp;=&nbsp;SY-REPID.<br />
+&nbsp;&nbsp;GV_SAVE&nbsp;=&nbsp;'A'.&nbsp;&nbsp;&nbsp;"&nbsp;''&nbsp;:&nbsp;Layout&nbsp;저장불가<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;"&nbsp;'U'&nbsp;:&nbsp;저장한&nbsp;사용자만&nbsp;사용가능<br />
+*&nbsp;&nbsp;"&nbsp;'X'&nbsp;:&nbsp;Layout을&nbsp;저장하면&nbsp;모든&nbsp;사용자가&nbsp;사용&nbsp;가능<br />
+*&nbsp;&nbsp;"&nbsp;'A'&nbsp;:&nbsp;Layout을&nbsp;저장할&nbsp;때&nbsp;'U'/'X'&nbsp;선택&nbsp;가능<br />
+*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;GS_LAYOUT-CWIDTH_OPT&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;GS_LAYOUT-ZEBRA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;ABAP_ON.<br />
+&nbsp;&nbsp;GS_LAYOUT-SEL_MODE&nbsp;&nbsp;&nbsp;=&nbsp;'B'.<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SET_ALV_EVENT2_0100<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SET_ALV_EVENT2_0100 .<br />
+<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;GET_DATA2<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM GET_DATA2 .<br />
+<br />
+&nbsp;&nbsp;"&nbsp;Internal&nbsp;Table의&nbsp;내용을&nbsp;전부&nbsp;비워둠<br />
+&nbsp;&nbsp;REFRESH&nbsp;GT_DATA2[].<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--B/S&nbsp;계정&nbsp;(부채)<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;SELECT<br />
+<br />
+&nbsp;&nbsp;B~GJAHR&nbsp;&nbsp;&nbsp;"&nbsp;회계연도<br />
+&nbsp;&nbsp;B~SAKNR&nbsp;&nbsp;&nbsp;"&nbsp;G/L계정&nbsp;(Recon)<br />
+&nbsp;&nbsp;D~INDI_CD&nbsp;"차대변&nbsp;구분자<br />
+&nbsp;&nbsp;C~GLTXT&nbsp;&nbsp;&nbsp;"&nbsp;G/L계정명<br />
+&nbsp;&nbsp;SUM(&nbsp;B~DMBTR&nbsp;)&nbsp;AS&nbsp;DMBTR&nbsp;"&nbsp;&nbsp;통화금액&nbsp;합계<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;SUM(&nbsp;B~EATAX&nbsp;)&nbsp;AS&nbsp;EATAX&nbsp;"&nbsp;세금&nbsp;합계<br />
+   </div>
+   <div class="code">
+INTO CORRESPONDING FIELDS OF TABLE GT_DATA2<br />
+FROM ZEA_BKPF AS A        " A: 전표 헤더<br />
+INNER JOIN ZEA_BSEG AS B   " B: 전표 아이템<br />
+&nbsp;&nbsp;ON&nbsp;A~BUKRS&nbsp;EQ&nbsp;B~BUKRS<br />
+&nbsp;AND&nbsp;A~BELNR&nbsp;EQ&nbsp;B~BELNR<br />
+&nbsp;AND&nbsp;A~GJAHR&nbsp;EQ&nbsp;B~GJAHR<br />
+INNER JOIN ZEA_SKB1 AS C   " C: G/L계정마스터<br />
+&nbsp;&nbsp;ON&nbsp;C~BUKRS&nbsp;EQ&nbsp;A~BUKRS<br />
+&nbsp;AND&nbsp;C~SAKNR&nbsp;EQ&nbsp;B~SAKNR<br />
+&nbsp;AND&nbsp;C~GLTXT&nbsp;EQ&nbsp;B~GLTXT<br />
+&nbsp;AND&nbsp;C~XBILK&nbsp;EQ&nbsp;'X'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;G/L코드&nbsp;Type&nbsp;-&nbsp;'X':&nbsp;대차대조&nbsp;/&nbsp;''&nbsp;:&nbsp;손익계산<br />
+INNER JOIN ZEA_TBSL AS D     "D : 전기키 테이블<br />
+&nbsp;&nbsp;ON&nbsp;D~BSCHL&nbsp;EQ&nbsp;B~BSCHL<br />
+<br />
+WHERE C~SAKNR IN R_SAKNR_2   "2로 시작하는 G/L은 부채에 해당<br />
+GROUP BY B~GJAHR B~SAKNR D~INDI_CD C~GLTXT .<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;GET_DATA3<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM GET_DATA3 .<br />
+<br />
+&nbsp;&nbsp;"&nbsp;Internal&nbsp;Table의&nbsp;내용을&nbsp;전부&nbsp;비워둠<br />
+&nbsp;&nbsp;REFRESH&nbsp;GT_DATA3[].<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--B/S&nbsp;계정&nbsp;(자본)<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;SELECT<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;B~GJAHR&nbsp;&nbsp;&nbsp;"&nbsp;회계연도<br />
+&nbsp;&nbsp;&nbsp;&nbsp;B~SAKNR&nbsp;&nbsp;&nbsp;"&nbsp;G/L계정&nbsp;(Recon)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;D~INDI_CD&nbsp;"차대변&nbsp;구분자<br />
+&nbsp;&nbsp;&nbsp;&nbsp;C~GLTXT&nbsp;&nbsp;&nbsp;"&nbsp;G/L계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;SUM(&nbsp;B~DMBTR&nbsp;)&nbsp;AS&nbsp;DMBTR&nbsp;"&nbsp;&nbsp;통화금액&nbsp;합계<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;SUM(&nbsp;B~EATAX&nbsp;)&nbsp;AS&nbsp;EATAX&nbsp;"&nbsp;세금&nbsp;합계<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;GT_DATA3&nbsp;&nbsp;&nbsp;"자본이력&nbsp;테이블<br />
+&nbsp;&nbsp;FROM&nbsp;ZEA_BKPF&nbsp;AS&nbsp;A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;A:&nbsp;전표&nbsp;헤더<br />
+&nbsp;INNER&nbsp;JOIN&nbsp;ZEA_BSEG&nbsp;AS&nbsp;B&nbsp;&nbsp;&nbsp;"&nbsp;B:&nbsp;전표&nbsp;아이템<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ON&nbsp;A~BUKRS&nbsp;EQ&nbsp;B~BUKRS<br />
+&nbsp;&nbsp;&nbsp;AND&nbsp;A~BELNR&nbsp;EQ&nbsp;B~BELNR<br />
+&nbsp;&nbsp;&nbsp;AND&nbsp;A~GJAHR&nbsp;EQ&nbsp;B~GJAHR<br />
+&nbsp;INNER&nbsp;JOIN&nbsp;ZEA_SKB1&nbsp;AS&nbsp;C&nbsp;&nbsp;&nbsp;"&nbsp;C:&nbsp;G/L계정마스터<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ON&nbsp;C~BUKRS&nbsp;EQ&nbsp;A~BUKRS<br />
+&nbsp;&nbsp;&nbsp;AND&nbsp;C~SAKNR&nbsp;EQ&nbsp;B~SAKNR<br />
+&nbsp;&nbsp;&nbsp;AND&nbsp;C~GLTXT&nbsp;EQ&nbsp;B~GLTXT<br />
+&nbsp;&nbsp;&nbsp;AND&nbsp;C~XBILK&nbsp;EQ&nbsp;'X'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;G/L코드&nbsp;Type&nbsp;-&nbsp;'X':&nbsp;대차대조&nbsp;/&nbsp;''&nbsp;:&nbsp;손익계산<br />
+INNER JOIN ZEA_TBSL AS D     "D : 전기키 테이블<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ON&nbsp;D~BSCHL&nbsp;EQ&nbsp;B~BSCHL<br />
+<br />
+&nbsp;&nbsp;WHERE&nbsp;C~SAKNR&nbsp;IN&nbsp;R_SAKNR_3&nbsp;"3으로&nbsp;시작하는&nbsp;것은&nbsp;자본<br />
+&nbsp;&nbsp;GROUP&nbsp;BY&nbsp;B~GJAHR&nbsp;B~SAKNR&nbsp;D~INDI_CD&nbsp;C~GLTXT&nbsp;.<br />
+   </div>
+   <div class="codeComment">
+*<br />
+*&nbsp;&nbsp;GS_DATA3-NEW_SAKNR&nbsp;=&nbsp;&nbsp;'350000'.<br />
+*&nbsp;&nbsp;GS_DATA3-T_AMOUNT&nbsp;=&nbsp;LV_INCOME.<br />
+*&nbsp;&nbsp;APPEND&nbsp;&nbsp;GS_DATA3&nbsp;TO&nbsp;GT_DATA3.<br />
+<br />
+   </div>
+   <div class="code">
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;CREATE_OBJECT_1<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM CREATE_OBJECT_2 .<br />
+<br />
+   </div>
+   <div class="codeComment">
+**--&nbsp;Create&nbsp;Container&nbsp;(부채)<br />
+*<br />
+*&nbsp;&nbsp;CREATE&nbsp;OBJECT&nbsp;GCL_CONTAINER_2<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CONTAINER_NAME&nbsp;=&nbsp;'CCON1'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Name&nbsp;of&nbsp;the&nbsp;Screen&nbsp;CustCtrl&nbsp;Name&nbsp;to&nbsp;Link&nbsp;Container&nbsp;To<br />
+*<br />
+**--&nbsp;Create&nbsp;Tree&nbsp;(부채)<br />
+*&nbsp;&nbsp;CREATE&nbsp;OBJECT&nbsp;GO_ALV_TREE_1<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PARENT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GO_CONTAINER_1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Parent&nbsp;Container<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NODE_SELECTION_MODE&nbsp;=&nbsp;CL_GUI_COLUMN_TREE=&gt;NODE_SEL_MODE_SINGLE.&nbsp;"&nbsp;Nodes:&nbsp;Single&nbsp;or&nbsp;Multiple&nbsp;Selection<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ITEM_SELECTION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Can&nbsp;Individual&nbsp;Items&nbsp;be&nbsp;Selected?<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NO_TOOLBAR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;NO_TOOLBAR<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NO_HTML_HEADER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;NO_HTML_HEADER<br />
+*<br />
+<br />
+   </div>
+   <div class="code">
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SET_ALV_FIELDCAT_0100<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SET_ALV_FIELDCAT_1.<br />
+   </div>
+   <div class="codeComment">
+*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;PERFORM&nbsp;MAKE_FIELDCAT_1.<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;GT_FCAT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM GT_FCAT  USING  PT_TAB TYPE STANDARD TABLE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;PT_FCAT&nbsp;TYPE&nbsp;LVC_T_FCAT.<br />
+<br />
+&nbsp;&nbsp;DATA:&nbsp;LO_DREF&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;DATA.<br />
+<br />
+&nbsp;&nbsp;CREATE&nbsp;DATA&nbsp;LO_DREF&nbsp;LIKE&nbsp;PT_TAB.<br />
+&nbsp;&nbsp;FIELD-SYMBOLS&nbsp;&lt;LT_TAB&gt;&nbsp;TYPE&nbsp;TABLE.<br />
+&nbsp;&nbsp;ASSIGN&nbsp;LO_DREF-&gt;*&nbsp;TO&nbsp;&lt;LT_TAB&gt;.<br />
+<br />
+&nbsp;&nbsp;TRY.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;CL_SALV_TABLE=&gt;FACTORY<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_SALV_TABLE&nbsp;=&nbsp;DATA(LR_TABLE)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T_TABLE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&lt;LT_TAB&gt;.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CATCH&nbsp;CX_SALV_MSG.&nbsp;"&nbsp;ALV:&nbsp;General&nbsp;Error&nbsp;Class&nbsp;with&nbsp;Message<br />
+&nbsp;&nbsp;ENDTRY.<br />
+<br />
+&nbsp;&nbsp;PT_FCAT&nbsp;=&nbsp;CL_SALV_CONTROLLER_METADATA=&gt;GET_LVC_FIELDCATALOG(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_COLUMNS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;LR_TABLE-&gt;GET_COLUMNS(&nbsp;)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_AGGREGATIONS&nbsp;=&nbsp;LR_TABLE-&gt;GET_AGGREGATIONS(&nbsp;)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;).<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;MAKE_FIELDCAT_1<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM MAKE_FIELDCAT_1 .<br />
+<br />
+&nbsp;&nbsp;GS_LAYOUT-ZEBRA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;GS_LAYOUT-CWIDTH_OPT&nbsp;=&nbsp;'A'.<br />
+&nbsp;&nbsp;GS_LAYOUT-SEL_MODE&nbsp;&nbsp;&nbsp;=&nbsp;'D'.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;PERFORM&nbsp;SET_FCAT&nbsp;USING&nbsp;:<br />
+*&nbsp;&nbsp;&nbsp;'X'&nbsp;&nbsp;&nbsp;'LEVEL0_TEXT'&nbsp;&nbsp;'계정과목'&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'&nbsp;',<br />
+*&nbsp;&nbsp;&nbsp;'X'&nbsp;&nbsp;&nbsp;'SAKNR'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'계정번호'&nbsp;&nbsp;&nbsp;'ZEA_SKB1'&nbsp;&nbsp;&nbsp;'SAKNR',<br />
+*&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'DMBTR'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'ZEA_BSEG'&nbsp;&nbsp;&nbsp;'DMBTR',<br />
+*&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'D_WAERS'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'ZEA_BSEG'&nbsp;&nbsp;&nbsp;'D_WAERS'.<br />
+<br />
+   </div>
+   <div class="code">
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SET_ALV_LAYOUT_1<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SET_ALV_LAYOUT_1 .<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SET_ALV_EVENT_1<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SET_ALV_EVENT_1 .<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;CLEAR&nbsp;GS_LAYOUT.<br />
+*&nbsp;&nbsp;CLEAR&nbsp;GS_VARIANT.<br />
+*&nbsp;&nbsp;CLEAR&nbsp;GV_SAVE.<br />
+*<br />
+*&nbsp;&nbsp;GS_VARIANT-REPORT&nbsp;=&nbsp;SY-REPID.<br />
+**&nbsp;&nbsp;GS_VARIANT-VARIANT&nbsp;=&nbsp;PA_LAYO.<br />
+*&nbsp;&nbsp;GV_SAVE&nbsp;=&nbsp;'A'.&nbsp;&nbsp;&nbsp;"&nbsp;''&nbsp;:&nbsp;Layout&nbsp;저장불가<br />
+*&nbsp;&nbsp;"&nbsp;'U'&nbsp;:&nbsp;저장한&nbsp;사용자만&nbsp;사용가능<br />
+*&nbsp;&nbsp;"&nbsp;'X'&nbsp;:&nbsp;Layout을&nbsp;저장하면&nbsp;모든&nbsp;사용자가&nbsp;사용&nbsp;가능<br />
+*&nbsp;&nbsp;"&nbsp;'A'&nbsp;:&nbsp;Layout을&nbsp;저장할&nbsp;때&nbsp;'U'/'X'&nbsp;선택&nbsp;가능<br />
+*<br />
+*&nbsp;&nbsp;GS_LAYOUT-CWIDTH_OPT&nbsp;=&nbsp;ABAP_ON.<br />
+*&nbsp;&nbsp;GS_LAYOUT-ZEBRA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;ABAP_ON.<br />
+*&nbsp;&nbsp;GS_LAYOUT-SEL_MODE&nbsp;&nbsp;&nbsp;=&nbsp;'D'.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;GS_LAYOUT-SEL_MODE&nbsp;=&nbsp;'A'.<br />
+*&nbsp;&nbsp;"&nbsp;A:&nbsp;다중&nbsp;행,&nbsp;다중&nbsp;열&nbsp;선택,&nbsp;선택&nbsp;박스&nbsp;생성<br />
+*&nbsp;&nbsp;"&nbsp;(셀&nbsp;단위,&nbsp;전체&nbsp;선택도&nbsp;가능)<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;GS_LAYOUT-SEL_MODE&nbsp;=&nbsp;'B'.&nbsp;"&nbsp;B&nbsp;:&nbsp;단일&nbsp;행,&nbsp;다중&nbsp;열&nbsp;선택,&nbsp;기본&nbsp;값<br />
+*&nbsp;&nbsp;"&nbsp;기본값으로&nbsp;해도&nbsp;Ctrl&nbsp;+&nbsp;y로&nbsp;강제로&nbsp;드래그&nbsp;할&nbsp;수는&nbsp;있음<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;GS_LAYOUT-SEL_MODE&nbsp;=&nbsp;'C'.&nbsp;"&nbsp;C&nbsp;:&nbsp;다중&nbsp;행,&nbsp;다중&nbsp;열&nbsp;선택,&nbsp;줄&nbsp;단위&nbsp;선택<br />
+*<br />
+**&nbsp;&nbsp;GS_LAYOUT-GRID_TITLE&nbsp;=&nbsp;TEXT-T10.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;ALV&nbsp;TITLE&nbsp;TEXT<br />
+**&nbsp;&nbsp;GS_LAYOUT-INFO_FNAME&nbsp;=&nbsp;'COLOR'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;행&nbsp;색상<br />
+**&nbsp;&nbsp;GS_LAYOUT-EXCP_FNAME&nbsp;=&nbsp;'LIGHT'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;신호등<br />
+**&nbsp;&nbsp;GS_LAYOUT-EXCP_LED&nbsp;=&nbsp;ABAP_ON.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;신호등&nbsp;모양&nbsp;변경<br />
+**&nbsp;&nbsp;GS_LAYOUT-CTAB_FNAME&nbsp;=&nbsp;'IT_FIELD_COLORS'.&nbsp;"&nbsp;셀&nbsp;별&nbsp;색상<br />
+**&nbsp;&nbsp;GS_LAYOUT-STYLEFNAME&nbsp;&nbsp;=&nbsp;'STYLE'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;스타일<br />
+   </div>
+   <div class="code">
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;DISPLAY_ALV_1<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM DISPLAY_ALV_1 .<br />
+<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;MAKE_HIERARCHY_1<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM MAKE_HIERARCHY_1 .<br />
+<br />
+&nbsp;&nbsp;GS_HIERARCHY_HEADER-HEADING&nbsp;=&nbsp;'계정과목'.<br />
+&nbsp;&nbsp;GS_HIERARCHY_HEADER-TOOLTIP&nbsp;=&nbsp;'계정과목&nbsp;폴더'.<br />
+&nbsp;&nbsp;GS_HIERARCHY_HEADER-WIDTH_PIX&nbsp;=&nbsp;'&nbsp;'.<br />
+&nbsp;&nbsp;GS_HIERARCHY_HEADER-WIDTH&nbsp;=&nbsp;30.<br />
+<br />
+   </div>
+   <div class="codeComment">
+****&---Set&nbsp;Node&nbsp;of&nbsp;부채-------------------------------------------------*<br />
+*<br />
+*&nbsp;&nbsp;DATA&nbsp;L_GL_TYP&nbsp;TYPE&nbsp;C.<br />
+*&nbsp;&nbsp;L_GL_TYP&nbsp;=&nbsp;ZEA_SKB1-SAKNR(2).<br />
+*<br />
+*&nbsp;&nbsp;CASE&nbsp;L_GL_TYP.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'10'.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_KEY_2&nbsp;=&nbsp;1.&nbsp;"&nbsp;'유동자산'.<br />
+**<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'11'.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_KEY_2&nbsp;=&nbsp;2.&nbsp;"&nbsp;'비유동자산'.<br />
+*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'21'.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_KEY_2&nbsp;=&nbsp;3.&nbsp;"&nbsp;'유동부채'.<br />
+**<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'22'.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_KEY_2&nbsp;=&nbsp;4.&nbsp;"&nbsp;'비유동부채'.<br />
+**<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'31'.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_KEY_2&nbsp;=&nbsp;5.&nbsp;"&nbsp;'자본금'.<br />
+**<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'33'.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_KEY_2&nbsp;=&nbsp;6.&nbsp;"&nbsp;'기타&nbsp;자본금'.<br />
+**<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'35'.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_KEY_2&nbsp;=&nbsp;7.&nbsp;"&nbsp;'이익잉여금'.<br />
+*<br />
+*&nbsp;&nbsp;ENDCASE.<br />
+<br />
+   </div>
+   <div class="code">
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;CREATE_OBJECT_2<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM CREATE_OBJECT_RIGHT .<br />
+<br />
+   </div>
+   <div class="codeComment">
+*-----&nbsp;Right&nbsp;컨테이너&nbsp;생성(부채/자본)용<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CREATE&nbsp;OBJECT&nbsp;GCL_CONTAINER_2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SIDE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;CL_GUI_DOCKING_CONTAINER=&gt;DOCK_AT_RIGHT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RATIO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;50<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CNTL_ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CNTL_SYSTEM_ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CREATE_ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;3<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LIFETIME_ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;4<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LIFETIME_DYNPRO_DYNPRO_LINK&nbsp;=&nbsp;5<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;6.<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;ID&nbsp;SY-MSGID&nbsp;TYPE&nbsp;SY-MSGTY&nbsp;NUMBER&nbsp;SY-MSGNO<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WITH&nbsp;SY-MSGV1&nbsp;SY-MSGV2&nbsp;SY-MSGV3&nbsp;SY-MSGV4.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;CREATE_HIERARCHY_1<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM Build_node_table. " USING T_NODE LIKE MTREESNODE.<br />
+<br />
+   </div>
+   <div class="codeComment">
+**---&nbsp;Node&nbsp;추가<br />
+*&nbsp;&nbsp;DATA&nbsp;:&nbsp;LS_SKB1&nbsp;LIKE&nbsp;ZEA_SKB1,<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LT_SKB1&nbsp;LIKE&nbsp;TABLE&nbsp;OF&nbsp;ZEA_SKB1.<br />
+*<br />
+*&nbsp;&nbsp;DATA&nbsp;:&nbsp;NODE&nbsp;LIKE&nbsp;MTREESNODE.<br />
+*<br />
+*&nbsp;&nbsp;CLEAR&nbsp;NODE.<br />
+*&nbsp;&nbsp;NODE-NODE_KEY&nbsp;=&nbsp;'Root'.<br />
+*&nbsp;&nbsp;NODE-ISFOLDER&nbsp;=&nbsp;'X'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"폴더<br />
+**&nbsp;&nbsp;NODE-TEXT&nbsp;=&nbsp;'부채'.<br />
+*&nbsp;&nbsp;NODE-TEXT&nbsp;=&nbsp;'SAKNR'.<br />
+*&nbsp;&nbsp;APPEND&nbsp;NODE&nbsp;TO&nbsp;GT_NODES.<br />
+*<br />
+*&nbsp;&nbsp;CLEAR&nbsp;NODE.<br />
+*&nbsp;&nbsp;NODE-NODE_KEY&nbsp;=&nbsp;'Child1'.<br />
+*&nbsp;&nbsp;NODE-RELATKEY&nbsp;=&nbsp;'Root'.<br />
+*&nbsp;&nbsp;NODE-ISFOLDER&nbsp;=&nbsp;'X'.<br />
+**&nbsp;&nbsp;NODE-TEXT&nbsp;=&nbsp;'유동부채'.<br />
+*&nbsp;&nbsp;NODE-TEXT&nbsp;=&nbsp;'BELNR'.<br />
+*&nbsp;&nbsp;NODE-EXPANDER&nbsp;=&nbsp;'X'.<br />
+*&nbsp;&nbsp;APPEND&nbsp;NODE&nbsp;TO&nbsp;GT_NODES.<br />
+*<br />
+*&nbsp;&nbsp;CLEAR&nbsp;NODE.<br />
+*&nbsp;&nbsp;NODE-NODE_KEY&nbsp;=&nbsp;'Child1'.<br />
+*&nbsp;&nbsp;NODE-RELATKEY&nbsp;=&nbsp;'Root'.<br />
+*&nbsp;&nbsp;NODE-ISFOLDER&nbsp;=&nbsp;'X'.<br />
+**&nbsp;&nbsp;NODE-TEXT&nbsp;=&nbsp;'비부채'.<br />
+*&nbsp;&nbsp;NODE-TEXT&nbsp;=&nbsp;'GLTXT'.<br />
+**&nbsp;&nbsp;NODE-EXPANDER&nbsp;=&nbsp;'&nbsp;'.<br />
+*&nbsp;&nbsp;NODE-EXPANDER&nbsp;=&nbsp;'X'.<br />
+*&nbsp;&nbsp;APPEND&nbsp;NODE&nbsp;TO&nbsp;GT_NODES.<br />
+*<br />
+*<br />
+*&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GO_ALV_TREE_1-&gt;ADD_NODES<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TABLE_STRUCTURE_NAME&nbsp;=&nbsp;'ZEA_BSEG'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Name&nbsp;of&nbsp;Structure&nbsp;of&nbsp;Node&nbsp;Table<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NODE_TABLE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GT_NODES.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Node&nbsp;table<br />
+<br />
+**********************************************************************<br />
+******&nbsp;&nbsp;DATA:&nbsp;LV_DEBT_TYPE_KEY&nbsp;TYPE&nbsp;LVC_NKEY,<br />
+******&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LV_SAKNR_KEY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_NKEY.<br />
+******<br />
+******&nbsp;&nbsp;"&nbsp;부채&nbsp;계정코드&nbsp;텍스트만&nbsp;가져와서&nbsp;LT_NODE에&nbsp;넣는다.<br />
+******&nbsp;&nbsp;SELECT&nbsp;SAKNR,&nbsp;GLTXT<br />
+******&nbsp;&nbsp;&nbsp;&nbsp;FROM&nbsp;ZEA_SKB1<br />
+******&nbsp;&nbsp;&nbsp;WHERE&nbsp;SAKNR&nbsp;LIKE&nbsp;'2%'<br />
+******&nbsp;&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;@GT_NODE.<br />
+******<br />
+******<br />
+******&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_NODE&nbsp;INTO&nbsp;GS_NODE.<br />
+******&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;21~&nbsp;유동&nbsp;22~&nbsp;비유동으로&nbsp;폴더&nbsp;만드려고<br />
+******&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;ADD_DEBT_TYPE&nbsp;USING&nbsp;GS_NODE-SAKNR<br />
+******&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;'<br />
+******&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;LV_DEBT_TYPE_KEY.<br />
+******<br />
+******&nbsp;&nbsp;ENDLOOP.<br />
+**********************************************************************<br />
+<br />
+<br />
+<br />
+*&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GO_ALV_TREE_1-&gt;ADD_NODE<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_RELAT_NODE_KEY&nbsp;=&nbsp;GV_KEY_2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Node&nbsp;Already&nbsp;in&nbsp;Tree&nbsp;Hierarchy<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_RELATIONSHIP&nbsp;&nbsp;&nbsp;=&nbsp;CL_GUI_COLUMN_TREE=&gt;RELAT_FIRST_CHILD&nbsp;&nbsp;&nbsp;"&nbsp;How&nbsp;to&nbsp;Insert&nbsp;Node<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IS_OUTTAB_LINE&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Attributes&nbsp;of&nbsp;Inserted&nbsp;Node<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IS_NODE_LAYOUT&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Node&nbsp;Layout<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IT_ITEM_LAYOUT&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Item&nbsp;Layout<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_NODE_TEXT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;G_NODE_TEXT_1.&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Hierarchy&nbsp;Node&nbsp;Text<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E_NEW_NODE_KEY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Key&nbsp;of&nbsp;New&nbsp;Node&nbsp;Key<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RELAT_NODE_NOT_FOUND&nbsp;=&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Relat&nbsp;Node&nbsp;Key&nbsp;not&nbsp;Found<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NODE_NOT_FOUND&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Node&nbsp;not&nbsp;Found<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;3.<br />
+<br />
+*---&nbsp;가공해서&nbsp;NODE&nbsp;텍스트를&nbsp;만든다고&nbsp;함.<br />
+<br />
+   </div>
+   <div class="code">
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;ADD_DEBT_TYPE<br />
+*&---------------------------------------------------------------------*<br />
+***FORM&nbsp;ADD_DEBT_TYPE&nbsp;USING&nbsp;P_SAKNR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_SKB1-SAKNR<br />
+***&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P_RELATE_KEY&nbsp;TYPE&nbsp;LVC_NKEY<br />
+***&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;P_NODE_KEY&nbsp;TYPE&nbsp;LVC_NKEY.<br />
+***<br />
+***&nbsp;DATA:&nbsp;L_NODE_TEXT&nbsp;TYPE&nbsp;LVC_VALUE,<br />
+***&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_NODE&nbsp;LIKE&nbsp;LINE&nbsp;OF&nbsp;GT_NODE.<br />
+***<br />
+***<br />
+***<br />
+***<br />
+***&nbsp;&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GO_ALV_TREE_1-&gt;ADD_NODE<br />
+***&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+***&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_RELAT_NODE_KEY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;P_RELATE_KEY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Node&nbsp;Already&nbsp;in&nbsp;Tree&nbsp;Hierarchy<br />
+***&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_RELATIONSHIP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;CL_GUI_COLUMN_TREE=&gt;RELAT_LAST_CHILD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;How&nbsp;to&nbsp;Insert&nbsp;Node<br />
+***&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IS_OUTTAB_LINE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;LS_NODE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Attributes&nbsp;of&nbsp;Inserted&nbsp;Node<br />
+****&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IS_NODE_LAYOUT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Node&nbsp;Layout<br />
+****&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IT_ITEM_LAYOUT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Item&nbsp;Layout<br />
+***&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_NODE_TEXT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;L_NODE_TEXT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Hierarchy&nbsp;Node&nbsp;Text<br />
+***&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+***&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E_NEW_NODE_KEY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;P_NODE_KEY.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Key&nbsp;of&nbsp;New&nbsp;Node&nbsp;Key<br />
+***<br />
+***ENDFORM.<br />
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;REFRESH_TREE_DEBT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM REFRESH_TREE_DEBT .<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;DATA&nbsp;:&nbsp;L_SCROLL&nbsp;TYPE&nbsp;LVC_S_STBL.<br />
+*&nbsp;&nbsp;L_Scroll-COL&nbsp;=&nbsp;'X'.<br />
+*&nbsp;&nbsp;L_Scroll-ROW&nbsp;=&nbsp;'X'.<br />
+*&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GO<br />
+<br />
+   </div>
+   <div class="code">
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SET_EVENT_TREE_1<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SET_EVENT_TREE_1 .<br />
+   </div>
+   <div class="codeComment">
+*<br />
+*&nbsp;event-envtid&nbsp;=&nbsp;CL_GUI_SIMPLE_TREE=&gt;EVENTID_NODE_DOUBLE_CLICK.<br />
+**&nbsp;EVENTS-appl_event&nbsp;=&nbsp;'X'.&nbsp;"procsee&nbsp;PAI&nbsp;if&nbsp;event&nbsp;occurs<br />
+*&nbsp;APPEND&nbsp;EVENT&nbsp;TO&nbsp;EVENTS.<br />
+*<br />
+*&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GO_ALV_TREE_1-&gt;SET_REGISTERED_EVENTS<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EVENTS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;events&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Event&nbsp;Table<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CNTL_ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;cntl_error<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CNTL_SYSTEM_ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;cntl_system_error<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ILLEGAL_EVENT_COMBINATION&nbsp;=&nbsp;3&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;ILLEGAL_EVENT_COMBINATION<br />
+<br />
+<br />
+   </div>
+   <div class="code">
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;CREATE_SPLIT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM CREATE_SPLIT .<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Split&nbsp;생성<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CREATE&nbsp;OBJECT&nbsp;GO_SPLIT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PARENT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GCL_CONTAINER_2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ROWS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;몇&nbsp;개의&nbsp;행으로&nbsp;나눌&nbsp;것인지.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COLUMNS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;몇&nbsp;개의&nbsp;열로&nbsp;나눌&nbsp;것인지.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CNTL_ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CNTL_SYSTEM_ERROR&nbsp;=&nbsp;2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;3.<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;ID&nbsp;SY-MSGID&nbsp;TYPE&nbsp;SY-MSGTY&nbsp;NUMBER&nbsp;SY-MSGNO<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WITH&nbsp;SY-MSGV1&nbsp;SY-MSGV2&nbsp;SY-MSGV3&nbsp;SY-MSGV4.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Split&nbsp;Container에&nbsp;Container&nbsp;올리기<br />
+*&---------------------------------------------------------------------*<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GO_SPLIT-&gt;GET_CONTAINER<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;첫번째&nbsp;행의&nbsp;첫번째&nbsp;열을&nbsp;go_top과&nbsp;연결하겠다는&nbsp;구문<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ROW&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COLUMN&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;RECEIVING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CONTAINER&nbsp;=&nbsp;GO_TOP.&nbsp;"&nbsp;go_dock2<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GO_SPLIT-&gt;GET_CONTAINER<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;2번쨰&nbsp;row의&nbsp;첫번째&nbsp;열을&nbsp;GO_BOT과&nbsp;연결하겠다는&nbsp;구문<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ROW&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COLUMN&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;RECEIVING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CONTAINER&nbsp;=&nbsp;GO_BOT.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Container&nbsp;높이&nbsp;설정<br />
+*&---------------------------------------------------------------------*<br />
+<br />
+*row&nbsp;높이&nbsp;설정.&nbsp;(하나의&nbsp;컨테이너의&nbsp;높이를&nbsp;맞추면,&nbsp;저절로&nbsp;아래&nbsp;높이&nbsp;설정)<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GO_SPLIT-&gt;SET_ROW_HEIGHT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HEIGHT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;50&nbsp;"&nbsp;%로&nbsp;옴.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CNTL_ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CNTL_SYSTEM_ERROR&nbsp;=&nbsp;2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;3.<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;Implement&nbsp;suitable&nbsp;error&nbsp;handling&nbsp;here<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;CREATE_TREE<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM CREATE_TREE .<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.&nbsp;GCL_TREE_2&nbsp;(부채&nbsp;트리&nbsp;-&gt;&nbsp;GO_TOP과&nbsp;연결)<br />
+*&---------------------------------------------------------------------*<br />
+*--&nbsp;Tree&nbsp;생성&nbsp;후&nbsp;top에&nbsp;붙이기<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CREATE&nbsp;OBJECT&nbsp;GCL_TREE_2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"부채&nbsp;Tree&nbsp;생성<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_PARENT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GO_TOP<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_NODE_SELECTION_MODE&nbsp;=&nbsp;CL_GUI_ALV_TREE_SIMPLE=&gt;ALIGN_AT_LEFT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_ITEM_SELECTION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_NO_HTML_HEADER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_NO_TOOLBAR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'&nbsp;'.<br />
+<br />
+&nbsp;&nbsp;GS_VARIANT-REPORT&nbsp;=&nbsp;SY-REPID.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.&nbsp;GCL_TREE_3&nbsp;(자본&nbsp;트리&nbsp;-&gt;&nbsp;GO_BOT과&nbsp;연결)<br />
+*&---------------------------------------------------------------------*<br />
+*--&nbsp;Tree&nbsp;생성&nbsp;후&nbsp;Bottom&nbsp;에&nbsp;붙이기<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CREATE&nbsp;OBJECT&nbsp;GCL_TREE_3<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_PARENT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GO_BOT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_NODE_SELECTION_MODE&nbsp;=&nbsp;CL_GUI_ALV_TREE_SIMPLE=&gt;ALIGN_AT_LEFT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_ITEM_SELECTION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_NO_HTML_HEADER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_NO_TOOLBAR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'&nbsp;'.<br />
+<br />
+&nbsp;&nbsp;GS_VARIANT-REPORT&nbsp;=&nbsp;SY-REPID.<br />
+<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;DISPLAY_TREE<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM DISPLAY_TREE .<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.&nbsp;GCL_TREE_2&nbsp;(부채&nbsp;트리/GO_TOP)<br />
+*&---------------------------------------------------------------------*<br />
+*--&nbsp;Display&nbsp;하여&nbsp;확인하기<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;REFRESH&nbsp;GT_SORT.<br />
+<br />
+&nbsp;&nbsp;GS_VARIANT-REPORT&nbsp;=&nbsp;SY-REPID.<br />
+&nbsp;&nbsp;GS_VARIANT-HANDLE&nbsp;=&nbsp;'2'.<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GCL_TREE_2-&gt;SET_TABLE_FOR_FIRST_DISPLAY<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_SAVE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'A'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IS_LAYOUT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GS_LAYOUT2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IS_VARIANT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GS_VARIANT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CHANGING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IT_OUTTAB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GT_DISPLAY2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"부채&nbsp;인터널&nbsp;테이블과&nbsp;연결<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IT_SORT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GT_SORT2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IT_FIELDCATALOG&nbsp;=&nbsp;GT_FCAT2.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;Tree&nbsp;옵션&nbsp;적용<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GCL_TREE_2-&gt;EXPAND_TREE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_LEVEL&nbsp;=&nbsp;1.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;Column&nbsp;열&nbsp;최적화<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GCL_TREE_2-&gt;COLUMN_OPTIMIZE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_START_COLUMN&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GCL_TREE_2-&gt;C_HIERARCHY_COLUMN_NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;First&nbsp;Column&nbsp;to&nbsp;Optimize<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_END_COLUMN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GCL_TREE_2-&gt;C_HIERARCHY_COLUMN_NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Last&nbsp;Column&nbsp;to&nbsp;Optimize<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_INCLUDE_HEADING&nbsp;=&nbsp;'X'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Include&nbsp;Heading<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.&nbsp;GCL_TREE_3&nbsp;(자본&nbsp;트리/GO_BOT)<br />
+*&---------------------------------------------------------------------*<br />
+<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;GS_VARIANT-REPORT&nbsp;=&nbsp;SY-REPID.<br />
+&nbsp;&nbsp;GS_VARIANT-HANDLE&nbsp;=&nbsp;'3'.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;Display&nbsp;하여&nbsp;확인하기<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GCL_TREE_3-&gt;SET_TABLE_FOR_FIRST_DISPLAY<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_SAVE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'A'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IS_LAYOUT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GS_LAYOUT3<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IS_VARIANT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GS_VARIANT&nbsp;&nbsp;&nbsp;"핸들로&nbsp;구별<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CHANGING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IT_OUTTAB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GT_DISPLAY3&nbsp;&nbsp;"자본&nbsp;인터널&nbsp;테이블<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IT_SORT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GT_SORT3<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IT_FIELDCATALOG&nbsp;=&nbsp;GT_FCAT3.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;Tree&nbsp;옵션&nbsp;적용<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GCL_TREE_3-&gt;EXPAND_TREE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_LEVEL&nbsp;=&nbsp;1.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;Column&nbsp;열&nbsp;최적화<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GCL_TREE_3-&gt;COLUMN_OPTIMIZE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_START_COLUMN&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GCL_TREE_3-&gt;C_HIERARCHY_COLUMN_NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;First&nbsp;Column&nbsp;to&nbsp;Optimize<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_END_COLUMN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GCL_TREE_3-&gt;C_HIERARCHY_COLUMN_NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Last&nbsp;Column&nbsp;to&nbsp;Optimize<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_INCLUDE_HEADING&nbsp;=&nbsp;'X'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Include&nbsp;Heading<br />
+<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SET_FACT_2<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SET_FACT_2 .<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;Set&nbsp;Layout&nbsp;1,2,3<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;PERFORM&nbsp;SET_LAYOUT.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;Set&nbsp;Field&nbsp;Catalog&nbsp;1,2,3<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;REFRESH&nbsp;GT_FCAT2.<br />
+&nbsp;&nbsp;REFRESH&nbsp;GT_FCAT3.<br />
+<br />
+&nbsp;&nbsp;PERFORM&nbsp;SET_FCAT<br />
+&nbsp;&nbsp;TABLES&nbsp;GT_FCAT2<br />
+&nbsp;&nbsp;USING&nbsp;:<br />
+<br />
+&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'FLTXT'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'계정과목'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;',<br />
+&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'FLTXT2'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'유동/비유동'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;',<br />
+&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'GLTXT'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'계정명'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'ZEA_SKB1'&nbsp;&nbsp;&nbsp;&nbsp;'GLTXT',<br />
+&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'SAKNR'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'G/L계정'&nbsp;&nbsp;&nbsp;&nbsp;'ZEA_SKB1'&nbsp;&nbsp;&nbsp;&nbsp;'SAKNR',<br />
+&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'T_AMOUNT'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'Amount'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'ZEA_BSEG'&nbsp;&nbsp;&nbsp;&nbsp;'DMBTR',<br />
+&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'D_WAERS'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'통화코드'&nbsp;&nbsp;&nbsp;'ZEA_BSEG'&nbsp;&nbsp;&nbsp;&nbsp;'D_WAERS'.<br />
+<br />
+&nbsp;&nbsp;PERFORM&nbsp;SET_FCAT<br />
+&nbsp;&nbsp;TABLES&nbsp;GT_FCAT3<br />
+&nbsp;&nbsp;USING&nbsp;:<br />
+<br />
+&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'FLTXT'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'계정과목'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;',<br />
+&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'FLTXT2'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'유동/비유동'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'&nbsp;',<br />
+&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'GLTXT'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'계정명'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'ZEA_SKB1'&nbsp;&nbsp;&nbsp;&nbsp;'GLTXT',<br />
+&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'SAKNR'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'G/L계정'&nbsp;&nbsp;&nbsp;&nbsp;'ZEA_SKB1'&nbsp;&nbsp;&nbsp;&nbsp;'SAKNR',<br />
+&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'T_AMOUNT'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'Amount'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'ZEA_BSEG'&nbsp;&nbsp;&nbsp;&nbsp;'DMBTR',<br />
+&nbsp;&nbsp;&nbsp;'&nbsp;'&nbsp;&nbsp;&nbsp;'D_WAERS'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'통화코드'&nbsp;&nbsp;&nbsp;'ZEA_BSEG'&nbsp;&nbsp;&nbsp;&nbsp;'D_WAERS'.<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;MOVE_DISPLAY<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM MOVE_DISPLAY .<br />
+<br />
+&nbsp;&nbsp;DATA&nbsp;:&nbsp;LT_DATA&nbsp;&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;&nbsp;TS_DISPLAY,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA&nbsp;&nbsp;TYPE&nbsp;TS_DISPLAY,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LV_INDEX&nbsp;TYPE&nbsp;SY-TABIX.<br />
+<br />
+&nbsp;&nbsp;REFRESH&nbsp;GT_DISPLAY1.&nbsp;"인터널&nbsp;테이블&nbsp;초기화<br />
+&nbsp;&nbsp;REFRESH&nbsp;LT_DATA.&nbsp;"인터널&nbsp;테이블&nbsp;초기화<br />
+<br />
+&nbsp;&nbsp;"SAKN&nbsp;별&nbsp;합계&nbsp;계산<br />
+&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_DATA&nbsp;INTO&nbsp;GS_DATA.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;LS_DATA.&nbsp;"사용하기&nbsp;전&nbsp;초기화<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;GS_DATA-INDI_CD.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'S'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-S_AMOUNT&nbsp;=&nbsp;GS_DATA-DMBTR.&nbsp;"차변&nbsp;값의&nbsp;합계<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'H'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-H_AMOUNT&nbsp;=&nbsp;GS_DATA-DMBTR.&nbsp;"대변&nbsp;값의&nbsp;합계<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"SAKNR(계정코드)별&nbsp;딱&nbsp;한&nbsp;값만&nbsp;저장되도록<br />
+&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;LT_DATA&nbsp;INTO&nbsp;LS_DATA&nbsp;WITH&nbsp;KEY&nbsp;SAKNR&nbsp;=&nbsp;GS_DATA-SAKNR.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;NE&nbsp;0.<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;유동/비유동&nbsp;구분&nbsp;후&nbsp;폴더&nbsp;노드&nbsp;값&nbsp;부여<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;GS_DATA-SAKNR&nbsp;CP&nbsp;'10*'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-FLTXT2&nbsp;&nbsp;=&nbsp;'유동&nbsp;자산'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-FLTXT2&nbsp;&nbsp;=&nbsp;'비유동&nbsp;자산'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-FLTXT&nbsp;=&nbsp;'자산'.<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;-----&nbsp;----&nbsp;BP&nbsp;NAME&nbsp;불러오기<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;GS_DATA-BPCODE&nbsp;IS&nbsp;NOT&nbsp;INITIAL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;*&nbsp;FROM&nbsp;ZEA_SKA1&nbsp;INTO&nbsp;ZEA_SKA1&nbsp;WHERE&nbsp;BPCODE&nbsp;EQ&nbsp;GS_DATA-BPCODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-GLTXT&nbsp;=&nbsp;GS_DATA-GLTXT&nbsp;&&&nbsp;'(파트너:'&nbsp;&&&nbsp;ZEA_SKA1-BPNAME&nbsp;&&&nbsp;')'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSE.&nbsp;"BP&nbsp;CODE가&nbsp;없는&nbsp;경우<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"자산<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-GLTXT&nbsp;=&nbsp;GS_DATA-GLTXT&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-SAKNR&nbsp;=&nbsp;GS_DATA-SAKNR&nbsp;.&nbsp;&nbsp;"계정번호<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-D_WAERS&nbsp;=&nbsp;'KRW'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"통화코드<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;계정잔액&nbsp;구하기<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;GS_DATA-INDI_CD.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'S'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_DATA&nbsp;INTO&nbsp;GS_DATA&nbsp;WITH&nbsp;KEY&nbsp;INDI_CD&nbsp;=&nbsp;'H'&nbsp;SAKNR&nbsp;=&nbsp;LS_DATA-SAKNR.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;NE&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-T_AMOUNT&nbsp;=&nbsp;LS_DATA-S_AMOUNT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSE.&nbsp;"대변이&nbsp;있다면&nbsp;?<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-T_AMOUNT&nbsp;=&nbsp;LS_DATA-S_AMOUNT&nbsp;-&nbsp;&nbsp;GS_DATA-DMBTR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'H'.&nbsp;"지금&nbsp;돌고있는&nbsp;GS_DATA는&nbsp;대변&nbsp;금액&nbsp;.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_DATA&nbsp;INTO&nbsp;GS_DATA&nbsp;WITH&nbsp;KEY&nbsp;INDI_CD&nbsp;=&nbsp;'S'&nbsp;SAKNR&nbsp;=&nbsp;LS_DATA-SAKNR.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;NE&nbsp;0.&nbsp;"실패.&nbsp;한값밖에&nbsp;없음.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-T_AMOUNT&nbsp;=&nbsp;LS_DATA-H_AMOUNT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSE.&nbsp;"차변이&nbsp;있다면?<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-T_AMOUNT&nbsp;=&nbsp;LS_DATA-H_AMOUNT&nbsp;-&nbsp;&nbsp;GS_DATA-DMBTR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;LS_DATA&nbsp;TO&nbsp;LT_DATA.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ELSE.&nbsp;"&nbsp;딱&nbsp;한번만&nbsp;저장되어야&nbsp;하기&nbsp;때문&nbsp;(S/H&nbsp;-&gt;&nbsp;&nbsp;T)<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;LT_DATA&nbsp;FROM&nbsp;LS_DATA&nbsp;INDEX&nbsp;&nbsp;SY-TABIX.<br />
+<br />
+&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+&nbsp;&nbsp;APPEND&nbsp;LINES&nbsp;OF&nbsp;LT_DATA&nbsp;TO&nbsp;GT_DISPLAY1.<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;MOVE_DISPLAY2<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM MOVE_DISPLAY2 .<br />
+<br />
+&nbsp;&nbsp;DATA&nbsp;:&nbsp;LT_DATA&nbsp;&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;&nbsp;TS_DISPLAY,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA&nbsp;&nbsp;TYPE&nbsp;TS_DISPLAY,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LV_INDEX&nbsp;TYPE&nbsp;SY-TABIX.<br />
+<br />
+&nbsp;&nbsp;REFRESH&nbsp;GT_DISPLAY2.&nbsp;"인터널&nbsp;테이블&nbsp;초기화<br />
+&nbsp;&nbsp;REFRESH&nbsp;LT_DATA.&nbsp;"인터널&nbsp;테이블&nbsp;초기화<br />
+<br />
+<br />
+&nbsp;&nbsp;"SAKN&nbsp;별&nbsp;합계&nbsp;계산<br />
+&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_DATA2&nbsp;INTO&nbsp;GS_DATA2.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;LS_DATA.&nbsp;"사용하기&nbsp;전&nbsp;초기화<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;GS_DATA2-INDI_CD.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'S'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-S_AMOUNT&nbsp;=&nbsp;GS_DATA2-DMBTR.&nbsp;"차변&nbsp;값의&nbsp;합계<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'H'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-H_AMOUNT&nbsp;=&nbsp;GS_DATA2-DMBTR.&nbsp;"대변&nbsp;값의&nbsp;합계<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"SAKNR(계정코드)별&nbsp;딱&nbsp;한&nbsp;값만&nbsp;저장되도록<br />
+&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;LT_DATA&nbsp;INTO&nbsp;LS_DATA&nbsp;WITH&nbsp;KEY&nbsp;SAKNR&nbsp;=&nbsp;GS_DATA2-SAKNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;NE&nbsp;0.<br />
+   </div>
+   <div class="codeComment">
+*----&nbsp;유동/비유동&nbsp;구분&nbsp;후&nbsp;하위&nbsp;폴더&nbsp;노드&nbsp;값&nbsp;부여<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;GS_DATA2-SAKNR&nbsp;CP&nbsp;&nbsp;'22*'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-FLTXT2&nbsp;=&nbsp;'비유동&nbsp;부채'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-FLTXT2&nbsp;=&nbsp;'유동&nbsp;부채'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-FLTXT&nbsp;=&nbsp;'부채'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"폴더명(상위)<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;-----&nbsp;----&nbsp;BP&nbsp;NAME&nbsp;불러오기<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;GS_DATA2-BPCODE&nbsp;IS&nbsp;NOT&nbsp;INITIAL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;*&nbsp;FROM&nbsp;ZEA_SKA1&nbsp;INTO&nbsp;ZEA_SKA1&nbsp;WHERE&nbsp;BPCODE&nbsp;EQ&nbsp;GS_DATA-BPCODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-GLTXT&nbsp;=&nbsp;GS_DATA2-GLTXT&nbsp;&&&nbsp;'(파트너:'&nbsp;&&&nbsp;ZEA_SKA1-BPNAME&nbsp;&&&nbsp;')'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSE.&nbsp;"BP&nbsp;CODE가&nbsp;없는&nbsp;경우<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"자산<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-GLTXT&nbsp;=&nbsp;GS_DATA2-GLTXT&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-SAKNR&nbsp;=&nbsp;GS_DATA2-SAKNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"계정번호<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-D_WAERS&nbsp;=&nbsp;'KRW'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"통화코드<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;계정잔액&nbsp;구하기<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;GS_DATA-INDI_CD.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'S'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_DATA2&nbsp;INTO&nbsp;GS_DATA2&nbsp;WITH&nbsp;KEY&nbsp;INDI_CD&nbsp;=&nbsp;'H'&nbsp;SAKNR&nbsp;=&nbsp;LS_DATA-SAKNR.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;NE&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-T_AMOUNT&nbsp;=&nbsp;LS_DATA-S_AMOUNT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSE.&nbsp;"대변이&nbsp;있다면&nbsp;?<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-T_AMOUNT&nbsp;=&nbsp;&nbsp;GS_DATA2-DMBTR&nbsp;-&nbsp;LS_DATA-S_AMOUNT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'H'.&nbsp;"지금&nbsp;돌고있는&nbsp;GS_DATA는&nbsp;대변&nbsp;금액&nbsp;.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_DATA2&nbsp;INTO&nbsp;GS_DATA2&nbsp;WITH&nbsp;KEY&nbsp;INDI_CD&nbsp;=&nbsp;'S'&nbsp;SAKNR&nbsp;=&nbsp;LS_DATA-SAKNR.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;NE&nbsp;0.&nbsp;"실패.&nbsp;한값밖에&nbsp;없음.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-T_AMOUNT&nbsp;=&nbsp;LS_DATA-H_AMOUNT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSE.&nbsp;"차변이&nbsp;있다면?<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-T_AMOUNT&nbsp;=&nbsp;GS_DATA2-DMBTR&nbsp;-&nbsp;LS_DATA-H_AMOUNT&nbsp;.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;LS_DATA&nbsp;TO&nbsp;LT_DATA.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ELSE.&nbsp;"&nbsp;딱&nbsp;한번만&nbsp;저장되어야&nbsp;하기&nbsp;때문&nbsp;(S/H&nbsp;-&gt;&nbsp;&nbsp;T)<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;LT_DATA&nbsp;FROM&nbsp;LS_DATA&nbsp;INDEX&nbsp;&nbsp;SY-TABIX.<br />
+<br />
+&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+&nbsp;&nbsp;APPEND&nbsp;LINES&nbsp;OF&nbsp;LT_DATA&nbsp;TO&nbsp;GT_DISPLAY2.<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;MOVE_DISPLAY3<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM MOVE_DISPLAY3 .<br />
+<br />
+&nbsp;&nbsp;DATA&nbsp;:&nbsp;LT_DATA&nbsp;&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;&nbsp;TS_DISPLAY,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA&nbsp;&nbsp;TYPE&nbsp;TS_DISPLAY,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LV_INDEX&nbsp;TYPE&nbsp;SY-TABIX.<br />
+<br />
+&nbsp;&nbsp;REFRESH&nbsp;GT_DISPLAY3.&nbsp;"인터널&nbsp;테이블&nbsp;초기화<br />
+&nbsp;&nbsp;REFRESH&nbsp;LT_DATA.&nbsp;"인터널&nbsp;테이블&nbsp;초기화<br />
+<br />
+<br />
+&nbsp;&nbsp;"SAKN&nbsp;별&nbsp;합계&nbsp;계산<br />
+&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_DATA3&nbsp;INTO&nbsp;GS_DATA3.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;LS_DATA.&nbsp;"사용하기&nbsp;전&nbsp;초기화<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;GS_DATA3-INDI_CD.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'S'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-S_AMOUNT&nbsp;=&nbsp;GS_DATA3-DMBTR.&nbsp;"차변&nbsp;값의&nbsp;합계<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'H'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-H_AMOUNT&nbsp;=&nbsp;GS_DATA3-DMBTR.&nbsp;"대변&nbsp;값의&nbsp;합계<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"SAKNR(계정코드)별&nbsp;딱&nbsp;한&nbsp;값만&nbsp;저장되도록<br />
+&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;LT_DATA&nbsp;INTO&nbsp;LS_DATA&nbsp;WITH&nbsp;KEY&nbsp;SAKNR&nbsp;=&nbsp;GS_DATA3-SAKNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;NE&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-FLTXT&nbsp;=&nbsp;'자본'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"계정폴더(상위)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-FLTXT2&nbsp;=&nbsp;'자본금'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"계정폴더(하위)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-GLTXT&nbsp;=&nbsp;GS_DATA3-GLTXT.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-SAKNR&nbsp;=&nbsp;GS_DATA3-SAKNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"계정번호<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-D_WAERS&nbsp;=&nbsp;'KRW'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"통화코드<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;계정잔액&nbsp;구하기<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;GS_DATA-INDI_CD.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'S'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_DATA3&nbsp;INTO&nbsp;GS_DATA3&nbsp;WITH&nbsp;KEY&nbsp;INDI_CD&nbsp;=&nbsp;'H'&nbsp;SAKNR&nbsp;=&nbsp;LS_DATA-SAKNR.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;NE&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-T_AMOUNT&nbsp;=&nbsp;LS_DATA-S_AMOUNT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSE.&nbsp;"대변이&nbsp;있다면&nbsp;?<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-T_AMOUNT&nbsp;=&nbsp;GS_DATA3-DMBTR&nbsp;-&nbsp;LS_DATA-S_AMOUNT&nbsp;.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'H'.&nbsp;"지금&nbsp;돌고있는&nbsp;GS_DATA는&nbsp;대변&nbsp;금액&nbsp;.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_DATA3&nbsp;INTO&nbsp;GS_DATA3&nbsp;WITH&nbsp;KEY&nbsp;INDI_CD&nbsp;=&nbsp;'S'&nbsp;SAKNR&nbsp;=&nbsp;LS_DATA-SAKNR.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;NE&nbsp;0.&nbsp;"실패.&nbsp;한값밖에&nbsp;없음.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-T_AMOUNT&nbsp;=&nbsp;LS_DATA-H_AMOUNT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSE.&nbsp;"차변이&nbsp;있다면?<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_DATA-T_AMOUNT&nbsp;=&nbsp;&nbsp;GS_DATA3-DMBTR&nbsp;-&nbsp;LS_DATA-H_AMOUNT&nbsp;.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;LS_DATA&nbsp;TO&nbsp;LT_DATA.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ELSE.&nbsp;"&nbsp;딱&nbsp;한번만&nbsp;저장되어야&nbsp;하기&nbsp;때문&nbsp;(S/H&nbsp;-&gt;&nbsp;&nbsp;T)<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;LT_DATA&nbsp;FROM&nbsp;LS_DATA&nbsp;INDEX&nbsp;&nbsp;SY-TABIX.<br />
+<br />
+&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+&nbsp;&nbsp;APPEND&nbsp;LINES&nbsp;OF&nbsp;LT_DATA&nbsp;TO&nbsp;GT_DISPLAY3.<br />
+<br />
+&nbsp;&nbsp;GS_DISPLAY3-FLTXT2&nbsp;&nbsp;&nbsp;=&nbsp;'자본'.&nbsp;&nbsp;"계정과목&nbsp;폴더&nbsp;(상위)&nbsp;-&nbsp;자산/부채/자본&nbsp;-&nbsp;구분<br />
+&nbsp;&nbsp;GS_DISPLAY3-FLTXT&nbsp;=&nbsp;'자본금'.&nbsp;"계정과목&nbsp;폴더&nbsp;(하위)&nbsp;-&nbsp;유동/비유동&nbsp;구분<br />
+&nbsp;&nbsp;GS_DISPLAY3-GLTXT&nbsp;=&nbsp;'이익잉여금'.<br />
+&nbsp;&nbsp;GS_DISPLAY3-SAKNR&nbsp;=&nbsp;&nbsp;'350000'.<br />
+&nbsp;&nbsp;GS_DISPLAY3-T_AMOUNT&nbsp;=&nbsp;LV_INCOME.<br />
+&nbsp;&nbsp;GS_DISPLAY3-D_WAERS&nbsp;=&nbsp;'KRW'.<br />
+<br />
+&nbsp;&nbsp;APPEND&nbsp;&nbsp;GS_DISPLAY3&nbsp;TO&nbsp;GT_DISPLAY3.<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SET_LAYOUT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SET_LAYOUT .<br />
+<br />
+&nbsp;&nbsp;GS_LAYOUT-ZEBRA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;GS_LAYOUT-CWIDTH_OPT&nbsp;=&nbsp;'A'.<br />
+&nbsp;&nbsp;GS_LAYOUT-SEL_MODE&nbsp;&nbsp;&nbsp;=&nbsp;'D'.<br />
+<br />
+<br />
+&nbsp;&nbsp;GS_LAYOUT2-ZEBRA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;GS_LAYOUT2-CWIDTH_OPT&nbsp;=&nbsp;'A'.<br />
+&nbsp;&nbsp;GS_LAYOUT2-SEL_MODE&nbsp;&nbsp;&nbsp;=&nbsp;'D'.<br />
+<br />
+<br />
+&nbsp;&nbsp;GS_LAYOUT3-ZEBRA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;GS_LAYOUT3-CWIDTH_OPT&nbsp;=&nbsp;'A'.<br />
+&nbsp;&nbsp;GS_LAYOUT3-SEL_MODE&nbsp;&nbsp;&nbsp;=&nbsp;'D'.<br />
+<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;CALL_SAKNR<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM CALL_SAKNR  USING   PV_INDEX_OUTTAB PO_SENDERS PO_GROUPLEVEL .<br />
+<br />
+&nbsp;&nbsp;CASE&nbsp;&nbsp;PO_SENDERS.<br />
+   </div>
+   <div class="codeComment">
+*&------------------자산&nbsp;Tree<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;GCL_TREE.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;GS_DISPLAY1.<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;더블클릭&nbsp;값&nbsp;점검<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_DISPLAY1&nbsp;INTO&nbsp;GS_DISPLAY1&nbsp;INDEX&nbsp;PV_INDEX_OUTTAB.&nbsp;"선택한&nbsp;노드를&nbsp;가져와<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"찾기에&nbsp;실패했다면&nbsp;나가고<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;NE&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXIT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSE.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"찾기에&nbsp;성공한&nbsp;경우<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;PO_GROUPLEVEL&nbsp;NE&nbsp;'GLTXT'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"만약&nbsp;클릭한&nbsp;것이&nbsp;'G/L&nbsp;Account'가&nbsp;아닌&nbsp;경우<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'상세조회는&nbsp;계정과목&nbsp;명을&nbsp;선택해주세요.'&nbsp;TYPE&nbsp;'E'&nbsp;DISPLAY&nbsp;LIKE&nbsp;'S'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXIT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SET&nbsp;PARAMETER&nbsp;ID&nbsp;'ZEA_SAKNR'&nbsp;FIELD&nbsp;GS_DISPLAY1-SAKNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CALL&nbsp;TRANSACTION&nbsp;'ZEA_FI040'&nbsp;AND&nbsp;SKIP&nbsp;FIRST&nbsp;SCREEN.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+   </div>
+   <div class="codeComment">
+*&------------------부채&nbsp;Tree<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;GCL_TREE_2.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;GS_DISPLAY2.<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;더블클릭&nbsp;값&nbsp;점검<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_DISPLAY2&nbsp;INTO&nbsp;GS_DISPLAY2&nbsp;INDEX&nbsp;PV_INDEX_OUTTAB.&nbsp;"선택한&nbsp;노드를&nbsp;가져와<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"찾기에&nbsp;실패했다면&nbsp;나가고<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;NE&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXIT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSE.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"찾기에&nbsp;성공한&nbsp;경우<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;PO_GROUPLEVEL&nbsp;NE&nbsp;'GLTXT'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"만약&nbsp;클릭한&nbsp;것이&nbsp;'G/L&nbsp;Account'가&nbsp;아닌&nbsp;경우<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'상세조회는&nbsp;계정과목&nbsp;명을&nbsp;선택해주세요.'&nbsp;TYPE&nbsp;'E'&nbsp;DISPLAY&nbsp;LIKE&nbsp;'S'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXIT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SET&nbsp;PARAMETER&nbsp;ID&nbsp;'ZEA_SAKNR'&nbsp;FIELD&nbsp;GS_DISPLAY2-SAKNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CALL&nbsp;TRANSACTION&nbsp;'ZEA_FI040'&nbsp;AND&nbsp;SKIP&nbsp;FIRST&nbsp;SCREEN.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+   </div>
+   <div class="codeComment">
+*&------------------자본&nbsp;Tree<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;GCL_TREE_3.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_DISPLAY3&nbsp;INTO&nbsp;GS_DISPLAY3&nbsp;INDEX&nbsp;PV_INDEX_OUTTAB.&nbsp;"선택한&nbsp;노드를&nbsp;가져와<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"찾기에&nbsp;실패했다면&nbsp;나가고<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;NE&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXIT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSE.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"찾기에&nbsp;성공한&nbsp;경우<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;PO_GROUPLEVEL&nbsp;NE&nbsp;'GLTXT'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"만약&nbsp;클릭한&nbsp;것이&nbsp;'G/L&nbsp;Account'가&nbsp;아닌&nbsp;경우<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'상세조회는&nbsp;계정과목&nbsp;명을&nbsp;선택해주세요.'&nbsp;TYPE&nbsp;'E'&nbsp;DISPLAY&nbsp;LIKE&nbsp;'S'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXIT.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;GS_DISPLAY3-SAKNR&nbsp;EQ&nbsp;&nbsp;'350000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CALL&nbsp;TRANSACTION&nbsp;'ZEA_FI090'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;SKIP&nbsp;FIRST&nbsp;SCREEN&nbsp;.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+<br />
+&nbsp;&nbsp;ENDCASE.<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SET_HANDLER_TREE<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SET_HANDLER_TREE .<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;For&nbsp;자산&nbsp;Tree<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CREATE&nbsp;OBJECT&nbsp;GCL_HANDLER.<br />
+<br />
+&nbsp;&nbsp;SET&nbsp;HANDLER&nbsp;:&nbsp;&nbsp;GCL_HANDLER-&gt;HANDLE_DOUBLE_CLICK&nbsp;FOR&nbsp;GCL_TREE.<br />
+<br />
+&nbsp;&nbsp;DATA&nbsp;LT_EVENT&nbsp;TYPE&nbsp;CNTL_SIMPLE_EVENTS.&nbsp;"LT<br />
+&nbsp;&nbsp;DATA&nbsp;LS_EVENT&nbsp;LIKE&nbsp;LINE&nbsp;OF&nbsp;LT_EVENT.&nbsp;&nbsp;&nbsp;"WA<br />
+<br />
+<br />
+&nbsp;&nbsp;GCL_TREE-&gt;GET_REGISTERED_EVENTS(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EVENTS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;LT_EVENT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;simple_events<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CNTL_ERROR&nbsp;=&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;cntl_error<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2<br />
+&nbsp;&nbsp;).<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;ID&nbsp;SY-MSGID&nbsp;TYPE&nbsp;SY-MSGTY&nbsp;NUMBER&nbsp;SY-MSGNO<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WITH&nbsp;SY-MSGV1&nbsp;SY-MSGV2&nbsp;SY-MSGV3&nbsp;SY-MSGV4.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;Evnet&nbsp;추가<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;LS_EVENT-EVENTID&nbsp;=&nbsp;CL_GUI_SIMPLE_TREE=&gt;EVENTID_NODE_DOUBLE_CLICK.<br />
+&nbsp;&nbsp;LS_EVENT-APPL_EVENT&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;APPEND&nbsp;LS_EVENT&nbsp;TO&nbsp;LT_EVENT.<br />
+<br />
+&nbsp;&nbsp;GCL_TREE-&gt;SET_REGISTERED_EVENTS(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EVENTS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;LT_EVENT&nbsp;&nbsp;"&nbsp;Event&nbsp;Table<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CNTL_ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;cntl_error<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CNTL_SYSTEM_ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;cntl_system_error<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ILLEGAL_EVENT_COMBINATION&nbsp;=&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;ILLEGAL_EVENT_COMBINATION<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;4<br />
+&nbsp;&nbsp;).<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;ID&nbsp;SY-MSGID&nbsp;TYPE&nbsp;SY-MSGTY&nbsp;NUMBER&nbsp;SY-MSGNO<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WITH&nbsp;SY-MSGV1&nbsp;SY-MSGV2&nbsp;SY-MSGV3&nbsp;SY-MSGV4.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SET_HANDLER_TREE2<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SET_HANDLER_TREE2 .<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;For&nbsp;자산&nbsp;Tree<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;SET&nbsp;HANDLER&nbsp;:&nbsp;&nbsp;GCL_HANDLER-&gt;HANDLE_DOUBLE_CLICK&nbsp;FOR&nbsp;GCL_TREE_2.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;SET&nbsp;HANDLER&nbsp;:&nbsp;&nbsp;GCL_HANDLER-&gt;HANDLE_DOUBLE_CLICK&nbsp;FOR&nbsp;GCL_TREE_3.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;DATA&nbsp;LT_EVENT&nbsp;TYPE&nbsp;CNTL_SIMPLE_EVENTS.&nbsp;"LT<br />
+&nbsp;&nbsp;DATA&nbsp;LS_EVENT&nbsp;LIKE&nbsp;LINE&nbsp;OF&nbsp;LT_EVENT.&nbsp;&nbsp;&nbsp;"WA<br />
+<br />
+&nbsp;&nbsp;GCL_TREE_2-&gt;GET_REGISTERED_EVENTS(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EVENTS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;LT_EVENT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;simple_events<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CNTL_ERROR&nbsp;=&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;cntl_error<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2<br />
+&nbsp;&nbsp;).<br />
+<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;ID&nbsp;SY-MSGID&nbsp;TYPE&nbsp;SY-MSGTY&nbsp;NUMBER&nbsp;SY-MSGNO<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WITH&nbsp;SY-MSGV1&nbsp;SY-MSGV2&nbsp;SY-MSGV3&nbsp;SY-MSGV4.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;Evnet&nbsp;추가<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;LS_EVENT-EVENTID&nbsp;=&nbsp;CL_GUI_SIMPLE_TREE=&gt;EVENTID_NODE_DOUBLE_CLICK.<br />
+&nbsp;&nbsp;LS_EVENT-APPL_EVENT&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;APPEND&nbsp;LS_EVENT&nbsp;TO&nbsp;LT_EVENT.<br />
+<br />
+&nbsp;&nbsp;GCL_TREE_2-&gt;SET_REGISTERED_EVENTS(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EVENTS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;LT_EVENT&nbsp;&nbsp;"&nbsp;Event&nbsp;Table<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CNTL_ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;cntl_error<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CNTL_SYSTEM_ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;cntl_system_error<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ILLEGAL_EVENT_COMBINATION&nbsp;=&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;ILLEGAL_EVENT_COMBINATION<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;4<br />
+&nbsp;&nbsp;).<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;ID&nbsp;SY-MSGID&nbsp;TYPE&nbsp;SY-MSGTY&nbsp;NUMBER&nbsp;SY-MSGNO<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WITH&nbsp;SY-MSGV1&nbsp;SY-MSGV2&nbsp;SY-MSGV3&nbsp;SY-MSGV4.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SET_HANDLER_TREE3<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SET_HANDLER_TREE3 .<br />
+<br />
+&nbsp;&nbsp;SET&nbsp;HANDLER&nbsp;:&nbsp;&nbsp;GCL_HANDLER-&gt;HANDLE_DOUBLE_CLICK&nbsp;FOR&nbsp;GCL_TREE_3.<br />
+<br />
+&nbsp;&nbsp;DATA&nbsp;LT_EVENT&nbsp;TYPE&nbsp;CNTL_SIMPLE_EVENTS.&nbsp;"LT<br />
+&nbsp;&nbsp;DATA&nbsp;LS_EVENT&nbsp;LIKE&nbsp;LINE&nbsp;OF&nbsp;LT_EVENT.&nbsp;&nbsp;&nbsp;"WA<br />
+<br />
+&nbsp;&nbsp;GCL_TREE_3-&gt;GET_REGISTERED_EVENTS(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EVENTS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;LT_EVENT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;simple_events<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CNTL_ERROR&nbsp;=&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;cntl_error<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2<br />
+&nbsp;&nbsp;).<br />
+<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;ID&nbsp;SY-MSGID&nbsp;TYPE&nbsp;SY-MSGTY&nbsp;NUMBER&nbsp;SY-MSGNO<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WITH&nbsp;SY-MSGV1&nbsp;SY-MSGV2&nbsp;SY-MSGV3&nbsp;SY-MSGV4.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;Evnet&nbsp;추가<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;LS_EVENT-EVENTID&nbsp;=&nbsp;CL_GUI_SIMPLE_TREE=&gt;EVENTID_NODE_DOUBLE_CLICK.<br />
+&nbsp;&nbsp;LS_EVENT-APPL_EVENT&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;APPEND&nbsp;LS_EVENT&nbsp;TO&nbsp;LT_EVENT.<br />
+<br />
+&nbsp;&nbsp;GCL_TREE_3-&gt;SET_REGISTERED_EVENTS(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EVENTS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;LT_EVENT&nbsp;&nbsp;"&nbsp;Event&nbsp;Table<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CNTL_ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;cntl_error<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CNTL_SYSTEM_ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;cntl_system_error<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ILLEGAL_EVENT_COMBINATION&nbsp;=&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;ILLEGAL_EVENT_COMBINATION<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;4<br />
+&nbsp;&nbsp;).<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;ID&nbsp;SY-MSGID&nbsp;TYPE&nbsp;SY-MSGTY&nbsp;NUMBER&nbsp;SY-MSGNO<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WITH&nbsp;SY-MSGV1&nbsp;SY-MSGV2&nbsp;SY-MSGV3&nbsp;SY-MSGV4.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+ENDFORM.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

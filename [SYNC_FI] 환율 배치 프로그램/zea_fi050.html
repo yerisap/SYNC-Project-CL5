@@ -1,0 +1,519 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI050</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZEA_FI050</h2>
+<h3> Description: [FI] 환율 importing 배치 프로그램</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Report&nbsp;ZEA_FI050<br />
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;[FI]&nbsp;환율&nbsp;importing&nbsp;프로그램&nbsp;2024.04.13&nbsp;[시작]&nbsp;-&nbsp;ACA5-08&nbsp;김예리<br />
+*&&nbsp;[FI]&nbsp;환율&nbsp;importing&nbsp;프로그램&nbsp;2024.04.20&nbsp;[완료]&nbsp;-&nbsp;ACA5-08&nbsp;김예리<br />
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;[2024.04.22&nbsp;/&nbsp;단위&nbsp;테스트&nbsp;완료]&nbsp;-&nbsp;[PM]&nbsp;김건우&nbsp;:&nbsp;o<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+REPORT ZEA_FI050 MESSAGE-ID ZEA_MSG.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+PARAMETERS: P_URL    TYPE STRING LOWER CASE,              " URL<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P_DEST&nbsp;&nbsp;&nbsp;TYPE&nbsp;RFCDISPLAY-RFCDEST&nbsp;LOWER&nbsp;CASE,&nbsp;&nbsp;"&nbsp;RFC&nbsp;목적지<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P_AUTH&nbsp;&nbsp;&nbsp;TYPE&nbsp;STRING&nbsp;LOWER&nbsp;CASE,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Authorization<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P_METHOD&nbsp;TYPE&nbsp;STRING&nbsp;,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;HTTP&nbsp;METHOD<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P_METHOD&nbsp;TYPE&nbsp;STRING&nbsp;OBLIGATORY,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;HTTP&nbsp;METHOD<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;P_JSON&nbsp;&nbsp;&nbsp;TYPE&nbsp;STRING&nbsp;LOWER&nbsp;CASE.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Request&nbsp;Body&nbsp;JSON<br />
+<br />
+DATA: LO_HTTP_CLIENT TYPE REF TO IF_HTTP_CLIENT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LO_REST_CLIENT&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_REST_HTTP_CLIENT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LO_REQUEST&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;IF_REST_ENTITY,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LO_RESPONSE&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;IF_REST_ENTITY.<br />
+DATA: LO_EXCEPTION   TYPE REF TO CX_ROOT.<br />
+DATA: LV_STATUS_CODE TYPE  I,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LV_STATUS_TEXT&nbsp;TYPE&nbsp;&nbsp;STRING.<br />
+<br />
+DATA: LT_RESPONSE_HEADER TYPE TIHTTPNVP.<br />
+<br />
+TYPES: BEGIN OF TS_JSON,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BKPR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;STRING,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CUR_NM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;STRING,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CUR_UNIT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;STRING,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DEAL_BAS_R&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;STRING,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KFTC_BKPR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;STRING,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KFTC_DEAL_BAS_R&nbsp;TYPE&nbsp;STRING,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RESULT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;I,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TEN_DD_EFEE_R&nbsp;&nbsp;&nbsp;TYPE&nbsp;STRING,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TTB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;STRING,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TTS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;STRING,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;YY_EFEE_R&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;STRING,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;END&nbsp;OF&nbsp;TS_JSON.<br />
+<br />
+TYPES: BEGIN OF TS_JSON_NUM,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BKPR_NUM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;P,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CUR_NM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;STRING,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CUR_UNIT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;STRING,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DEAL_BAS_R&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;STRING,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KFTC_BKPR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;STRING,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KFTC_DEAL_BAS_R&nbsp;TYPE&nbsp;STRING,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RESULT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;I,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TEN_DD_EFEE_R&nbsp;&nbsp;&nbsp;TYPE&nbsp;STRING,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TTB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;STRING,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TTS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;STRING,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;YY_EFEE_R&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;STRING,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;END&nbsp;OF&nbsp;TS_JSON_NUM.<br />
+<br />
+DATA: GS_JSON TYPE TS_JSON,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_JSON&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;TS_JSON.<br />
+<br />
+DATA: GS_JSON_NUM TYPE TS_JSON_NUM,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_JSON_NUM&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;TS_JSON_NUM.<br />
+<br />
+DATA: GS_TCURR TYPE ZEA_TCURR,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_TCURR&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;ZEA_TCURR.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;형변환<br />
+   </div>
+   <div class="code">
+DATA: GV_STRING TYPE TS_JSON-BKPR. " VALUE '19,050'.<br />
+DATA: GV_NUM TYPE P.<br />
+<br />
+DATA: GV_NEW_STRING TYPE STRING.<br />
+<br />
+GV_NEW_STRING = REPLACE( VAL = GV_STRING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUB&nbsp;=&nbsp;','<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WITH&nbsp;=&nbsp;'').<br />
+<br />
+CALL FUNCTION 'MOVE_CHAR_TO_NUM'<br />
+&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CHR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GV_NEW_STRING<br />
+&nbsp;&nbsp;IMPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;NUM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GV_NUM<br />
+&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CONVT_NO_NUMBER&nbsp;=&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CONVT_OVERFLOW&nbsp;&nbsp;=&nbsp;2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;3.<br />
+IF SY-SUBRC &lt;&gt; 0.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;Implement&nbsp;suitable&nbsp;error&nbsp;handling&nbsp;here<br />
+   </div>
+   <div class="code">
+ENDIF.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*WRITE&nbsp;GV_NUM.<br />
+<br />
+<br />
+*&nbsp;--&nbsp;형변환<br />
+**DATA:&nbsp;GV_STRING&nbsp;TYPE&nbsp;STRING&nbsp;VALUE&nbsp;'19,050'.<br />
+**DATA:&nbsp;GV_NUM&nbsp;TYPE&nbsp;P.<br />
+**<br />
+**DATA:&nbsp;GV_NEW_STRING&nbsp;TYPE&nbsp;STRING.<br />
+**<br />
+**GV_NEW_STRING&nbsp;=&nbsp;REPLACE(&nbsp;val&nbsp;=&nbsp;GV_STRING<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sub&nbsp;=&nbsp;','<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with&nbsp;=&nbsp;'').<br />
+**<br />
+**CALL&nbsp;FUNCTION&nbsp;'MOVE_CHAR_TO_NUM'<br />
+**&nbsp;&nbsp;EXPORTING<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;CHR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GV_NEW_STRING<br />
+**&nbsp;&nbsp;IMPORTING<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;NUM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GV_NUM<br />
+**&nbsp;&nbsp;EXCEPTIONS<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;CONVT_NO_NUMBER&nbsp;=&nbsp;1<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;CONVT_OVERFLOW&nbsp;&nbsp;=&nbsp;2<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;3.<br />
+**IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+***&nbsp;Implement&nbsp;suitable&nbsp;error&nbsp;handling&nbsp;here<br />
+**ENDIF.<br />
+**<br />
+**WRITE&nbsp;GV_NUM.<br />
+<br />
+*&---------------------------------------------------------------------*<br />
+*&nbsp;#1.&nbsp;HTTP&nbsp;Client<br />
+   </div>
+   <div class="code">
+IF P_URL IS NOT INITIAL.<br />
+&nbsp;&nbsp;"URL로&nbsp;직접&nbsp;호출<br />
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;CL_HTTP_CLIENT=&gt;CREATE_BY_URL<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;URL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;P_URL<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CLIENT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;LO_HTTP_CLIENT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ARGUMENT_NOT_FOUND&nbsp;=&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PLUGIN_NOT_ACTIVE&nbsp;&nbsp;=&nbsp;2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INTERNAL_ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;3<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PSE_NOT_FOUND&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;4<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PSE_NOT_DISTRIB&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;5<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PSE_ERRORS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;6<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;7.<br />
+<br />
+&nbsp;&nbsp;LO_HTTP_CLIENT-&gt;SEND(<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TIMEOUT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;CO_TIMEOUT_DEFAULT&nbsp;"&nbsp;Timeout&nbsp;of&nbsp;Answer&nbsp;Waiting&nbsp;Time<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HTTP_COMMUNICATION_FAILURE&nbsp;=&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Communication&nbsp;Error<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HTTP_INVALID_STATE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Invalid&nbsp;state<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HTTP_PROCESSING_FAILED&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Error&nbsp;when&nbsp;processing&nbsp;method<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HTTP_INVALID_TIMEOUT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Invalid&nbsp;Time&nbsp;Entry<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;5<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;).<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;ID&nbsp;SY-MSGID&nbsp;TYPE&nbsp;SY-MSGTY&nbsp;NUMBER&nbsp;SY-MSGNO<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WITH&nbsp;SY-MSGV1&nbsp;SY-MSGV2&nbsp;SY-MSGV3&nbsp;SY-MSGV4.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;LO_HTTP_CLIENT-&gt;RECEIVE(<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HTTP_COMMUNICATION_FAILURE&nbsp;=&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Communication&nbsp;Error<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HTTP_INVALID_STATE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Invalid&nbsp;state<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HTTP_PROCESSING_FAILED&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Error&nbsp;when&nbsp;processing&nbsp;method<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;4<br />
+&nbsp;&nbsp;).<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;ID&nbsp;SY-MSGID&nbsp;TYPE&nbsp;SY-MSGTY&nbsp;NUMBER&nbsp;SY-MSGNO<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WITH&nbsp;SY-MSGV1&nbsp;SY-MSGV2&nbsp;SY-MSGV3&nbsp;SY-MSGV4.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;DATA(LO_RECIVED_DATA)&nbsp;=&nbsp;LO_HTTP_CLIENT-&gt;RESPONSE-&gt;GET_DATA(<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OFFSET&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Offset&nbsp;into&nbsp;binary&nbsp;data<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LENGTH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Length&nbsp;of&nbsp;binary&nbsp;data<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VIRUS_SCAN_PROFILE&nbsp;=&nbsp;'/SIHTTP/HTTP_UPLOAD'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Virus&nbsp;Scan&nbsp;Profile<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VSCAN_SCAN_ALWAYS&nbsp;&nbsp;=&nbsp;IF_HTTP_ENTITY=&gt;CO_CONTENT_CHECK_PROFILE&nbsp;"&nbsp;Virus&nbsp;Scan&nbsp;Always&nbsp;(A&nbsp;=&nbsp;Always,&nbsp;N&nbsp;=&nbsp;Never,&nbsp;space&nbsp;=&nbsp;Internal)<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RECEIVING<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DATA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Binary&nbsp;data<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;).<br />
+<br />
+<br />
+ELSEIF P_DEST IS NOT INITIAL.<br />
+&nbsp;&nbsp;"RFC&nbsp;목적지로&nbsp;호출<br />
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;CL_HTTP_CLIENT=&gt;CREATE_BY_DESTINATION<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DESTINATION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;P_DEST<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CLIENT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;LO_HTTP_CLIENT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ARGUMENT_NOT_FOUND&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DESTINATION_NOT_FOUND&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DESTINATION_NO_AUTHORITY&nbsp;=&nbsp;3<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PLUGIN_NOT_ACTIVE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;4<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INTERNAL_ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;5<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;6.<br />
+ELSE.<br />
+&nbsp;&nbsp;EXIT.<br />
+ENDIF.<br />
+IF SY-SUBRC &lt;&gt; 0.<br />
+&nbsp;&nbsp;LV_STATUS_CODE&nbsp;=&nbsp;500.<br />
+&nbsp;&nbsp;MESSAGE&nbsp;ID&nbsp;SY-MSGID&nbsp;TYPE&nbsp;SY-MSGTY&nbsp;NUMBER&nbsp;SY-MSGNO&nbsp;WITH&nbsp;SY-MSGV1&nbsp;SY-MSGV2&nbsp;SY-MSGV3&nbsp;SY-MSGV4&nbsp;INTO&nbsp;LV_STATUS_TEXT.<br />
+&nbsp;&nbsp;WRITE:/&nbsp;LV_STATUS_CODE,&nbsp;LV_STATUS_TEXT.<br />
+&nbsp;&nbsp;EXIT.<br />
+ENDIF.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;#1.&nbsp;REST&nbsp;Client&nbsp;생성<br />
+   </div>
+   <div class="code">
+TRY.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CREATE&nbsp;OBJECT&nbsp;LO_REST_CLIENT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IO_HTTP_CLIENT&nbsp;=&nbsp;LO_HTTP_CLIENT.<br />
+&nbsp;&nbsp;CATCH&nbsp;CX_ROOT&nbsp;INTO&nbsp;LO_EXCEPTION.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;LV_STATUS_CODE&nbsp;=&nbsp;500.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;LV_STATUS_TEXT&nbsp;=&nbsp;LO_EXCEPTION-&gt;GET_TEXT(&nbsp;).<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WRITE:/&nbsp;LV_STATUS_CODE,&nbsp;LV_STATUS_TEXT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXIT.<br />
+ENDTRY.<br />
+<br />
+IF LO_HTTP_CLIENT IS NOT BOUND OR LO_REST_CLIENT IS NOT BOUND.<br />
+&nbsp;&nbsp;EXIT.<br />
+ENDIF.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;#2.&nbsp;Request&nbsp;생성<br />
+*&nbsp;&nbsp;LO_REQUEST&nbsp;=&nbsp;LO_REST_CLIENT-&gt;IF_REST_CLIENT~CREATE_REQUEST_ENTITY(&nbsp;).<br />
+   </div>
+   <div class="code">
+"Content type 설정 (application/json)<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;LO_REQUEST-&gt;SET_CONTENT_TYPE(&nbsp;IV_MEDIA_TYPE&nbsp;=&nbsp;IF_REST_MEDIA_TYPE=&gt;GC_APPL_JSON&nbsp;).&nbsp;&nbsp;&nbsp;"content-type&nbsp;:&nbsp;application/json<br />
+<br />
+   </div>
+   <div class="code">
+"Accept type 설정 (application/json)<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;LO_REST_CLIENT-&gt;IF_REST_CLIENT~SET_REQUEST_HEADER(&nbsp;IV_NAME&nbsp;&nbsp;=&nbsp;'Accept'&nbsp;IV_VALUE&nbsp;=&nbsp;IF_REST_MEDIA_TYPE=&gt;GC_APPL_JSON&nbsp;).<br />
+   </div>
+   <div class="code">
+"Authorization 설정<br />
+IF P_AUTH IS NOT INITIAL.<br />
+&nbsp;&nbsp;LO_REST_CLIENT-&gt;IF_REST_CLIENT~SET_REQUEST_HEADER(&nbsp;IV_NAME&nbsp;&nbsp;=&nbsp;'Authorization'&nbsp;IV_VALUE&nbsp;=&nbsp;P_AUTH&nbsp;).<br />
+ENDIF.<br />
+"Request Body<br />
+IF P_JSON IS NOT INITIAL.<br />
+&nbsp;&nbsp;LO_REQUEST-&gt;SET_STRING_DATA(&nbsp;P_JSON&nbsp;).<br />
+ENDIF.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;#3.&nbsp;HTTP&nbsp;Call<br />
+   </div>
+   <div class="code">
+TRY.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;P_METHOD.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'POST'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LO_REST_CLIENT-&gt;IF_REST_RESOURCE~POST(&nbsp;LO_REQUEST&nbsp;).<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'PUT'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LO_REST_CLIENT-&gt;IF_REST_RESOURCE~PUT(&nbsp;LO_REQUEST&nbsp;).<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'GET'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LO_REST_CLIENT-&gt;IF_REST_RESOURCE~GET(&nbsp;).<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'DELETE'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LO_REST_CLIENT-&gt;IF_REST_RESOURCE~DELETE(&nbsp;).<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+&nbsp;&nbsp;CATCH&nbsp;CX_ROOT&nbsp;INTO&nbsp;LO_EXCEPTION.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;LV_STATUS_CODE&nbsp;=&nbsp;500.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;LV_STATUS_TEXT&nbsp;=&nbsp;LO_EXCEPTION-&gt;GET_TEXT(&nbsp;).<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WRITE:/&nbsp;LV_STATUS_CODE,&nbsp;LV_STATUS_TEXT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXIT.<br />
+ENDTRY.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;#4.&nbsp;Response<br />
+   </div>
+   <div class="code">
+LO_RESPONSE = LO_REST_CLIENT-&gt;IF_REST_CLIENT~GET_RESPONSE_ENTITY( ).<br />
+"Response Body JSON<br />
+DATA(LV_RESPONSE_JSON) = LO_RESPONSE-&gt;GET_STRING_DATA( ).<br />
+"Response Body Content-type<br />
+LO_RESPONSE-&gt;GET_CONTENT_TYPE( IMPORTING EV_MEDIA_TYPE = DATA(LV_RESPONSE_CTYPE) ).<br />
+"Response Content Length<br />
+DATA(LV_RESPONSE_LENGTH) = LO_RESPONSE-&gt;GET_CONTENT_LENGTH( ).<br />
+"Status code, Status text<br />
+LV_STATUS_CODE = LO_REST_CLIENT-&gt;IF_REST_CLIENT~GET_STATUS(  ).<br />
+LV_STATUS_TEXT = LO_RESPONSE-&gt;GET_HEADER_FIELD( '~status_reason' ).<br />
+"Response Headers<br />
+LT_RESPONSE_HEADER = LO_RESPONSE-&gt;GET_HEADER_FIELDS( ).<br />
+"HTTP Close<br />
+LO_HTTP_CLIENT-&gt;CLOSE( ).<br />
+<br />
+WRITE:/ LV_STATUS_CODE, LV_STATUS_TEXT.<br />
+WRITE:/ LV_RESPONSE_CTYPE, LV_RESPONSE_LENGTH.<br />
+WRITE:/ LV_RESPONSE_JSON.<br />
+   </div>
+   <div class="codeComment">
+*EXIT.<br />
+*&---------------------------------------------------------------------*<br />
+<br />
+   </div>
+   <div class="code">
+DATA(JSON) = LV_RESPONSE_JSON.<br />
+   </div>
+   <div class="codeComment">
+***/UI2/CL_JSON=&gt;DESERIALIZE(<br />
+***&nbsp;&nbsp;EXPORTING&nbsp;JSON&nbsp;=&nbsp;CONV&nbsp;#(&nbsp;JSON&nbsp;)<br />
+***&nbsp;&nbsp;CHANGING&nbsp;DATA&nbsp;=&nbsp;GS_JSON<br />
+***).<br />
+<br />
+   </div>
+   <div class="code">
+/UI2/CL_JSON=&gt;DESERIALIZE(<br />
+&nbsp;&nbsp;EXPORTING&nbsp;JSON&nbsp;=&nbsp;CONV&nbsp;#(&nbsp;JSON&nbsp;)<br />
+&nbsp;&nbsp;CHANGING&nbsp;DATA&nbsp;=&nbsp;GT_JSON<br />
+).<br />
+<br />
+LOOP AT GT_JSON INTO GS_JSON.<br />
+<br />
+&nbsp;&nbsp;GV_NEW_STRING&nbsp;=&nbsp;REPLACE(&nbsp;VAL&nbsp;=&nbsp;GS_JSON-BKPR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUB&nbsp;=&nbsp;','<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WITH&nbsp;=&nbsp;'').<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;FUNCTION&nbsp;'MOVE_CHAR_TO_NUM'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GV_NEW_STRING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NUM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GV_NUM&nbsp;"&nbsp;Type&nbsp;:&nbsp;P<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CONVT_NO_NUMBER&nbsp;=&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CONVT_OVERFLOW&nbsp;&nbsp;=&nbsp;2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;3.<br />
+<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;EQ&nbsp;0.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;GS_JSON-BKPR&nbsp;=&nbsp;GV_NUM.&nbsp;"&nbsp;&lt;=&nbsp;단순히&nbsp;값을&nbsp;전달,&nbsp;Type&nbsp;이&nbsp;변환되지는&nbsp;않는다.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;MOVE-CORRESPONDING&nbsp;GS_JSON&nbsp;TO&nbsp;GS_JSON_NUM.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GS_JSON_NUM-BKPR_NUM&nbsp;=&nbsp;GV_NUM.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_JSON_NUM&nbsp;TO&nbsp;GT_JSON_NUM.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;GT_JSON_NUM&nbsp;FROM&nbsp;GS_JSON.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;WRITE&nbsp;:&nbsp;GS_JSON_NUM-BKPR_NUM.&nbsp;"&nbsp;&lt;&nbsp;==&nbsp;CHAR<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+<br />
+ENDLOOP.<br />
+<br />
+CLEAR GS_TCURR.<br />
+REFRESH GT_TCURR.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;테스트&nbsp;완료<br />
+**LOOP&nbsp;AT&nbsp;GT_JSON_NUM&nbsp;INTO&nbsp;GS_JSON_NUM.<br />
+**&nbsp;&nbsp;GS_TCURR-UKURS&nbsp;=&nbsp;GS_JSON_NUM-BKPR_NUM.&nbsp;"&nbsp;환율<br />
+**&nbsp;&nbsp;GS_TCURR-GDATU&nbsp;=&nbsp;'20240408'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;효력시작일<br />
+**&nbsp;&nbsp;GS_TCURR-FCURR&nbsp;=&nbsp;'KRW'.<br />
+**&nbsp;&nbsp;GS_TCURR-TCURR&nbsp;=&nbsp;GS_JSON_NUM-CUR_UNIT.<br />
+**<br />
+**&nbsp;&nbsp;APPEND&nbsp;GS_TCURR&nbsp;TO&nbsp;GT_TCURR.<br />
+**ENDLOOP.<br />
+<br />
+   </div>
+   <div class="code">
+LOOP AT GT_JSON_NUM INTO GS_JSON_NUM.<br />
+&nbsp;&nbsp;GS_TCURR-UKURS&nbsp;=&nbsp;GS_JSON_NUM-BKPR_NUM.&nbsp;"&nbsp;환율<br />
+&nbsp;&nbsp;GS_TCURR-GDATU&nbsp;=&nbsp;SY-DATUM.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;효력시작일&nbsp;(&nbsp;당일&nbsp;오후&nbsp;12시&nbsp;이후&nbsp;실행되어야&nbsp;함&nbsp;)<br />
+&nbsp;&nbsp;GS_TCURR-FCURR&nbsp;=&nbsp;'KRW'.<br />
+&nbsp;&nbsp;GS_TCURR-TCURR&nbsp;=&nbsp;GS_JSON_NUM-CUR_UNIT.<br />
+<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_TCURR&nbsp;TO&nbsp;GT_TCURR.<br />
+ENDLOOP.<br />
+<br />
+<br />
+MODIFY ZEA_TCURR FROM TABLE GT_TCURR.<br />
+<br />
+MESSAGE S000 WITH '데이터가 저장되었습니다'.<br />
+<br />
+EXIT.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+INITIALIZATION.<br />
+   </div>
+   <div class="codeComment">
+*P_URL&nbsp;=&nbsp;'http://localhost:3000'.&nbsp;"&nbsp;sap&nbsp;서버에서&nbsp;local&nbsp;로&nbsp;접근&nbsp;불가<br />
+*&nbsp;--&nbsp;프로그램을&nbsp;실행하는&nbsp;당일의&nbsp;환율을&nbsp;가져온다.<br />
+*&nbsp;&nbsp;P_URL&nbsp;=&nbsp;'https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey=IGG8ScoO0MmV3fsMb5AMdsI7KiSKA9hf&data=AP01'.<br />
+*&nbsp;&nbsp;P_URL&nbsp;=&nbsp;'https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?authkey=IGG8ScoO0MmV3fsMb5AMdsI7KiSKA9hf&searchdate=20240408&data=AP01'.<br />
+*P_URL&nbsp;=&nbsp;'https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?searchdate=20240408&data=AP01'.<br />
+*&nbsp;&nbsp;P_METHOD&nbsp;=&nbsp;'GET'.<br />
+*P_AUTH&nbsp;=&nbsp;'IGG8ScoO0MmV3fsMb5AMdsI7KiSKA9hf'.<br />
+<br />
+<br />
+*Selection&nbsp;texts<br />
+*----------------------------------------------------------<br />
+*&nbsp;P_AUTH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Authorization<br />
+*&nbsp;P_DEST&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RFC&nbsp;목적지<br />
+*&nbsp;P_JSON&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Request&nbsp;Body&nbsp;JSON<br />
+*&nbsp;P_METHOD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HTTP&nbsp;METHOD<br />
+*&nbsp;P_URL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;URL<br />
+<br />
+<br />
+*Messages<br />
+*----------------------------------------------------------<br />
+*<br />
+*&nbsp;Message&nbsp;class:&nbsp;ZEA_MSG<br />
+*000&nbsp;&nbsp;&nbsp;&&nbsp;&&nbsp;&&nbsp;&<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

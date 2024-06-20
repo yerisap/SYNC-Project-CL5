@@ -1,0 +1,356 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI_DZ</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for function ZEA_FI_DZ</h2>
+<h3> Description: [FI] SD모듈 DZ 자동함수 생성</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="code">
+FUNCTION ZEA_FI_DZ.<br />
+   </div>
+   <div class="codeComment">
+*"----------------------------------------------------------------------<br />
+*"*"Local Interface:<br />
+*"  IMPORTING<br />
+*"     REFERENCE(IV_AR_RECON) TYPE  ZEA_SAKNR<br />
+*"     REFERENCE(IV_BUDAT) TYPE  ZEA_BUDAT<br />
+*"     REFERENCE(IV_PAY_AMOUNT) TYPE  ZEA_DMBTR<br />
+*"     REFERENCE(IV_WAERS) TYPE  ZEA_WAERS<br />
+*"     REFERENCE(IV_MBLNR) TYPE  ZEA_BELNR<br />
+*"     REFERENCE(IV_BANK_SAKNR) TYPE  ZEA_SAKNR<br />
+*"  EXPORTING<br />
+*"     REFERENCE(EV_BELNR) TYPE  ZEA_BELNR<br />
+*"----------------------------------------------------------------------<br />
+*& [MM-FI]        DZ 전표 함수 테스트 프로그램<br />
+*&---------------------------------------------------------------------*<br />
+*& [생성일자 : 2024-04-23] / [생성자 : 5반 1조 이세영]<br />
+*& 완성도 [00%]<br />
+*&---------------------------------------------------------------------*<br />
+*& [Memo]<br />
+*  1) 해당 함수 사용 이후, DA전표를 BELNR 로 찾아서 'X' 에서 표시 (O)<br />
+*  2) 함수를 통해 DZ 반제번호 Export. 이는 반제번호에 Insert      (O)<br />
+*  3) 아이템01 전기키 15에 반제 필요한 채권 인식                  (O)<br />
+*  4) 저장 테이블 확인 (FIT700/BSEG/BKPF)                         (O)<br />
+*&---------------------------------------------------------------------*<br />
+
+<div class="codeComment">*       <a href ="global-zea_fi_dz.html">Global data declarations</a></div><br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CLEAR:&nbsp;GS_BKPF,&nbsp;GS_BSEG.<br />
+&nbsp;&nbsp;REFRESH:&nbsp;GT_BKPF,&nbsp;GT_BSEG.<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 0. FI 전표번호 채번<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;PERFORM&nbsp;NR_ZEA_BELNR&nbsp;CHANGING&nbsp;GV_BELNR_NUMBER.&nbsp;&nbsp;"&nbsp;전표번호&nbsp;채번<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 1. FI A/R 레콘 계정 찾기<br />
+* 1) 받아온 DA전표의 전표번호(PK)를 활용하여 해당 고객 코드를 찾는다.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;*&nbsp;FROM&nbsp;ZEA_BSEG&nbsp;INTO&nbsp;ZEA_BSEG<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BELNR&nbsp;EQ&nbsp;IV_MBLNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;&nbsp;&nbsp;BSCHL&nbsp;EQ&nbsp;'01'.<br />
+<br />
+&nbsp;&nbsp;LV_CUSCODE&nbsp;=&nbsp;ZEA_BSEG-BPCODE.<br />
+   </div>
+   <div class="codeComment">
+* 2) 고객코드를 활용하여 매출채권 계정(A/R) Recon 을 찾는다.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CLEAR&nbsp;GS_SKB1.&nbsp;&nbsp;"사용&nbsp;전&nbsp;초기화<br />
+&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;*&nbsp;FROM&nbsp;ZEA_SKB1&nbsp;INTO&nbsp;ZEA_SKB1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BPCODE&nbsp;EQ&nbsp;LV_CUSCODE&nbsp;.<br />
+<br />
+   </div>
+   <div class="codeComment">
+* 3) 찾은 값을 LV_ARRECON 보관 변수에 넣는다.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;LV_ARRECON&nbsp;=&nbsp;ZEA_SKB1-SAKNR.<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 2. Amount 환산<br />
+* -- 2-1. (S/H) 금액 변환<br />
+*  CASE IV_WAERS.<br />
+*    WHEN 'KRW'.<br />
+*      CALL FUNCTION 'BAPI_CURRENCY_CONV_TO_INTERNAL'<br />
+*        EXPORTING<br />
+*          AMOUNT_EXTERNAL      = IV_PAY_AMOUNT  " [SD] 반제 필요금액<br />
+*          CURRENCY             = IV_WAERS<br />
+*          MAX_NUMBER_OF_DIGITS = 23             "출력할 금액필드의 자릿수"<br />
+*        IMPORTING<br />
+*          AMOUNT_INTERNAL      = CS_AMOUNT.<br />
+*      ENDCASE.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CS_AMOUNT&nbsp;&nbsp;=&nbsp;IV_PAY_AMOUNT.<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+*                            IMPORTING<br />
+*----------------------------------------------------------------------<br />
+* -- 1. FI 전표 헤더 생성 ---------------------------------------------*<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;GS_BKPF-BUKRS&nbsp;=&nbsp;'1000'.<br />
+&nbsp;&nbsp;GS_BKPF-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+&nbsp;&nbsp;GS_BKPF-GJAHR&nbsp;=&nbsp;'2024'.<br />
+&nbsp;&nbsp;GS_BKPF-BLART&nbsp;=&nbsp;'DZ'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;A/R&nbsp;&nbsp;입금&nbsp;전표<br />
+&nbsp;&nbsp;GS_BKPF-BUDAT&nbsp;=&nbsp;SY-DATUM.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;KA&nbsp;전기일자&nbsp;=&gt;&nbsp;[FI]&nbsp;헤더&nbsp;-&nbsp;전기일자<br />
+&nbsp;&nbsp;GS_BKPF-BLDAT&nbsp;=&nbsp;SY-DATUM.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;증빙일자<br />
+&nbsp;&nbsp;GS_BKPF-BLTXT&nbsp;=&nbsp;'[SD]&nbsp;입금전표'.<br />
+&nbsp;&nbsp;GS_BKPF-XBLNR&nbsp;=&nbsp;IV_MBLNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;DA전표&nbsp;번호&nbsp;=&gt;&nbsp;[FI]&nbsp;헤더&nbsp;-&nbsp;참조문서<br />
+<br />
+&nbsp;&nbsp;"&nbsp;생성&nbsp;관련&nbsp;정보<br />
+&nbsp;&nbsp;GS_BKPF-ERDAT&nbsp;=&nbsp;SY-DATUM.&nbsp;"&nbsp;생성일자를&nbsp;오늘로<br />
+&nbsp;&nbsp;GS_BKPF-ERZET&nbsp;=&nbsp;SY-UZEIT.&nbsp;"&nbsp;생성시간을&nbsp;현재&nbsp;시간으로<br />
+&nbsp;&nbsp;GS_BKPF-ERNAM&nbsp;=&nbsp;'ACA5-17'.&nbsp;"&nbsp;생성자를&nbsp;현재&nbsp;로그인한&nbsp;사용자ID<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;EQ&nbsp;0&nbsp;.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;INSERT&nbsp;&nbsp;ZEA_BKPF&nbsp;FROM&nbsp;GS_BKPF.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;ZEA_BKPF&nbsp;FROM&nbsp;ZEA_BKPF.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 2. FI 전표 아이템 생성 -------------------------------------------*<br />
+* -- 2-1. FI 전표 아이템(차변: A/R 감소)<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;DO&nbsp;2&nbsp;TIMES.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-ITNUM&nbsp;=&nbsp;SY-INDEX.&nbsp;"&nbsp;Item&nbsp;번호<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;GS_BSEG-ITNUM.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;1.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"[15]&nbsp;(H)&nbsp;A/R&nbsp;감소<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BUKRS&nbsp;=&nbsp;'1000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GJAHR&nbsp;=&nbsp;'2024'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BSCHL&nbsp;=&nbsp;'15'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;전기키&nbsp;(A/R&nbsp;차변)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-SAKNR&nbsp;=&nbsp;&nbsp;LV_ARRECON.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정(A/R&nbsp;Recon)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GLTXT&nbsp;=&nbsp;'A/R&nbsp;반제'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGBL&nbsp;=&nbsp;IV_MBLNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;DA전표&nbsp;번호&nbsp;=&gt;&nbsp;[FI]&nbsp;아이템&nbsp;-&nbsp;반제번호<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGDT&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BPCODE&nbsp;=&nbsp;LV_CUSCODE.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"국제(전표)&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;&nbsp;&nbsp;=&nbsp;CS_AMOUNT.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[SD]&nbsp;반제&nbsp;필요금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;'KRW'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"현지&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;&nbsp;&nbsp;=&nbsp;CS_AMOUNT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;&nbsp;'KRW'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_BSEG&nbsp;TO&nbsp;GT_BSEG.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 2-1. FI 전표 아이템(차변 : 예금 증가)<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;2.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[15]&nbsp;(S)&nbsp;당좌예금&nbsp;증가<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BUKRS&nbsp;=&nbsp;'1000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GJAHR&nbsp;=&nbsp;'2024'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BSCHL&nbsp;=&nbsp;'05'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;전기키&nbsp;(B/S&nbsp;계정&nbsp;:&nbsp;대변)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-SAKNR&nbsp;=&nbsp;IV_BANK_SAKNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정&nbsp;(Recon)&nbsp;-&nbsp;BANK&nbsp;CODE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GLTXT&nbsp;=&nbsp;'당좌예금'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGBL&nbsp;=&nbsp;IV_MBLNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;DA전표&nbsp;번호&nbsp;=&gt;&nbsp;[FI]&nbsp;아이템&nbsp;-&nbsp;반제번호<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGDT&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BPCODE&nbsp;=&nbsp;LV_CUSCODE.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"국제(전표)&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;&nbsp;&nbsp;=&nbsp;CS_AMOUNT.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[SD]&nbsp;반제&nbsp;필요금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;'KRW'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"현지&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;&nbsp;&nbsp;=&nbsp;CS_AMOUNT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;&nbsp;'KRW'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_BSEG&nbsp;TO&nbsp;GT_BSEG.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+&nbsp;&nbsp;ENDDO.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+*                  SAVE TO ZEA_BKPF / ZEA_BSEG<br />
+*----------------------------------------------------------------------<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;MODIFY&nbsp;ZEA_BSEG&nbsp;FROM&nbsp;TABLE&nbsp;GT_BSEG.<br />
+<br />
+&nbsp;&nbsp;MESSAGE&nbsp;GV_BELNR_NUMBER&nbsp;&&&nbsp;'번&nbsp;전표가&nbsp;생성되었습니다.&nbsp;'&nbsp;TYPE&nbsp;'S'.<br />
+<br />
+&nbsp;&nbsp;COMMIT&nbsp;WORK&nbsp;AND&nbsp;WAIT.<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+*                          EXPORTING<br />
+*----------------------------------------------------------------------<br />
+*                        &lt;&lt;  FI =&gt;  SD  &gt;&gt;<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;EV_BELNR&nbsp;=&nbsp;&nbsp;GV_BELNR_NUMBER.&nbsp;"전표번호&nbsp;Exporting<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+*                          DA 전표에 표시<br />
+*----------------------------------------------------------------------<br />
+*                      &lt;&lt;  FI(DZ) =&gt;  FI(DA)  &gt;&gt;<br />
+<br />
+*--- 3. DZ전표 생성 후 성공 Message 출력 및 DA전표에 체크<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;EQ&nbsp;0&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"DZ&nbsp;전표가&nbsp;성공적으로&nbsp;Posting&nbsp;된&nbsp;경우<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;GS_BSEG.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"사용을&nbsp;위해&nbsp;변수&nbsp;초기화<br />
+&nbsp;&nbsp;&nbsp;&nbsp;REFRESH&nbsp;GT_BSEG.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--- BSEG ( 아이템 테이블 )<br />
+* DA유형 전표 - 반제여부 필드/반제번호 필드 채우기 위해 GT_BSEG에 담기<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;*&nbsp;FROM&nbsp;ZEA_BSEG<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BELNR&nbsp;EQ&nbsp;@IV_MBLNR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"DA유형&nbsp;전표번호<br />
+&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;@GT_BSEG.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_BSEG&nbsp;INTO&nbsp;GS_BSEG.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGDT&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGBL&nbsp;=&nbsp;EV_BELNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"DZ유형&nbsp;전표번호<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;GT_BSEG&nbsp;FROM&nbsp;GS_BSEG.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDLOOP.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;&nbsp;ZEA_BSEG&nbsp;FROM&nbsp;TABLE&nbsp;GT_BSEG.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--- FIT700 ( 고객 원장 테이블 )<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;*&nbsp;FROM&nbsp;ZEA_FIT700<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BELNR&nbsp;EQ&nbsp;@IV_MBLNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;@GT_FIT700.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_FIT700&nbsp;INTO&nbsp;GS_FIT700.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_FIT700-AUGDT&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_FIT700-AUGBL&nbsp;=&nbsp;EV_BELNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_FIT700-CUSCODE&nbsp;=&nbsp;LV_CUSCODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;GT_FIT700&nbsp;FROM&nbsp;GS_FIT700.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;&nbsp;ZEA_FIT700&nbsp;FROM&nbsp;TABLE&nbsp;GT_FIT700.<br />
+<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----     ZEA_SDT040 (판매오더 테이블-수금필드)<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;DATA&nbsp;LV_PAYNR&nbsp;TYPE&nbsp;ZEA_SDT070-PAYNR.<br />
+&nbsp;&nbsp;DATA&nbsp;LV_VBELN&nbsp;TYPE&nbsp;ZEA_SDT040-VBELN.<br />
+<br />
+&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;*&nbsp;FROM&nbsp;ZEA_BKPF<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BELNR&nbsp;EQ&nbsp;@IV_MBLNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;@ZEA_BKPF.<br />
+<br />
+&nbsp;&nbsp;LV_PAYNR&nbsp;=&nbsp;&nbsp;ZEA_BKPF-XBLNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"DA전표&nbsp;내&nbsp;참조&nbsp;필드,&nbsp;대금청구번호&nbsp;Select<br />
+<br />
+&nbsp;&nbsp;"ZEA_SDT070(대금청구테이블)&nbsp;에서&nbsp;해당&nbsp;대금청구문서&nbsp;를&nbsp;Select<br />
+&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;*&nbsp;FROM&nbsp;ZEA_SDT070<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;PAYNR&nbsp;EQ&nbsp;LV_PAYNR.<br />
+<br />
+&nbsp;&nbsp;LV_VBELN&nbsp;=&nbsp;ZEA_SDT070-VBELN.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"해당&nbsp;대금청구&nbsp;문서&nbsp;내&nbsp;판매오더를&nbsp;Select<br />
+<br />
+&nbsp;&nbsp;UPDATE&nbsp;ZEA_SDT040&nbsp;SET&nbsp;STATUS4&nbsp;=&nbsp;'X'&nbsp;WHERE&nbsp;VBELN&nbsp;EQ&nbsp;LV_VBELN&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"DB변경<br />
+<br />
+<br />
+<br />
+ENDFUNCTION.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*Messages<br />
+*----------------------------------------------------------<br />
+*<br />
+* Message class: Hard coded<br />
+*   번 전표가 생성되었습니다.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

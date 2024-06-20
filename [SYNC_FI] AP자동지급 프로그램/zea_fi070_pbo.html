@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI070_PBO</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZEA_FI070_PBO</h2>
+<h3> Description: Include ZMEETROOMO01</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Include&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZMEETROOMO01<br />
+*&---------------------------------------------------------------------*<br />
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Module&nbsp;STATUS_0100&nbsp;OUTPUT<br />
+*&---------------------------------------------------------------------*<br />
+*&<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE STATUS_0100 OUTPUT.<br />
+&nbsp;&nbsp;SET&nbsp;PF-STATUS&nbsp;'S0100'.<br />
+&nbsp;&nbsp;SET&nbsp;TITLEBAR&nbsp;'T0100'.<br />
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Module&nbsp;INIT_PROCESS_CONTROL&nbsp;OUTPUT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE INIT_PROCESS_CONTROL OUTPUT.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;Docking&nbsp;Container<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;IF&nbsp;GO_CONTAINER&nbsp;IS&nbsp;INITIAL.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;CREATE_OBJECT_0100.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;SET_ALV_LAYOUT_0100&nbsp;.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;SET_ALV_FIELDCAT_0100.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;SET_ALV_EVENT_0100.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;DISPLAY_ALV_0100.<br />
+<br />
+&nbsp;&nbsp;ELSE.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;REFRESH_ALV_0100.<br />
+<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;Screen&nbsp;Container<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;IF&nbsp;GO_CONTAINER_2&nbsp;IS&nbsp;INITIAL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;CREATE_OBJECT2_0100.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;SET_ALV_FIELDCAT2_0100.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;SET_ALV_LAYOUT2_0100.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;SET_ALV_EVENT2_0100.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;DISPLAY_ALV2_0100.<br />
+<br />
+&nbsp;&nbsp;ELSE.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;REFRESH_ALV2_0100.<br />
+<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+<br />
+<br />
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Module&nbsp;STATUS_0200&nbsp;OUTPUT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE STATUS_0200 OUTPUT.<br />
+&nbsp;SET&nbsp;PF-STATUS&nbsp;'S0200'.<br />
+&nbsp;SET&nbsp;TITLEBAR&nbsp;'T0200'.<br />
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Module&nbsp;CLEAR_OK_CODE&nbsp;OUTPUT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE CLEAR_OK_CODE OUTPUT.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;화면이&nbsp;나오기&nbsp;전&nbsp;OK_CODE&nbsp;를&nbsp;CLEAR&nbsp;한다.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CLEAR&nbsp;OK_CODE.<br />
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Module&nbsp;SET_DATA_200&nbsp;OUTPUT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE SET_DATA_200 OUTPUT.<br />
+   </div>
+   <div class="codeComment">
+*<br />
+**&nbsp;&nbsp;환율&nbsp;불러와&nbsp;&nbsp;A/P(USD)를&nbsp;원화로&nbsp;환산<br />
+*&nbsp;&nbsp;"&nbsp;환율&nbsp;기준일&nbsp;:&nbsp;전기일자(IV_BUDAT)&nbsp;에&nbsp;해당하는&nbsp;'USD'&nbsp;의&nbsp;환율&nbsp;값을&nbsp;전표에&nbsp;넣어준다<br />
+*<br />
+*&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;*&nbsp;FROM&nbsp;ZEA_TCURR&nbsp;INTO&nbsp;ZEA_TCURR<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;GDATU&nbsp;EQ&nbsp;&nbsp;SY-DATUM&nbsp;"&nbsp;환율&nbsp;기준일(KZ유형&nbsp;전표-전기일)<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;&nbsp;&nbsp;TCURR&nbsp;EQ&nbsp;&nbsp;'USD'.&nbsp;&nbsp;&nbsp;"&nbsp;통화코드&nbsp;&nbsp;&nbsp;(USD=IV_WAERS)<br />
+*<br />
+*<br />
+*&nbsp;&nbsp;"&nbsp;주말의&nbsp;경우&nbsp;환율&nbsp;값이&nbsp;없기&nbsp;때문에&nbsp;가장&nbsp;마지막&nbsp;환율&nbsp;값을&nbsp;읽어와야&nbsp;한다.<br />
+*&nbsp;&nbsp;IF&nbsp;GS_TCURR-GDATU&nbsp;EQ&nbsp;'00000000'.<br />
+*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;*&nbsp;FROM&nbsp;ZEA_TCURR&nbsp;INTO&nbsp;TABLE&nbsp;GT_TCURR<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;TCURR&nbsp;=&nbsp;'USD'<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;GDATU&nbsp;&lt;=&nbsp;ZEA_TCURR-GDATU&nbsp;&nbsp;&nbsp;"&nbsp;HEADER에&nbsp;입력한&nbsp;환산일<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ORDER&nbsp;BY&nbsp;GDATU&nbsp;DESCENDING.<br />
+*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_TCURR&nbsp;INTO&nbsp;GS_TCURR&nbsp;INDEX&nbsp;1.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[환산금액]&nbsp;통화금액(KRW)&nbsp;=&nbsp;현지통화금액&nbsp;*&nbsp;환율&nbsp;/&nbsp;100&nbsp;을&nbsp;해야&nbsp;.00&nbsp;이&nbsp;인식되지&nbsp;않고&nbsp;정확한&nbsp;계산&nbsp;값이&nbsp;들어간다.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-WRBTR&nbsp;&nbsp;&nbsp;=&nbsp;ZEA_BSEG-DMBTR&nbsp;*&nbsp;GS_TCURR-UKURS&nbsp;/&nbsp;100.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-W_WAERS&nbsp;=&nbsp;'KRW'.<br />
+**&nbsp;&nbsp;ENDIF.<br />
+*<br />
+*&nbsp;&nbsp;IF&nbsp;GS_DATA2-D_WAERS&nbsp;NE&nbsp;'KRW'.<br />
+*<br />
+*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;OPEN_AMOUNT&nbsp;=&nbsp;&nbsp;GS_DATA2-WRBTR&nbsp;*&nbsp;100.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;OPEN_AMOUNT2&nbsp;=&nbsp;GS_DATA2-WRBTR&nbsp;*&nbsp;100.<br />
+*<br />
+*&nbsp;&nbsp;ELSE.<br />
+*<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_TCURR-UKURS&nbsp;"&nbsp;환율&nbsp;기준일에&nbsp;해당하는&nbsp;USD의&nbsp;환율을&nbsp;가지고&nbsp;있음.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;환산금액(KRW)&nbsp;=&nbsp;총&nbsp;매입금액&nbsp;/&nbsp;환율<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;OPEN_AMOUNT2&nbsp;=&nbsp;&nbsp;OPEN_AMOUNT&nbsp;/&nbsp;ZEA_TCURR-UKURS.<br />
+*&nbsp;&nbsp;ENDIF.<br />
+<br />
+   </div>
+   <div class="code">
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Module&nbsp;FILL_200&nbsp;OUTPUT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE FILL_200 OUTPUT.<br />
+<br />
+ZEA_BKPF-BUKRS = 1000. "회사코드<br />
+ZEA_BKPF-GJAHR = 2024. "회계연도<br />
+<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;Fill&nbsp;Screen&nbsp;0200.&nbsp;반제&nbsp;팝업(다이올로그)<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;FILL_SCREEN_0200&nbsp;CHANGING&nbsp;CV_BN.<br />
+<br />
+ENDMODULE.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

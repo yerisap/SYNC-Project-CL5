@@ -1,0 +1,1020 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI090_F01</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZEA_FI090_F01</h2>
+<h3> Description: Include YE08_EX001_F01</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Include&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;YE08_EX001_F01<br />
+*&---------------------------------------------------------------------*<br />
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SELECT_DATA<br />
+*&&nbsp;---------------------------------------------------------------------*<br />
+*&&nbsp;Lv1.&nbsp;대분류	구분<br />
+*&&nbsp;4&nbsp;&nbsp;매출<br />
+*&&nbsp;5&nbsp;&nbsp;매출원가<br />
+*&&nbsp;6&nbsp;&nbsp;판매비/관리비/재료비&nbsp;&gt;&nbsp;판관비<br />
+*&&nbsp;7&nbsp;&nbsp;영업외수익/비용<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SELECT_DATA .<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;"&nbsp;매출&nbsp;:&nbsp;4로&nbsp;시작<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;R_SAKNR_4-SIGN&nbsp;&nbsp;&nbsp;=&nbsp;'I'.<br />
+&nbsp;&nbsp;R_SAKNR_4-OPTION&nbsp;=&nbsp;'CP'.<br />
+&nbsp;&nbsp;R_SAKNR_4-LOW&nbsp;=&nbsp;'4*'.<br />
+&nbsp;&nbsp;APPEND&nbsp;R_SAKNR_4.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;매출원가:&nbsp;5로&nbsp;시작<br />
+&nbsp;&nbsp;R_SAKNR_5-SIGN&nbsp;&nbsp;&nbsp;=&nbsp;'I'.<br />
+&nbsp;&nbsp;R_SAKNR_5-OPTION&nbsp;=&nbsp;'CP'.<br />
+&nbsp;&nbsp;R_SAKNR_5-LOW&nbsp;=&nbsp;'5*'.<br />
+&nbsp;&nbsp;APPEND&nbsp;R_SAKNR_5.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;판관비&nbsp;:&nbsp;6로&nbsp;시작<br />
+&nbsp;&nbsp;R_SAKNR_6-SIGN&nbsp;&nbsp;&nbsp;=&nbsp;'I'.<br />
+&nbsp;&nbsp;R_SAKNR_6-OPTION&nbsp;=&nbsp;'CP'.<br />
+&nbsp;&nbsp;R_SAKNR_6-LOW&nbsp;=&nbsp;'6*'.<br />
+&nbsp;&nbsp;APPEND&nbsp;R_SAKNR_6.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;영업외수익&nbsp;:&nbsp;71로&nbsp;시작,&nbsp;73으로&nbsp;시작,&nbsp;75로&nbsp;시작<br />
+&nbsp;&nbsp;R_SAKNR_7P-SIGN&nbsp;&nbsp;&nbsp;=&nbsp;'I'.<br />
+&nbsp;&nbsp;R_SAKNR_7P-OPTION&nbsp;=&nbsp;'CP'.<br />
+&nbsp;&nbsp;R_SAKNR_7P-LOW&nbsp;=&nbsp;'71*'.<br />
+&nbsp;&nbsp;R_SAKNR_7P-HIGH&nbsp;=&nbsp;'73*'.<br />
+&nbsp;&nbsp;APPEND&nbsp;R_SAKNR_7P.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;영업외비용&nbsp;:&nbsp;72,&nbsp;74,&nbsp;79로&nbsp;시작<br />
+&nbsp;&nbsp;R_SAKNR_7L-SIGN&nbsp;&nbsp;&nbsp;=&nbsp;'I'.<br />
+&nbsp;&nbsp;R_SAKNR_7L-OPTION&nbsp;=&nbsp;'CP'.<br />
+&nbsp;&nbsp;R_SAKNR_7L-LOW&nbsp;=&nbsp;'74*'.<br />
+&nbsp;&nbsp;R_SAKNR_7L-HIGH&nbsp;=&nbsp;'79*'.<br />
+&nbsp;&nbsp;APPEND&nbsp;R_SAKNR_7L.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;1분기<br />
+&nbsp;&nbsp;R_1-SIGN&nbsp;=&nbsp;'I'.<br />
+&nbsp;&nbsp;R_1-OPTION&nbsp;=&nbsp;'BT'.&nbsp;"&nbsp;Between&nbsp;(범위&nbsp;내)<br />
+&nbsp;&nbsp;R_1-LOW&nbsp;=&nbsp;'20240101'.&nbsp;"&nbsp;시작&nbsp;날짜<br />
+&nbsp;&nbsp;R_1-HIGH&nbsp;=&nbsp;'20240331'.&nbsp;"&nbsp;끝&nbsp;날짜<br />
+&nbsp;&nbsp;APPEND&nbsp;R_1.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;2분기<br />
+&nbsp;&nbsp;R_2-SIGN&nbsp;=&nbsp;'I'.<br />
+&nbsp;&nbsp;R_2-OPTION&nbsp;=&nbsp;'BT'.<br />
+&nbsp;&nbsp;R_2-LOW&nbsp;=&nbsp;'20240401'.<br />
+&nbsp;&nbsp;R_2-HIGH&nbsp;=&nbsp;'20240630'.<br />
+&nbsp;&nbsp;APPEND&nbsp;R_2.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;Internal&nbsp;Table의&nbsp;내용을&nbsp;전부&nbsp;비워둠<br />
+&nbsp;&nbsp;REFRESH&nbsp;GT_DATA[].<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--손익계정&nbsp;(&nbsp;ALL)<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;SELECT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;A~BUDAT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;B~GJAHR&nbsp;&nbsp;&nbsp;"&nbsp;회계연도<br />
+&nbsp;&nbsp;&nbsp;&nbsp;B~SAKNR&nbsp;&nbsp;&nbsp;"&nbsp;G/L계정&nbsp;(Recon)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;C~GLTXT&nbsp;&nbsp;&nbsp;"&nbsp;G/L계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;B~BPCODE&nbsp;&nbsp;"&nbsp;BP코드&nbsp;"<br />
+&nbsp;&nbsp;&nbsp;&nbsp;SUM(&nbsp;B~DMBTR&nbsp;)&nbsp;AS&nbsp;DMBTR&nbsp;"&nbsp;&nbsp;통화금액&nbsp;합계<br />
+&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;GT_DATA<br />
+&nbsp;&nbsp;FROM&nbsp;ZEA_BKPF&nbsp;AS&nbsp;A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;A:&nbsp;전표&nbsp;헤더<br />
+&nbsp;INNER&nbsp;JOIN&nbsp;ZEA_BSEG&nbsp;AS&nbsp;B&nbsp;&nbsp;&nbsp;"&nbsp;B:&nbsp;전표&nbsp;아이템<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ON&nbsp;A~BUKRS&nbsp;EQ&nbsp;B~BUKRS<br />
+&nbsp;&nbsp;&nbsp;AND&nbsp;A~BELNR&nbsp;EQ&nbsp;B~BELNR<br />
+&nbsp;&nbsp;&nbsp;AND&nbsp;A~GJAHR&nbsp;EQ&nbsp;B~GJAHR<br />
+&nbsp;INNER&nbsp;JOIN&nbsp;ZEA_SKB1&nbsp;AS&nbsp;C&nbsp;&nbsp;&nbsp;"&nbsp;C:&nbsp;G/L계정마스터<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ON&nbsp;C~BUKRS&nbsp;EQ&nbsp;A~BUKRS<br />
+&nbsp;&nbsp;&nbsp;AND&nbsp;C~SAKNR&nbsp;EQ&nbsp;B~SAKNR<br />
+&nbsp;&nbsp;&nbsp;AND&nbsp;C~GLTXT&nbsp;EQ&nbsp;C~GLTXT<br />
+&nbsp;&nbsp;&nbsp;AND&nbsp;C~XBILK&nbsp;NE&nbsp;'X'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;G/L코드&nbsp;Type&nbsp;-&nbsp;'X':&nbsp;대차대조&nbsp;/&nbsp;''&nbsp;:&nbsp;손익계산<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GROUP&nbsp;BY&nbsp;A~BUDAT&nbsp;B~GJAHR&nbsp;B~SAKNR&nbsp;C~GLTXT&nbsp;B~BPCODE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ORDER&nbsp;BY&nbsp;B~BPCODE&nbsp;ASCENDING.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--손익계정&nbsp;-&nbsp;1분기&nbsp;"----------------<br />
+<br />
+*&nbsp;&nbsp;SELECT<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;B~GJAHR&nbsp;&nbsp;&nbsp;"&nbsp;회계연도<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;B~SAKNR&nbsp;&nbsp;&nbsp;"&nbsp;G/L계정&nbsp;(Recon)<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;C~GLTXT&nbsp;&nbsp;&nbsp;"&nbsp;G/L계정명<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;B~BPCODE&nbsp;&nbsp;"&nbsp;BP코드&nbsp;"&nbsp;&lt;====&nbsp;추가함<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;SUM(&nbsp;B~DMBTR&nbsp;)&nbsp;AS&nbsp;DMBTR&nbsp;"&nbsp;&nbsp;통화금액&nbsp;합계<br />
+*&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;GT_DATA1<br />
+*&nbsp;&nbsp;FROM&nbsp;ZEA_BKPF&nbsp;AS&nbsp;A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;A:&nbsp;전표&nbsp;헤더<br />
+*&nbsp;INNER&nbsp;JOIN&nbsp;ZEA_BSEG&nbsp;AS&nbsp;B&nbsp;&nbsp;&nbsp;"&nbsp;B:&nbsp;전표&nbsp;아이템<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;ON&nbsp;A~BUKRS&nbsp;EQ&nbsp;B~BUKRS<br />
+*&nbsp;&nbsp;&nbsp;AND&nbsp;A~BELNR&nbsp;EQ&nbsp;B~BELNR<br />
+*&nbsp;&nbsp;&nbsp;AND&nbsp;A~GJAHR&nbsp;EQ&nbsp;B~GJAHR<br />
+*&nbsp;INNER&nbsp;JOIN&nbsp;ZEA_SKB1&nbsp;AS&nbsp;C&nbsp;&nbsp;&nbsp;"&nbsp;C:&nbsp;G/L계정마스터<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;ON&nbsp;C~BUKRS&nbsp;EQ&nbsp;A~BUKRS<br />
+*&nbsp;&nbsp;&nbsp;AND&nbsp;C~SAKNR&nbsp;EQ&nbsp;B~SAKNR<br />
+*&nbsp;&nbsp;&nbsp;AND&nbsp;C~GLTXT&nbsp;EQ&nbsp;B~GLTXT<br />
+*&nbsp;&nbsp;&nbsp;AND&nbsp;C~XBILK&nbsp;NE&nbsp;'X'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;G/L코드&nbsp;Type&nbsp;-&nbsp;'X':&nbsp;대차대조&nbsp;/&nbsp;''&nbsp;:&nbsp;손익계산<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;A~BUDAT&nbsp;IN&nbsp;R_1<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;GROUP&nbsp;BY&nbsp;B~GJAHR&nbsp;B~SAKNR&nbsp;C~GLTXT&nbsp;B~BPCODE<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;ORDER&nbsp;BY&nbsp;B~BPCODE&nbsp;ASCENDING.<br />
+<br />
+*&nbsp;--&nbsp;손익계정&nbsp;-&nbsp;2분기&nbsp;"&nbsp;----------------<br />
+*&nbsp;&nbsp;SELECT<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;B~GJAHR&nbsp;&nbsp;&nbsp;"&nbsp;회계연도<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;B~SAKNR&nbsp;&nbsp;&nbsp;"&nbsp;G/L계정&nbsp;(Recon)<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;C~GLTXT&nbsp;&nbsp;&nbsp;"&nbsp;G/L계정명<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;B~BPCODE&nbsp;&nbsp;"&nbsp;BP코드&nbsp;"&nbsp;&lt;====&nbsp;추가함<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;SUM(&nbsp;B~DMBTR&nbsp;)&nbsp;AS&nbsp;DMBTR&nbsp;"&nbsp;&nbsp;통화금액&nbsp;합계<br />
+*&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;GT_DATA2<br />
+*&nbsp;&nbsp;FROM&nbsp;ZEA_BKPF&nbsp;AS&nbsp;A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;A:&nbsp;전표&nbsp;헤더<br />
+*&nbsp;INNER&nbsp;JOIN&nbsp;ZEA_BSEG&nbsp;AS&nbsp;B&nbsp;&nbsp;&nbsp;"&nbsp;B:&nbsp;전표&nbsp;아이템<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;ON&nbsp;A~BUKRS&nbsp;EQ&nbsp;B~BUKRS<br />
+*&nbsp;&nbsp;&nbsp;AND&nbsp;A~BELNR&nbsp;EQ&nbsp;B~BELNR<br />
+*&nbsp;&nbsp;&nbsp;AND&nbsp;A~GJAHR&nbsp;EQ&nbsp;B~GJAHR<br />
+*&nbsp;INNER&nbsp;JOIN&nbsp;ZEA_SKB1&nbsp;AS&nbsp;C&nbsp;&nbsp;&nbsp;"&nbsp;C:&nbsp;G/L계정마스터<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;ON&nbsp;C~BUKRS&nbsp;EQ&nbsp;A~BUKRS<br />
+*&nbsp;&nbsp;&nbsp;AND&nbsp;C~SAKNR&nbsp;EQ&nbsp;B~SAKNR<br />
+*&nbsp;&nbsp;&nbsp;AND&nbsp;C~GLTXT&nbsp;EQ&nbsp;B~GLTXT<br />
+*&nbsp;&nbsp;&nbsp;AND&nbsp;C~XBILK&nbsp;NE&nbsp;'X'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;G/L코드&nbsp;Type&nbsp;-&nbsp;'X':&nbsp;대차대조&nbsp;/&nbsp;''&nbsp;:&nbsp;손익계산<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;A~BUDAT&nbsp;IN&nbsp;R_2<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;GROUP&nbsp;BY&nbsp;B~GJAHR&nbsp;B~SAKNR&nbsp;C~GLTXT&nbsp;B~BPCODE<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;ORDER&nbsp;BY&nbsp;B~BPCODE&nbsp;ASCENDING.<br />
+<br />
+<br />
+<br />
+   </div>
+   <div class="code">
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;MOVE_DISPLAY_DATA<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM MOVE_DISPLAY_DATA .<br />
+<br />
+&nbsp;&nbsp;"&nbsp;LS_SUM&nbsp;은&nbsp;매출총이익/&nbsp;영업이익/&nbsp;당기순이익을&nbsp;계산하기&nbsp;위함<br />
+&nbsp;&nbsp;DATA:&nbsp;LS_SUM&nbsp;LIKE&nbsp;GS_DISPLAY.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;LS_SUM을&nbsp;계산하기&nbsp;위해&nbsp;각&nbsp;계정의&nbsp;SUM값을&nbsp;보관하는&nbsp;변수<br />
+&nbsp;&nbsp;DATA:&nbsp;DMBTR_1A&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR.<br />
+&nbsp;&nbsp;DATA:&nbsp;DMBTR_2A&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR.<br />
+&nbsp;&nbsp;DATA:&nbsp;DMBTR_3A&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR.<br />
+&nbsp;&nbsp;DATA:&nbsp;DMBTR_4A&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR.<br />
+&nbsp;&nbsp;DATA:&nbsp;DMBTR_5A&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR.<br />
+&nbsp;&nbsp;DATA:&nbsp;DMBTR_6A&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR.<br />
+&nbsp;&nbsp;DATA:&nbsp;DMBTR_7A&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR.<br />
+&nbsp;&nbsp;DATA:&nbsp;DMBTR_1B&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR.<br />
+&nbsp;&nbsp;DATA:&nbsp;DMBTR_2B&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR.<br />
+&nbsp;&nbsp;DATA:&nbsp;DMBTR_3B&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR.<br />
+&nbsp;&nbsp;DATA:&nbsp;DMBTR_4B&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR.<br />
+&nbsp;&nbsp;DATA:&nbsp;DMBTR_5B&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR.<br />
+&nbsp;&nbsp;DATA:&nbsp;DMBTR_6B&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR.<br />
+&nbsp;&nbsp;DATA:&nbsp;DMBTR_7B&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;보여줄&nbsp;itab의&nbsp;순서를&nbsp;지정하기&nbsp;위해&nbsp;임시공간&nbsp;internal&nbsp;table<br />
+&nbsp;&nbsp;DATA&nbsp;LT_DISPLAY&nbsp;LIKE&nbsp;GT_DISPLAY.<br />
+&nbsp;&nbsp;DATA&nbsp;LS_DISPLAY&nbsp;LIKE&nbsp;LINE&nbsp;OF&nbsp;GT_DISPLAY.<br />
+<br />
+&nbsp;&nbsp;DATA:&nbsp;BEGIN&nbsp;OF&nbsp;LS_DISPLAY2.<br />
+&nbsp;&nbsp;DATA:<br />
+&nbsp;&nbsp;&nbsp;&nbsp;COLOR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;C&nbsp;LENGTH&nbsp;4,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GLTXT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_SKB1-GLTXT,&nbsp;"&nbsp;계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;BPCODE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-BPCODE,&nbsp;"&nbsp;계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;DMBTR_B&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,&nbsp;"&nbsp;금액합계(2024-2분기)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;DMBTR_C&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,&nbsp;"&nbsp;금액합계(2024-3분기)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;DMBTR_D&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,&nbsp;"&nbsp;금액합계(2024-4분기)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;DMBTR_YEAR&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,&nbsp;"&nbsp;금액합계(2024-당기실적)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;DMBTR_PER&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,&nbsp;"&nbsp;금액합계(2024-합계)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;END&nbsp;OF&nbsp;LS_DISPLAY2,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;LT_DISPLAY2&nbsp;LIKE&nbsp;TABLE&nbsp;OF&nbsp;LS_DISPLAY2.<br />
+<br />
+&nbsp;&nbsp;REFRESH:&nbsp;GT_DISPLAY.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;1.&nbsp;매출&nbsp;----------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;REFRESH&nbsp;LT_DISPLAY.<br />
+&nbsp;&nbsp;CLEAR:&nbsp;LS_SUM,&nbsp;GS_DATA.<br />
+&nbsp;&nbsp;LS_SUM-GLTXT&nbsp;=&nbsp;'I.&nbsp;매출액'.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;매출&nbsp;계정&nbsp;(4*)<br />
+&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_DATA&nbsp;INTO&nbsp;GS_DATA&nbsp;WHERE&nbsp;SAKNR&nbsp;IN&nbsp;R_SAKNR_4.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;GS_DISPLAY.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MOVE-CORRESPONDING&nbsp;GS_DATA&nbsp;TO&nbsp;GS_DISPLAY.&nbsp;"&nbsp;계정명/BP코드&nbsp;옮겨짐.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;GS_DATA-BUDAT&nbsp;IN&nbsp;R_1.&nbsp;"&nbsp;1분기<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DISPLAY-DMBTR_A&nbsp;=&nbsp;GS_DATA-DMBTR.&nbsp;&nbsp;"&nbsp;통화금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_SUM-DMBTR_A&nbsp;=&nbsp;LS_SUM-DMBTR_A&nbsp;+&nbsp;GS_DATA-DMBTR.&nbsp;"&nbsp;계정별&nbsp;누적합<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ELSEIF&nbsp;GS_DATA-BUDAT&nbsp;IN&nbsp;R_2.&nbsp;"&nbsp;2분기<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DISPLAY-DMBTR_B&nbsp;=&nbsp;GS_DISPLAY-DMBTR_B&nbsp;+&nbsp;GS_DATA-DMBTR.&nbsp;&nbsp;"&nbsp;통화금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_SUM-DMBTR_B&nbsp;=&nbsp;LS_SUM-DMBTR_B&nbsp;+&nbsp;GS_DATA-DMBTR.&nbsp;"&nbsp;계정별&nbsp;누적합<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;COLLECT&nbsp;GS_DISPLAY&nbsp;INTO&nbsp;LT_DISPLAY.<br />
+&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+&nbsp;&nbsp;DMBTR_1A&nbsp;=&nbsp;LS_SUM-DMBTR_A.<br />
+&nbsp;&nbsp;DMBTR_1B&nbsp;=&nbsp;LS_SUM-DMBTR_B.<br />
+&nbsp;&nbsp;LS_SUM-DMBTR_YEAR&nbsp;=&nbsp;LS_SUM-DMBTR_A&nbsp;+&nbsp;LS_SUM-DMBTR_B.<br />
+&nbsp;&nbsp;APPEND&nbsp;LS_SUM&nbsp;TO&nbsp;GT_DISPLAY.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;순서1.&nbsp;계정별&nbsp;누적합&nbsp;금액<br />
+&nbsp;&nbsp;APPEND&nbsp;LINES&nbsp;OF&nbsp;LT_DISPLAY&nbsp;TO&nbsp;GT_DISPLAY.&nbsp;"&nbsp;순서2.&nbsp;계정별&nbsp;합계&nbsp;&nbsp;&nbsp;금액<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;2.&nbsp;매출원가&nbsp;------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;REFRESH:&nbsp;GT_DATA1,&nbsp;GT_DATA2,&nbsp;LT_DISPLAY.<br />
+&nbsp;&nbsp;CLEAR:&nbsp;LS_SUM,&nbsp;GS_DATA1,&nbsp;GS_DATA2.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;REFRESH:&nbsp;LT_DISPLAY.<br />
+*&nbsp;&nbsp;CLEAR:&nbsp;LS_SUM.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;LS_SUM-GLTXT&nbsp;=&nbsp;'II.&nbsp;매출원가'.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;매출원가&nbsp;계정&nbsp;(5*)<br />
+&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_DATA&nbsp;INTO&nbsp;GS_DATA&nbsp;WHERE&nbsp;SAKNR&nbsp;IN&nbsp;R_SAKNR_5.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;GS_DISPLAY.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MOVE-CORRESPONDING&nbsp;GS_DATA&nbsp;TO&nbsp;GS_DISPLAY.&nbsp;"&nbsp;계정명/BP코드&nbsp;옮겨짐.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;GS_DATA-BUDAT&nbsp;IN&nbsp;R_1.&nbsp;"&nbsp;1분기<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DISPLAY-DMBTR_A&nbsp;=&nbsp;GS_DATA-DMBTR.&nbsp;&nbsp;"&nbsp;통화금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_SUM-DMBTR_A&nbsp;=&nbsp;LS_SUM-DMBTR_A&nbsp;+&nbsp;GS_DATA-DMBTR.&nbsp;"&nbsp;계정별&nbsp;누적합<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ELSEIF&nbsp;GS_DATA-BUDAT&nbsp;IN&nbsp;R_2.&nbsp;"&nbsp;2분기<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DISPLAY-DMBTR_B&nbsp;=&nbsp;GS_DISPLAY-DMBTR_B&nbsp;+&nbsp;GS_DATA-DMBTR.&nbsp;&nbsp;"&nbsp;통화금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_SUM-DMBTR_B&nbsp;=&nbsp;LS_SUM-DMBTR_B&nbsp;+&nbsp;GS_DATA-DMBTR.&nbsp;"&nbsp;계정별&nbsp;누적합<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;COLLECT&nbsp;GS_DISPLAY&nbsp;INTO&nbsp;LT_DISPLAY.<br />
+&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+&nbsp;&nbsp;DMBTR_2A&nbsp;=&nbsp;LS_SUM-DMBTR_A.<br />
+&nbsp;&nbsp;DMBTR_2B&nbsp;=&nbsp;LS_SUM-DMBTR_B.<br />
+&nbsp;&nbsp;LS_SUM-DMBTR_YEAR&nbsp;=&nbsp;LS_SUM-DMBTR_A&nbsp;+&nbsp;LS_SUM-DMBTR_B.<br />
+&nbsp;&nbsp;APPEND&nbsp;LS_SUM&nbsp;TO&nbsp;GT_DISPLAY.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;순서1.&nbsp;계정별&nbsp;누적합&nbsp;금액<br />
+&nbsp;&nbsp;APPEND&nbsp;LINES&nbsp;OF&nbsp;LT_DISPLAY&nbsp;TO&nbsp;GT_DISPLAY.&nbsp;"&nbsp;순서2.&nbsp;계정별&nbsp;합계&nbsp;&nbsp;&nbsp;금액<br />
+<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;3.&nbsp;매출총이익&nbsp;=&nbsp;매출&nbsp;-&nbsp;매출원가&nbsp;----------------------------------*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CLEAR:&nbsp;LS_SUM.<br />
+&nbsp;&nbsp;LS_SUM-GLTXT&nbsp;=&nbsp;'III.&nbsp;매출총이익'.<br />
+&nbsp;&nbsp;LS_SUM-DMBTR_A&nbsp;=&nbsp;DMBTR_1A&nbsp;-&nbsp;DMBTR_2A.<br />
+&nbsp;&nbsp;LS_SUM-DMBTR_B&nbsp;=&nbsp;DMBTR_1B&nbsp;-&nbsp;DMBTR_2B.<br />
+&nbsp;&nbsp;LS_SUM-DMBTR_YEAR&nbsp;=&nbsp;LS_SUM-DMBTR_A&nbsp;+&nbsp;LS_SUM-DMBTR_B.<br />
+&nbsp;&nbsp;IF&nbsp;(&nbsp;DMBTR_1A&nbsp;+&nbsp;DMBTR_1B&nbsp;)&nbsp;NE&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;LS_SUM-DMBTR_PER&nbsp;=&nbsp;(&nbsp;LS_SUM-DMBTR_YEAR&nbsp;/&nbsp;(&nbsp;DMBTR_1A&nbsp;+&nbsp;DMBTR_1B&nbsp;)&nbsp;)&nbsp;*&nbsp;100.<br />
+&nbsp;&nbsp;ELSE.<br />
+&nbsp;&nbsp;ENDIF.<br />
+&nbsp;&nbsp;DMBTR_3A&nbsp;=&nbsp;LS_SUM-DMBTR_A.<br />
+&nbsp;&nbsp;DMBTR_3B&nbsp;=&nbsp;LS_SUM-DMBTR_B.<br />
+&nbsp;&nbsp;APPEND&nbsp;LS_SUM&nbsp;TO&nbsp;GT_DISPLAY.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;4.&nbsp;판관비&nbsp;--------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;REFRESH&nbsp;LT_DISPLAY.<br />
+&nbsp;&nbsp;CLEAR:&nbsp;LS_SUM,&nbsp;GS_DATA.<br />
+&nbsp;&nbsp;LS_SUM-GLTXT&nbsp;=&nbsp;'IV.&nbsp;판매비와관리비'.<br />
+<br />
+<br />
+&nbsp;&nbsp;"&nbsp;판관비&nbsp;계정&nbsp;(6*)<br />
+&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_DATA&nbsp;INTO&nbsp;GS_DATA&nbsp;WHERE&nbsp;SAKNR&nbsp;IN&nbsp;R_SAKNR_6.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;GS_DISPLAY.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MOVE-CORRESPONDING&nbsp;GS_DATA&nbsp;TO&nbsp;GS_DISPLAY.&nbsp;"&nbsp;계정명/BP코드&nbsp;옮겨짐.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;GS_DATA-BUDAT&nbsp;IN&nbsp;R_1.&nbsp;"&nbsp;1분기<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DISPLAY-DMBTR_A&nbsp;=&nbsp;GS_DATA-DMBTR.&nbsp;&nbsp;"&nbsp;통화금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_SUM-DMBTR_A&nbsp;=&nbsp;LS_SUM-DMBTR_A&nbsp;+&nbsp;GS_DATA-DMBTR.&nbsp;"&nbsp;계정별&nbsp;누적합<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ELSEIF&nbsp;GS_DATA-BUDAT&nbsp;IN&nbsp;R_2.&nbsp;"&nbsp;2분기<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DISPLAY-DMBTR_B&nbsp;=&nbsp;GS_DISPLAY-DMBTR_B&nbsp;+&nbsp;GS_DATA-DMBTR.&nbsp;&nbsp;"&nbsp;통화금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_SUM-DMBTR_B&nbsp;=&nbsp;LS_SUM-DMBTR_B&nbsp;+&nbsp;GS_DATA-DMBTR.&nbsp;"&nbsp;계정별&nbsp;누적합<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;COLLECT&nbsp;GS_DISPLAY&nbsp;INTO&nbsp;LT_DISPLAY.<br />
+&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+&nbsp;&nbsp;DMBTR_4A&nbsp;=&nbsp;LS_SUM-DMBTR_A.<br />
+&nbsp;&nbsp;DMBTR_4B&nbsp;=&nbsp;LS_SUM-DMBTR_B.<br />
+&nbsp;&nbsp;LS_SUM-DMBTR_YEAR&nbsp;=&nbsp;LS_SUM-DMBTR_A&nbsp;+&nbsp;LS_SUM-DMBTR_B.<br />
+&nbsp;&nbsp;APPEND&nbsp;LS_SUM&nbsp;TO&nbsp;GT_DISPLAY.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;순서1.&nbsp;계정별&nbsp;누적합&nbsp;금액<br />
+&nbsp;&nbsp;APPEND&nbsp;LINES&nbsp;OF&nbsp;LT_DISPLAY&nbsp;TO&nbsp;GT_DISPLAY.&nbsp;"&nbsp;순서2.&nbsp;계정별&nbsp;합계&nbsp;&nbsp;&nbsp;금액<br />
+<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;5.&nbsp;영업이익&nbsp;=&nbsp;매출총이익&nbsp;-&nbsp;판관비&nbsp;--------------------------------*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CLEAR:&nbsp;LS_SUM.<br />
+&nbsp;&nbsp;LS_SUM-GLTXT&nbsp;=&nbsp;'V.&nbsp;영업이익'.<br />
+&nbsp;&nbsp;LS_SUM-DMBTR_A&nbsp;=&nbsp;DMBTR_3A&nbsp;-&nbsp;DMBTR_4A.<br />
+&nbsp;&nbsp;LS_SUM-DMBTR_B&nbsp;=&nbsp;DMBTR_3B&nbsp;-&nbsp;DMBTR_4B.<br />
+&nbsp;&nbsp;LS_SUM-DMBTR_YEAR&nbsp;=&nbsp;LS_SUM-DMBTR_A&nbsp;+&nbsp;LS_SUM-DMBTR_B.<br />
+&nbsp;&nbsp;IF&nbsp;(&nbsp;DMBTR_1A&nbsp;+&nbsp;DMBTR_1B&nbsp;)&nbsp;NE&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;LS_SUM-DMBTR_PER&nbsp;=&nbsp;(&nbsp;LS_SUM-DMBTR_YEAR&nbsp;/&nbsp;(&nbsp;DMBTR_1A&nbsp;+&nbsp;DMBTR_1B&nbsp;)&nbsp;)&nbsp;*&nbsp;100.<br />
+&nbsp;&nbsp;ELSE.<br />
+&nbsp;&nbsp;ENDIF.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;LS_SUM-DMBTR_PER&nbsp;=&nbsp;(&nbsp;LS_SUM-DMBTR_YEAR&nbsp;/&nbsp;(&nbsp;DMBTR_1A&nbsp;+&nbsp;DMBTR_1B&nbsp;)&nbsp;)&nbsp;*&nbsp;100.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;DMBTR_5A&nbsp;=&nbsp;LS_SUM-DMBTR_A.<br />
+&nbsp;&nbsp;DMBTR_5B&nbsp;=&nbsp;LS_SUM-DMBTR_B.<br />
+&nbsp;&nbsp;APPEND&nbsp;LS_SUM&nbsp;TO&nbsp;GT_DISPLAY.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+**&nbsp;--&nbsp;6.&nbsp;영업외이익&nbsp;---------------------------------------------------*<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;REFRESH&nbsp;LT_DISPLAY.<br />
+&nbsp;&nbsp;CLEAR:&nbsp;LS_SUM,&nbsp;GS_DATA.<br />
+&nbsp;&nbsp;LS_SUM-GLTXT&nbsp;=&nbsp;'VI.&nbsp;영업외이익'.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;영업외이익&nbsp;계정&nbsp;(7*)<br />
+&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_DATA&nbsp;INTO&nbsp;GS_DATA&nbsp;WHERE&nbsp;SAKNR&nbsp;IN&nbsp;R_SAKNR_7P.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;GS_DISPLAY.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MOVE-CORRESPONDING&nbsp;GS_DATA&nbsp;TO&nbsp;GS_DISPLAY.&nbsp;"&nbsp;계정명/BP코드&nbsp;옮겨짐.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;GS_DATA-BUDAT&nbsp;IN&nbsp;R_1.&nbsp;"&nbsp;1분기<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DISPLAY-DMBTR_A&nbsp;=&nbsp;GS_DATA-DMBTR.&nbsp;&nbsp;"&nbsp;통화금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_SUM-DMBTR_A&nbsp;=&nbsp;LS_SUM-DMBTR_A&nbsp;+&nbsp;GS_DATA-DMBTR.&nbsp;"&nbsp;계정별&nbsp;누적합<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ELSEIF&nbsp;GS_DATA-BUDAT&nbsp;IN&nbsp;R_2.&nbsp;"&nbsp;2분기<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DISPLAY-DMBTR_B&nbsp;=&nbsp;GS_DISPLAY-DMBTR_B&nbsp;+&nbsp;GS_DATA-DMBTR.&nbsp;&nbsp;"&nbsp;통화금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_SUM-DMBTR_B&nbsp;=&nbsp;LS_SUM-DMBTR_B&nbsp;+&nbsp;GS_DATA-DMBTR.&nbsp;"&nbsp;계정별&nbsp;누적합<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;COLLECT&nbsp;GS_DISPLAY&nbsp;INTO&nbsp;LT_DISPLAY.<br />
+&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+<br />
+&nbsp;&nbsp;DMBTR_6A&nbsp;=&nbsp;LS_SUM-DMBTR_A.<br />
+&nbsp;&nbsp;DMBTR_6B&nbsp;=&nbsp;LS_SUM-DMBTR_B.<br />
+&nbsp;&nbsp;LS_SUM-DMBTR_YEAR&nbsp;=&nbsp;LS_SUM-DMBTR_A&nbsp;+&nbsp;LS_SUM-DMBTR_B.<br />
+&nbsp;&nbsp;APPEND&nbsp;LS_SUM&nbsp;TO&nbsp;GT_DISPLAY.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;순서1.&nbsp;계정별&nbsp;누적합&nbsp;금액<br />
+&nbsp;&nbsp;APPEND&nbsp;LINES&nbsp;OF&nbsp;LT_DISPLAY&nbsp;TO&nbsp;GT_DISPLAY.&nbsp;"&nbsp;순서2.&nbsp;계정별&nbsp;합계&nbsp;&nbsp;&nbsp;금액<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*<br />
+**&nbsp;--&nbsp;7.&nbsp;영업외손실&nbsp;---------------------------------------------------*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;REFRESH&nbsp;LT_DISPLAY.<br />
+&nbsp;&nbsp;CLEAR:&nbsp;LS_SUM,&nbsp;GS_DATA.<br />
+&nbsp;&nbsp;LS_SUM-GLTXT&nbsp;=&nbsp;'VII.&nbsp;영업외비용'.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;영업외손실&nbsp;계정&nbsp;(7*)<br />
+&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_DATA&nbsp;INTO&nbsp;GS_DATA&nbsp;WHERE&nbsp;SAKNR&nbsp;IN&nbsp;R_SAKNR_7L.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;GS_DISPLAY.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MOVE-CORRESPONDING&nbsp;GS_DATA&nbsp;TO&nbsp;GS_DISPLAY.&nbsp;"&nbsp;계정명/BP코드&nbsp;옮겨짐.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;GS_DATA-BUDAT&nbsp;IN&nbsp;R_1.&nbsp;"&nbsp;1분기<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DISPLAY-DMBTR_A&nbsp;=&nbsp;GS_DATA-DMBTR.&nbsp;&nbsp;"&nbsp;통화금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_SUM-DMBTR_A&nbsp;=&nbsp;LS_SUM-DMBTR_A&nbsp;+&nbsp;GS_DATA-DMBTR.&nbsp;"&nbsp;계정별&nbsp;누적합<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ELSEIF&nbsp;GS_DATA-BUDAT&nbsp;IN&nbsp;R_2.&nbsp;"&nbsp;2분기<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DISPLAY-DMBTR_B&nbsp;=&nbsp;GS_DISPLAY-DMBTR_B&nbsp;+&nbsp;GS_DATA-DMBTR.&nbsp;&nbsp;"&nbsp;통화금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_SUM-DMBTR_B&nbsp;=&nbsp;LS_SUM-DMBTR_B&nbsp;+&nbsp;GS_DATA-DMBTR.&nbsp;"&nbsp;계정별&nbsp;누적합<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;COLLECT&nbsp;GS_DISPLAY&nbsp;INTO&nbsp;LT_DISPLAY.<br />
+&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+&nbsp;&nbsp;DMBTR_7A&nbsp;=&nbsp;LS_SUM-DMBTR_A.<br />
+&nbsp;&nbsp;DMBTR_7B&nbsp;=&nbsp;LS_SUM-DMBTR_B.<br />
+&nbsp;&nbsp;LS_SUM-DMBTR_YEAR&nbsp;=&nbsp;LS_SUM-DMBTR_A&nbsp;+&nbsp;LS_SUM-DMBTR_B.<br />
+&nbsp;&nbsp;APPEND&nbsp;LS_SUM&nbsp;TO&nbsp;GT_DISPLAY.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;순서1.&nbsp;계정별&nbsp;누적합&nbsp;금액<br />
+&nbsp;&nbsp;APPEND&nbsp;LINES&nbsp;OF&nbsp;LT_DISPLAY&nbsp;TO&nbsp;GT_DISPLAY.&nbsp;"&nbsp;순서2.&nbsp;계정별&nbsp;합계&nbsp;&nbsp;&nbsp;금액<br />
+<br />
+   </div>
+   <div class="codeComment">
+*<br />
+**&nbsp;&nbsp;--&nbsp;8.&nbsp;당기순이익&nbsp;=&nbsp;영업이익&nbsp;+&nbsp;영업외이익&nbsp;-&nbsp;영업외비용&nbsp;-------------*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CLEAR:&nbsp;LS_SUM.<br />
+&nbsp;&nbsp;LS_SUM-GLTXT&nbsp;=&nbsp;'VIII.&nbsp;당기순이익'.<br />
+&nbsp;&nbsp;LS_SUM-DMBTR_A&nbsp;=&nbsp;DMBTR_5A&nbsp;+&nbsp;DMBTR_6A&nbsp;-&nbsp;DMBTR_7A.<br />
+&nbsp;&nbsp;LS_SUM-DMBTR_B&nbsp;=&nbsp;DMBTR_5B&nbsp;+&nbsp;DMBTR_6B&nbsp;-&nbsp;DMBTR_7B.<br />
+&nbsp;&nbsp;LS_SUM-DMBTR_YEAR&nbsp;=&nbsp;LS_SUM-DMBTR_A&nbsp;+&nbsp;LS_SUM-DMBTR_B.<br />
+&nbsp;&nbsp;IF&nbsp;(&nbsp;DMBTR_1A&nbsp;+&nbsp;DMBTR_1B&nbsp;)&nbsp;NE&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;LS_SUM-DMBTR_PER&nbsp;=&nbsp;(&nbsp;LS_SUM-DMBTR_YEAR&nbsp;/&nbsp;(&nbsp;DMBTR_1A&nbsp;+&nbsp;DMBTR_1B&nbsp;)&nbsp;)&nbsp;*&nbsp;100.<br />
+&nbsp;&nbsp;ELSE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'손익&nbsp;계정의&nbsp;전표를&nbsp;확인해주세요.'&nbsp;TYPE&nbsp;'S'.<br />
+&nbsp;&nbsp;ENDIF.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;LS_SUM-DMBTR_PER&nbsp;=&nbsp;(&nbsp;LS_SUM-DMBTR_YEAR&nbsp;/&nbsp;(&nbsp;DMBTR_1A&nbsp;+&nbsp;DMBTR_1B&nbsp;)&nbsp;)&nbsp;*&nbsp;100.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;APPEND&nbsp;LS_SUM&nbsp;TO&nbsp;GT_DISPLAY.<br />
+<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;DISPLAY_DATA<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM DISPLAY_DATA .<br />
+<br />
+&nbsp;&nbsp;"&nbsp;[]는&nbsp;인터널&nbsp;테이블에&nbsp;담겨있는&nbsp;내용을&nbsp;의미,&nbsp;즉&nbsp;쌓여있는&nbsp;데이터<br />
+&nbsp;&nbsp;IF&nbsp;GT_DISPLAY[]&nbsp;IS&nbsp;INITIAL.&nbsp;"&nbsp;=&gt;&nbsp;한&nbsp;줄도&nbsp;없는지&nbsp;검사<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'검색된&nbsp;결과가&nbsp;없습니다.'&nbsp;TYPE&nbsp;'S'&nbsp;DISPLAY&nbsp;LIKE&nbsp;'W'.<br />
+&nbsp;&nbsp;ELSE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CALL&nbsp;SCREEN&nbsp;0100.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;CREATE_OBJECT_O100<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM CREATE_OBJECT_O100 .<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;CREATE&nbsp;OBJECT&nbsp;GO_CONTAINER<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CONTAINER_NAME&nbsp;=&nbsp;'CCON'<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1.<br />
+*&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+*<br />
+*&nbsp;&nbsp;ENDIF.<br />
+*<br />
+*&nbsp;&nbsp;CREATE&nbsp;OBJECT&nbsp;GO_ALV_GRID<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_PARENT&nbsp;=&nbsp;GO_CONTAINER<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;=&nbsp;1.<br />
+*&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+*&nbsp;&nbsp;ENDIF.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CREATE&nbsp;OBJECT&nbsp;GO_CONTAINER<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;REPID&nbsp;=&nbsp;SY-REPID<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DYNNR&nbsp;=&nbsp;SY-DYNNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SIDE&nbsp;&nbsp;=&nbsp;GO_CONTAINER-&gt;DOCK_AT_BOTTOM<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RATIO&nbsp;=&nbsp;85.<br />
+<br />
+&nbsp;&nbsp;CREATE&nbsp;OBJECT&nbsp;GO_ALV_GRID<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_PARENT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GO_CONTAINER<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_APPL_EVENTS&nbsp;=&nbsp;'X'.&nbsp;"&nbsp;Register&nbsp;Events&nbsp;as&nbsp;Application&nbsp;Events<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;Create&nbsp;TOP-Document<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CREATE&nbsp;OBJECT&nbsp;GO_DYNDOC_ID<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;STYLE&nbsp;=&nbsp;'ALV_GRID'.<br />
+<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SET_ALV_LAYOUT_0100<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SET_ALV_LAYOUT_0100 .<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_LAYOUT.<br />
+<br />
+&nbsp;&nbsp;GS_LAYOUT-ZEBRA&nbsp;=&nbsp;ABAP_ON.<br />
+&nbsp;&nbsp;GS_LAYOUT-SEL_MODE&nbsp;=&nbsp;'D'.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;GS_LAYOUT-CWIDTH_OPT&nbsp;=&nbsp;ABAP_ON.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;GS_LAYOUT-INFO_FNAME&nbsp;=&nbsp;'COLOR'.&nbsp;"&nbsp;행&nbsp;색상<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SET_ALV_FIELDCAT_0100<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SET_ALV_FIELDCAT_0100 .<br />
+<br />
+&nbsp;&nbsp;REFRESH&nbsp;GT_FIELDCAT.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_FIELDCAT.<br />
+&nbsp;&nbsp;GS_FIELDCAT-FIELDNAME&nbsp;=&nbsp;'GLTXT'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-COLTEXT&nbsp;&nbsp;&nbsp;=&nbsp;'계정명'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-REF_FIELD&nbsp;=&nbsp;'GLTXT'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-REF_TABLE&nbsp;='ZEA_SKB1'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-KEY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-OUTPUTLEN&nbsp;=&nbsp;15.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT&nbsp;TO&nbsp;GT_FIELDCAT.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_FIELDCAT.<br />
+&nbsp;&nbsp;GS_FIELDCAT-FIELDNAME&nbsp;=&nbsp;'BPCODE'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-COLTEXT&nbsp;&nbsp;&nbsp;=&nbsp;'거래처'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-REF_FIELD&nbsp;=&nbsp;'BPCODE'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-REF_TABLE&nbsp;='ZEA_BSEG'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-KEY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-OUTPUTLEN&nbsp;=&nbsp;5.<br />
+&nbsp;&nbsp;GS_FIELDCAT-HOTSPOT&nbsp;&nbsp;&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT&nbsp;TO&nbsp;GT_FIELDCAT.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_FIELDCAT.<br />
+&nbsp;&nbsp;GS_FIELDCAT-FIELDNAME&nbsp;=&nbsp;'DMBTR_A'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-COLTEXT&nbsp;&nbsp;&nbsp;=&nbsp;'1/4분기'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-REF_FIELD&nbsp;=&nbsp;'ZEA_BSEG'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-REF_TABLE&nbsp;='DMBTR'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-CFIELDNAME&nbsp;=&nbsp;'DMBTR_A'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-CURRENCY&nbsp;&nbsp;=&nbsp;'KRW'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-OUTPUTLEN&nbsp;=&nbsp;13.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT&nbsp;TO&nbsp;GT_FIELDCAT.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_FIELDCAT.<br />
+&nbsp;&nbsp;GS_FIELDCAT-FIELDNAME&nbsp;=&nbsp;'DMBTR_B'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-COLTEXT&nbsp;&nbsp;&nbsp;=&nbsp;'2/4분기'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-REF_FIELD&nbsp;=&nbsp;'ZEA_BSEG'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-REF_TABLE&nbsp;='DMBTR'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-CFIELDNAME&nbsp;=&nbsp;'DMBTR_B'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-CURRENCY&nbsp;&nbsp;=&nbsp;'KRW'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-OUTPUTLEN&nbsp;=&nbsp;13.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT&nbsp;TO&nbsp;GT_FIELDCAT.<br />
+<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_FIELDCAT.<br />
+&nbsp;&nbsp;GS_FIELDCAT-FIELDNAME&nbsp;=&nbsp;'DMBTR_C'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-COLTEXT&nbsp;&nbsp;&nbsp;=&nbsp;'3/4분기'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-REF_FIELD&nbsp;=&nbsp;'ZEA_BSEG'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-REF_TABLE&nbsp;='DMBTR'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-CFIELDNAME&nbsp;=&nbsp;'DMBTR_C'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-CURRENCY&nbsp;&nbsp;=&nbsp;'KRW'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-OUTPUTLEN&nbsp;=&nbsp;10.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT&nbsp;TO&nbsp;GT_FIELDCAT.<br />
+<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_FIELDCAT.<br />
+&nbsp;&nbsp;GS_FIELDCAT-FIELDNAME&nbsp;=&nbsp;'DMBTR_D'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-COLTEXT&nbsp;&nbsp;&nbsp;=&nbsp;'4/4분기'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-REF_FIELD&nbsp;=&nbsp;'ZEA_BSEG'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-REF_TABLE&nbsp;='DMBTR'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-CFIELDNAME&nbsp;=&nbsp;'DMBTR_D'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-CURRENCY&nbsp;&nbsp;=&nbsp;'KRW'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-OUTPUTLEN&nbsp;=&nbsp;10.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT&nbsp;TO&nbsp;GT_FIELDCAT.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_FIELDCAT.<br />
+&nbsp;&nbsp;GS_FIELDCAT-FIELDNAME&nbsp;=&nbsp;'DMBTR_YEAR'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-COLTEXT&nbsp;&nbsp;&nbsp;=&nbsp;'당기실적'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-REF_FIELD&nbsp;=&nbsp;'ZEA_BSEG'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-REF_TABLE&nbsp;='DMBTR'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-CFIELDNAME&nbsp;=&nbsp;'DMBTR_YEAR'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-CURRENCY&nbsp;&nbsp;=&nbsp;'KRW'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-OUTPUTLEN&nbsp;=&nbsp;13.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT&nbsp;TO&nbsp;GT_FIELDCAT.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_FIELDCAT.<br />
+&nbsp;&nbsp;GS_FIELDCAT-FIELDNAME&nbsp;=&nbsp;'DMBTR_PER'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-COLTEXT&nbsp;&nbsp;&nbsp;=&nbsp;'이익률(%)'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-TOOLTIP&nbsp;&nbsp;&nbsp;=&nbsp;'매출액&nbsp;대비&nbsp;이익률(%)'.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;GS_FIELDCAT-REF_FIELD&nbsp;=&nbsp;'ZEA_BSEG'.<br />
+*&nbsp;&nbsp;GS_FIELDCAT-REF_TABLE&nbsp;='DMBTR'.<br />
+*&nbsp;&nbsp;GS_FIELDCAT-CFIELDNAME&nbsp;=&nbsp;'DMBTR_YEAR'.<br />
+*&nbsp;&nbsp;GS_FIELDCAT-CURRENCY&nbsp;&nbsp;=&nbsp;'KRW'.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;GS_FIELDCAT-OUTPUTLEN&nbsp;=&nbsp;10.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT&nbsp;TO&nbsp;GT_FIELDCAT.<br />
+<br />
+<br />
+<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SET_ALV_EVENT_0100<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SET_ALV_EVENT_0100 .<br />
+&nbsp;&nbsp;SET&nbsp;HANDLER&nbsp;LCL_EVENT_HANDLER=&gt;ON_HOTSPOT_CLICK&nbsp;FOR&nbsp;GO_ALV_GRID.<br />
+&nbsp;&nbsp;SET&nbsp;HANDLER&nbsp;LCL_EVENT_HANDLER=&gt;ON_DOUBLE_CLICK&nbsp;&nbsp;FOR&nbsp;GO_ALV_GRID.<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;DISPLAY_ALV_0100<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM DISPLAY_ALV_0100 .<br />
+<br />
+&nbsp;&nbsp;DATA:&nbsp;LV_SAKNR&nbsp;TYPE&nbsp;ZEA_BSEG-SAKNR.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_VARIANT.<br />
+&nbsp;&nbsp;GS_VARIANT-REPORT&nbsp;=&nbsp;SY-REPID.<br />
+&nbsp;&nbsp;GV_SAVE&nbsp;=&nbsp;'A'.<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GO_ALV_GRID-&gt;SET_TABLE_FOR_FIRST_DISPLAY<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IS_VARIANT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GS_VARIANT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Layout<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_SAVE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GV_SAVE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Save&nbsp;Layout<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IS_LAYOUT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GS_LAYOUT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Layout<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CHANGING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IT_OUTTAB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GT_DISPLAY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Output&nbsp;Table<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IT_FIELDCATALOG&nbsp;=&nbsp;GT_FIELDCAT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Field&nbsp;Catalog<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1.<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;MAKE_DISPLAY_DATA<br />
+*&---------------------------------------------------------------------*<br />
+<br />
+   </div>
+   <div class="code">
+FORM MAKE_DISPLAY_DATA .<br />
+<br />
+&nbsp;&nbsp;DATA&nbsp;LS_STYLE&nbsp;TYPE&nbsp;LVC_S_STYL.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;REFRESH&nbsp;GT_DISPLAY.<br />
+*I.&nbsp;매출액<br />
+*II.&nbsp;매출원가<br />
+*III.&nbsp;매출총이익<br />
+*IV.&nbsp;판매비와관리비<br />
+*V.&nbsp;영업이익<br />
+*VI.&nbsp;영업외이익<br />
+*VII.&nbsp;영업외비용<br />
+*VIII.&nbsp;당기순이익<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_DISPLAY&nbsp;INTO&nbsp;GS_DISPLAY.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;GS_DISPLAY-GLTXT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'I.&nbsp;매출액'&nbsp;OR&nbsp;'II.&nbsp;매출원가'&nbsp;OR&nbsp;'IV.&nbsp;판매비와관리비'&nbsp;OR&nbsp;'VI.&nbsp;영업외이익'&nbsp;OR&nbsp;'VII.&nbsp;영업외비용'.&nbsp;"&nbsp;노란색<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DISPLAY-COLOR&nbsp;=&nbsp;'C300'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'III.&nbsp;매출총이익'&nbsp;OR&nbsp;'V.&nbsp;영업이익'&nbsp;OR&nbsp;'VIII.&nbsp;당기순이익'.&nbsp;"&nbsp;빨간색<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DISPLAY-COLOR&nbsp;=&nbsp;'C600'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;GT_DISPLAY&nbsp;FROM&nbsp;GS_DISPLAY.<br />
+&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;handle_hotspot_click<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM HANDLE_HOTSPOT_CLICK  USING PS_ROW TYPE LVC_S_ROW<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PS_COL&nbsp;TYPE&nbsp;&nbsp;LVC_S_COL<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PO_SENDER&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_ALV_GRID.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;선택한&nbsp;행이&nbsp;인터널테이블에&nbsp;있는&nbsp;정상적인&nbsp;데이터인지&nbsp;체크<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CHECK&nbsp;PS_ROW-ROWTYPE&nbsp;IS&nbsp;INITIAL.<br />
+<br />
+<br />
+&nbsp;&nbsp;DATA:&nbsp;GT_DATA1&nbsp;LIKE&nbsp;TABLE&nbsp;OF&nbsp;GS_DATA,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_DATA2&nbsp;LIKE&nbsp;TABLE&nbsp;OF&nbsp;GS_DATA,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_DATA3&nbsp;LIKE&nbsp;TABLE&nbsp;OF&nbsp;GS_DATA,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_DATA4&nbsp;LIKE&nbsp;TABLE&nbsp;OF&nbsp;GS_DATA.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;itab&nbsp;에서&nbsp;클릭한&nbsp;행의&nbsp;데이터를&nbsp;가져옴<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_DISPLAY&nbsp;INTO&nbsp;GS_DISPLAY&nbsp;INDEX&nbsp;PS_ROW-INDEX.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;클릭한&nbsp;행의&nbsp;데이터를&nbsp;사용<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;=&nbsp;0.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;I000&nbsp;WITH&nbsp;GS_DISPLAY-BPCODE.&nbsp;"&nbsp;&lt;==&nbsp;핫스팟&nbsp;클릭한&nbsp;값을&nbsp;읽어옴<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;BPCODE&nbsp;가&nbsp;일치하는&nbsp;모든&nbsp;전표&nbsp;데이터를&nbsp;가져옴<br />
+&nbsp;&nbsp;&nbsp;&nbsp;SELECT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUM(&nbsp;DMBTR&nbsp;)&nbsp;AS&nbsp;DMBTR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FROM&nbsp;ZEA_BSEG<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;GT_BSEG<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BPCODE&nbsp;EQ&nbsp;GS_DISPLAY-BPCODE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;SAKNR&nbsp;&nbsp;IN&nbsp;R_SAKNR_4.&nbsp;"&nbsp;&lt;==&nbsp;제품국내매출액&nbsp;을&nbsp;가져옴<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;BPCODE&nbsp;별&nbsp;전체&nbsp;매출액을&nbsp;가져온다.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_BSEG&nbsp;INTO&nbsp;DATA(LV_DATA)&nbsp;INDEX&nbsp;1.&nbsp;"&lt;==&nbsp;SUM&nbsp;데이터는&nbsp;한&nbsp;줄.<br />
+<br />
+   </div>
+   <div class="codeComment">
+********&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;1월&nbsp;판매액은&nbsp;&nbsp;:<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;SELECT<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUM(&nbsp;A~DMBTR&nbsp;)&nbsp;AS&nbsp;DMBTR&nbsp;"&nbsp;&nbsp;통화금액&nbsp;합계<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUM(&nbsp;A~EATAX&nbsp;)&nbsp;AS&nbsp;EATAX&nbsp;"&nbsp;세금&nbsp;합계<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FROM&nbsp;ZEA_BSEG&nbsp;AS&nbsp;A<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JOIN&nbsp;ZEA_BKPF&nbsp;AS&nbsp;B<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ON&nbsp;A~BUKRS&nbsp;EQ&nbsp;B~BUKRS<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;A~BELNR&nbsp;EQ&nbsp;B~BELNR<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;A~GJAHR&nbsp;EQ&nbsp;B~GJAHR<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;GT_DATA1<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BPCODE&nbsp;EQ&nbsp;GS_DISPLAY-BPCODE<br />
+*********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;BUDAT&nbsp;&nbsp;IN&nbsp;R_1&nbsp;"&nbsp;전기일자<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;SAKNR&nbsp;&nbsp;IN&nbsp;R_SAKNR_4<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GROUP&nbsp;BY&nbsp;A~DMBTR&nbsp;A~EATAX.&nbsp;"&nbsp;&lt;==&nbsp;제품국내매출액&nbsp;을&nbsp;가져옴<br />
+********<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_DATA1&nbsp;INTO&nbsp;DATA(LV_DATA1)&nbsp;INDEX&nbsp;1.<br />
+********<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;2월&nbsp;판매액은&nbsp;&nbsp;:<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;SELECT<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUM(&nbsp;A~DMBTR&nbsp;)&nbsp;AS&nbsp;DMBTR&nbsp;"&nbsp;&nbsp;통화금액&nbsp;합계<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUM(&nbsp;A~EATAX&nbsp;)&nbsp;AS&nbsp;EATAX&nbsp;"&nbsp;세금&nbsp;합계<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FROM&nbsp;ZEA_BSEG&nbsp;AS&nbsp;A<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JOIN&nbsp;ZEA_BKPF&nbsp;AS&nbsp;B<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ON&nbsp;A~BUKRS&nbsp;EQ&nbsp;B~BUKRS<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;A~BELNR&nbsp;EQ&nbsp;B~BELNR<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;A~GJAHR&nbsp;EQ&nbsp;B~GJAHR<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;GT_DATA2<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BPCODE&nbsp;EQ&nbsp;GS_DISPLAY-BPCODE<br />
+*********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;BUDAT&nbsp;&nbsp;IN&nbsp;R_2"&nbsp;전기일자<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;SAKNR&nbsp;&nbsp;IN&nbsp;R_SAKNR_4<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GROUP&nbsp;BY&nbsp;A~DMBTR&nbsp;A~EATAX.&nbsp;"&nbsp;&lt;==&nbsp;제품국내매출액&nbsp;을&nbsp;가져옴<br />
+********<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_DATA1&nbsp;INTO&nbsp;DATA(LV_DATA2)&nbsp;INDEX&nbsp;1.<br />
+********<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;3월&nbsp;판매액은&nbsp;&nbsp;:<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;SELECT<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUM(&nbsp;A~DMBTR&nbsp;)&nbsp;AS&nbsp;DMBTR&nbsp;"&nbsp;&nbsp;통화금액&nbsp;합계<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUM(&nbsp;A~EATAX&nbsp;)&nbsp;AS&nbsp;EATAX&nbsp;"&nbsp;세금&nbsp;합계<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FROM&nbsp;ZEA_BSEG&nbsp;AS&nbsp;A<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JOIN&nbsp;ZEA_BKPF&nbsp;AS&nbsp;B<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ON&nbsp;A~BUKRS&nbsp;EQ&nbsp;B~BUKRS<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;A~BELNR&nbsp;EQ&nbsp;B~BELNR<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;A~GJAHR&nbsp;EQ&nbsp;B~GJAHR<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;GT_DATA3<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BPCODE&nbsp;EQ&nbsp;GS_DISPLAY-BPCODE<br />
+*********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;BUDAT&nbsp;&nbsp;IN&nbsp;R_3&nbsp;"&nbsp;전기일자<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;SAKNR&nbsp;&nbsp;IN&nbsp;R_SAKNR_4<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GROUP&nbsp;BY&nbsp;A~DMBTR&nbsp;A~EATAX.&nbsp;"&nbsp;&lt;==&nbsp;제품국내매출액&nbsp;을&nbsp;가져옴<br />
+********<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_DATA1&nbsp;INTO&nbsp;DATA(LV_DATA3)&nbsp;INDEX&nbsp;1.<br />
+********<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;4월&nbsp;판매액은&nbsp;&nbsp;:<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;SELECT<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUM(&nbsp;A~DMBTR&nbsp;)&nbsp;AS&nbsp;DMBTR&nbsp;"&nbsp;&nbsp;통화금액&nbsp;합계<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUM(&nbsp;A~EATAX&nbsp;)&nbsp;AS&nbsp;EATAX&nbsp;"&nbsp;세금&nbsp;합계<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FROM&nbsp;ZEA_BSEG&nbsp;AS&nbsp;A<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JOIN&nbsp;ZEA_BKPF&nbsp;AS&nbsp;B<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ON&nbsp;A~BUKRS&nbsp;EQ&nbsp;B~BUKRS<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;A~BELNR&nbsp;EQ&nbsp;B~BELNR<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;A~GJAHR&nbsp;EQ&nbsp;B~GJAHR<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;GT_DATA4<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BPCODE&nbsp;EQ&nbsp;GS_DISPLAY-BPCODE<br />
+*********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;BUDAT&nbsp;&nbsp;IN&nbsp;R_4&nbsp;"&nbsp;전기일자<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;SAKNR&nbsp;&nbsp;IN&nbsp;R_SAKNR_4<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GROUP&nbsp;BY&nbsp;A~DMBTR&nbsp;A~EATAX.&nbsp;"&nbsp;&lt;==&nbsp;제품국내매출액&nbsp;을&nbsp;가져옴<br />
+********<br />
+********&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_DATA1&nbsp;INTO&nbsp;DATA(LV_DATA4)&nbsp;INDEX&nbsp;1.<br />
+********<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;ITAB_DATA-DATANAME&nbsp;=&nbsp;GS_DISPLAY-BPCODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ITAB_DATA-QUANTITY1&nbsp;=&nbsp;LV_DATA-DMBTR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;ITAB_DATA.<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CALL&nbsp;FUNCTION&nbsp;'GRAPH_MATRIX_3D'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COL1&nbsp;&nbsp;&nbsp;=&nbsp;'Store'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TITL&nbsp;&nbsp;&nbsp;=&nbsp;'Performance&nbsp;by&nbsp;store'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TABLES<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DATA&nbsp;&nbsp;&nbsp;=&nbsp;ITAB_DATA<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OPTS&nbsp;&nbsp;&nbsp;=&nbsp;ITAB_OPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;=&nbsp;1.<br />
+<br />
+&nbsp;&nbsp;ELSE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;클릭한&nbsp;행의&nbsp;데이터를&nbsp;읽을&nbsp;수&nbsp;없음<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;DOUBLE_CLICK<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM DOUBLE_CLICK  USING PS_ROW    TYPE LVC_S_ROW<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PS_COLUMN&nbsp;TYPE&nbsp;LVC_S_COL<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PO_SENDER&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_ALV_GRID.<br />
+<br />
+&nbsp;&nbsp;DATA:&nbsp;LV_SAKNR&nbsp;TYPE&nbsp;ZEA_SKB1-SAKNR.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;선택한&nbsp;행이&nbsp;인터널테이블에&nbsp;있는&nbsp;정상적인&nbsp;데이터인지&nbsp;체크<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CHECK&nbsp;PS_ROW-ROWTYPE&nbsp;IS&nbsp;INITIAL.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;itab&nbsp;에서&nbsp;클릭한&nbsp;행의&nbsp;데이터를&nbsp;가져옴<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_DISPLAY&nbsp;INTO&nbsp;GS_DISPLAY&nbsp;INDEX&nbsp;PS_ROW-INDEX.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;클릭한&nbsp;행의&nbsp;데이터를&nbsp;사용<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;=&nbsp;0.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;I000&nbsp;WITH&nbsp;GS_DISPLAY-DMBTR_A.&nbsp;"&nbsp;&lt;==&nbsp;더블&nbsp;클릭한&nbsp;DMBTR_A의&nbsp;값을&nbsp;읽어옴<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;전표번호를&nbsp;찾을&nbsp;순&nbsp;없다.&nbsp;왜냐?&nbsp;전표번호는&nbsp;유일하기&nbsp;때문에.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;G/L코드가&nbsp;일치하는&nbsp;데이터&nbsp;전부를&nbsp;찾아서&nbsp;계정과목&nbsp;조회화면으로&nbsp;연결시켜주자.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;나는&nbsp;금액을&nbsp;더블클릭한다.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;따라서&nbsp;더블클릭한&nbsp;금액의&nbsp;항목&nbsp;정보(GL코드)를&nbsp;읽어와야&nbsp;한다.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;SAKNR&nbsp;FROM&nbsp;ZEA_SKB1&nbsp;INTO&nbsp;LV_SAKNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BPCODE&nbsp;EQ&nbsp;GS_DISPLAY-BPCODE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;&nbsp;GLTXT&nbsp;EQ&nbsp;GS_DISPLAY-GLTXT.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;조건1.&nbsp;GL계정에&nbsp;매핑된&nbsp;BPCODE가&nbsp;2개&nbsp;이상일&nbsp;때는&nbsp;조건1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;조건2.&nbsp;BPCODE가&nbsp;가&nbsp;1개&nbsp;이하일&nbsp;때는&nbsp;GLTXT로만&nbsp;매핑<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;LV_SAKNR&nbsp;IS&nbsp;INITIAL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CLEAR:&nbsp;LV_SAKNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;SAKNR&nbsp;FROM&nbsp;ZEA_SKB1&nbsp;INTO&nbsp;LV_SAKNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;GLTXT&nbsp;EQ&nbsp;GS_DISPLAY-GLTXT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;SET&nbsp;PARAMETER&nbsp;ID&nbsp;'ZEA_SAKNR'&nbsp;FIELD&nbsp;LV_SAKNR.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;SUBMIT&nbsp;ZEA_FI040.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;CALL&nbsp;TRANSACTION&nbsp;'ZEA_FI040'&nbsp;AND&nbsp;SKIP&nbsp;FIRST&nbsp;SCREEN.<br />
+<br />
+&nbsp;&nbsp;ENDIF.<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;BAPI_CURRENCY_CONV_TO_INTERNAL<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM BAPI_CURRENCY_CONV_TO_INTERNAL  CHANGING PV_CURRENCY.<br />
+<br />
+   </div>
+   <div class="codeComment">
+**&nbsp;--&nbsp;금액&nbsp;변환&nbsp;(금액.00&nbsp;-&gt;&nbsp;itab&nbsp;에서&nbsp;x100&nbsp;되어서&nbsp;나오는&nbsp;오류를&nbsp;방지하기&nbsp;위함)<br />
+*CALL&nbsp;FUNCTION&nbsp;'BAPI_CURRENCY_CONV_TO_INTERNAL'<br />
+*&nbsp;&nbsp;EXPORTING<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;AMOUNT_EXTERNAL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;LV_CURRENCY<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;CURRENCY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'KRW'<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;MAX_NUMBER_OF_DIGITS&nbsp;=&nbsp;23&nbsp;&nbsp;"출력할&nbsp;금액필드의&nbsp;자릿수"<br />
+*&nbsp;&nbsp;IMPORTING<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;AMOUNT_INTERNAL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;LV_CURRENCY.<br />
+<br />
+<br />
+   </div>
+   <div class="code">
+ENDFORM.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

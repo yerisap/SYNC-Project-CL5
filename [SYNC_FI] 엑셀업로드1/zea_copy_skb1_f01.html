@@ -1,0 +1,303 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_COPY_SKB1_F01</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZEA_COPY_SKB1_F01</h2>
+<h3> Description: Include YE00_EX005_F01</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Include&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;YE00_EX005_F01<br />
+*&---------------------------------------------------------------------*<br />
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;F4_FNAME<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM F4_FNAME  CHANGING PV_FNAME LIKE PA_FNAME.<br />
+<br />
+&nbsp;&nbsp;DATA&nbsp;LT_FILE&nbsp;TYPE&nbsp;FILETABLE.<br />
+&nbsp;&nbsp;DATA&nbsp;LV_RC&nbsp;&nbsp;&nbsp;TYPE&nbsp;I.<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;CL_GUI_FRONTEND_SERVICES=&gt;FILE_OPEN_DIALOG<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WINDOW_TITLE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'업로드&nbsp;파일을&nbsp;선택하세요'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DEFAULT_EXTENSION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'*.xlsx'&nbsp;"&nbsp;Default&nbsp;Extension<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FILE_FILTER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'엑셀파일(*.xlsx,&nbsp;*.xls)|*.xlsx;*.xls'&nbsp;&nbsp;"&nbsp;File&nbsp;Extension&nbsp;Filter&nbsp;String<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INITIAL_DIRECTORY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'C:\'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CHANGING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FILE_TABLE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;LT_FILE&nbsp;&nbsp;"&nbsp;Table&nbsp;Holding&nbsp;Selected&nbsp;Files<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;LV_RC&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Return&nbsp;Code,&nbsp;Number&nbsp;of&nbsp;Files&nbsp;or&nbsp;-1&nbsp;If&nbsp;Error&nbsp;Occurred<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1.<br />
+<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;EQ&nbsp;0&nbsp;AND&nbsp;LV_RC&nbsp;GT&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;선택한&nbsp;파일&nbsp;목록에서&nbsp;첫번째를&nbsp;LS_FILE&nbsp;에&nbsp;보관한다.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;LT_FILE&nbsp;INTO&nbsp;DATA(LS_FILE)&nbsp;INDEX&nbsp;1.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;PV_FNAME&nbsp;=&nbsp;LS_FILE-FILENAME.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'파일이&nbsp;선택되었습니다.'&nbsp;TYPE&nbsp;'S'.<br />
+&nbsp;&nbsp;ELSE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'파일&nbsp;선택이&nbsp;취소되었습니다.'&nbsp;TYPE&nbsp;'S'&nbsp;DISPLAY&nbsp;LIKE&nbsp;'W'.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;UPLOAD_EXCEL<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM UPLOAD_EXCEL .<br />
+<br />
+&nbsp;&nbsp;REFRESH&nbsp;GT_INTERN.<br />
+<br />
+&nbsp;&nbsp;DATA&nbsp;LV_FILENAME&nbsp;TYPE&nbsp;RLGRAP-FILENAME.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;함수에게&nbsp;파일명을&nbsp;전달할&nbsp;때&nbsp;타입이&nbsp;다르면&nbsp;오류가&nbsp;발생하므로,<br />
+&nbsp;&nbsp;"&nbsp;동일한&nbsp;타입의&nbsp;변수를&nbsp;만들고&nbsp;그&nbsp;변수에&nbsp;파일명을&nbsp;전달하여<br />
+&nbsp;&nbsp;"&nbsp;오류발생을&nbsp;방지한다.<br />
+&nbsp;&nbsp;LV_FILENAME&nbsp;=&nbsp;PA_FNAME.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;LV_FILENAME&nbsp;에&nbsp;저장된&nbsp;파일&nbsp;경로로&nbsp;접근해서&nbsp;해당&nbsp;파일이&nbsp;엑셀파일이면<br />
+&nbsp;&nbsp;"&nbsp;엑셀&nbsp;파일&nbsp;내에서&nbsp;1번째&nbsp;칸부터&nbsp;9번째&nbsp;칸까지&nbsp;하나의&nbsp;데이터로&nbsp;취급한다.<br />
+&nbsp;&nbsp;"&nbsp;이때&nbsp;시작하는&nbsp;라인은&nbsp;2번째&nbsp;줄부터&nbsp;데이터가&nbsp;계속해서&nbsp;이어지는&nbsp;조건에<br />
+&nbsp;&nbsp;"&nbsp;최종적으로&nbsp;5000번째&nbsp;줄까지&nbsp;내용을&nbsp;읽어온다.<br />
+&nbsp;&nbsp;CALL&nbsp;FUNCTION&nbsp;'ALSM_EXCEL_TO_INTERNAL_TABLE'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FILENAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;LV_FILENAME<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_BEGIN_COL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_BEGIN_ROW&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_END_COL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;12<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_END_ROW&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;5000<br />
+&nbsp;&nbsp;&nbsp;&nbsp;TABLES<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INTERN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GT_INTERN<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INCONSISTENT_PARAMETERS&nbsp;=&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;UPLOAD_OLE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;3.<br />
+<br />
+&nbsp;&nbsp;CASE&nbsp;SY-SUBRC.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;0.&nbsp;"&nbsp;엑셀&nbsp;파일의&nbsp;내용을&nbsp;주어진&nbsp;조건에&nbsp;맞춰서&nbsp;올바르게&nbsp;가져왔다.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;1.&nbsp;MESSAGE&nbsp;'엑셀&nbsp;파일&nbsp;경로&nbsp;또는&nbsp;데이터&nbsp;범위가&nbsp;잘못되었습니다.'&nbsp;TYPE&nbsp;'E'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;2.&nbsp;MESSAGE&nbsp;'지정한&nbsp;경로의&nbsp;파일이&nbsp;엑셀파일이&nbsp;아닙니다.'&nbsp;TYPE&nbsp;'E'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;3.&nbsp;MESSAGE&nbsp;'알&nbsp;수&nbsp;없는&nbsp;오류가&nbsp;발생했습니다.'&nbsp;TYPE&nbsp;'E'.<br />
+&nbsp;&nbsp;ENDCASE.<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;MOVE_INTERN_TO_ITAB<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM MOVE_INTERN_TO_ITAB .<br />
+<br />
+&nbsp;&nbsp;FIELD-SYMBOLS&nbsp;&lt;FS&gt;.<br />
+<br />
+&nbsp;&nbsp;REFRESH&nbsp;GT_EXCEL.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;18줄을&nbsp;반복해서&nbsp;9칸씩&nbsp;데이터를&nbsp;GT_EXCEL에&nbsp;한&nbsp;줄로&nbsp;보관한다.<br />
+&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_INTERN&nbsp;INTO&nbsp;DATA(LS_INTERN).<br />
+&nbsp;&nbsp;&nbsp;&nbsp;AT&nbsp;NEW&nbsp;ROW.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;GS_EXCEL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDAT.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;열&nbsp;위치에&nbsp;따른&nbsp;스트럭쳐&nbsp;필드를&nbsp;&lt;FS&gt;로&nbsp;연결해놓고,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;GT_INTERN으로부터&nbsp;값을&nbsp;받아서&nbsp;반복중인&nbsp;LS_INTERN의&nbsp;VALUE&nbsp;필드의&nbsp;값을<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;&lt;FS&gt;로&nbsp;전달한다.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ASSIGN&nbsp;COMPONENT&nbsp;LS_INTERN-COL&nbsp;OF&nbsp;STRUCTURE&nbsp;GS_EXCEL&nbsp;TO&nbsp;&lt;FS&gt;.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;EQ&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;FS&gt;&nbsp;=&nbsp;LS_INTERN-VALUE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;AT&nbsp;END&nbsp;OF&nbsp;ROW.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_EXCEL&nbsp;TO&nbsp;GT_EXCEL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDAT.<br />
+&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+<br />
+&nbsp;&nbsp;"&nbsp;인터널&nbsp;테이블에&nbsp;저장된&nbsp;데이터를&nbsp;확인목적으로&nbsp;팝업출력<br />
+&nbsp;&nbsp;CL_DEMO_OUTPUT=&gt;DISPLAY(&nbsp;GT_EXCEL&nbsp;).<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;MAKE_SAVE_DATA<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM MAKE_SAVE_DATA .<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;Internal&nbsp;Table&nbsp;초기화<br />
+*<br />
+**&nbsp;Inline&nbsp;선언을&nbsp;이용해&nbsp;데이터&nbsp;검색과&nbsp;동시에&nbsp;Internal&nbsp;Table&nbsp;선언<br />
+*&nbsp;&nbsp;SELECT&nbsp;MTART<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;FROM&nbsp;T134<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;TABLE&nbsp;@DATA(LT_T134)."&nbsp;lt_t134&nbsp;라는&nbsp;internal&nbsp;table은&nbsp;field가&nbsp;MTART&nbsp;하나만&nbsp;존재<br />
+*<br />
+*&nbsp;&nbsp;SORT&nbsp;LT_T134&nbsp;BY&nbsp;MTART.&nbsp;"&nbsp;정렬<br />
+<br />
+*&nbsp;GT_EXCEL에는&nbsp;엑셀과&nbsp;동일한&nbsp;형태의&nbsp;데이터가&nbsp;이미&nbsp;보관되어&nbsp;있다.<br />
+*&nbsp;문제는&nbsp;형태가&nbsp;너무&nbsp;동일해서&nbsp;변수에&nbsp;값을&nbsp;전달할&nbsp;때,<br />
+*&nbsp;변환하는&nbsp;과정이&nbsp;필요하다.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_EXCEL&nbsp;INTO&nbsp;GS_EXCEL.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;GS_MARA.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GS_MARA-VENCODE&nbsp;=&nbsp;GS_EXCEL-VENCODE.&nbsp;"&nbsp;자재코드&nbsp;&nbsp;&nbsp;문자&nbsp;&lt;-&nbsp;문자<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GS_MARA-SAKNR&nbsp;=&nbsp;GS_EXCEL-SAKNR.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;위에서&nbsp;검색된&nbsp;LT_T134는&nbsp;현재&nbsp;사용&nbsp;중인&nbsp;모든&nbsp;자재유형이&nbsp;저장되어&nbsp;있다.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;MTART&nbsp;필드&nbsp;기준으로&nbsp;GS_EXCEL-MTART&nbsp;가&nbsp;가진&nbsp;값이랑&nbsp;동일한&nbsp;자재유형이&nbsp;있는지&nbsp;검사한다.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;만약&nbsp;동일한&nbsp;자재유형이&nbsp;검색되지&nbsp;않는다면,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;현재&nbsp;사용&nbsp;중인&nbsp;자재유형이라고&nbsp;볼&nbsp;수&nbsp;없으므로,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;결론을&nbsp;내리자면,&nbsp;없는&nbsp;자재유형을&nbsp;엑셀로&nbsp;업로드&nbsp;하고자&nbsp;했다고&nbsp;본다.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;LT_T134&nbsp;TRANSPORTING&nbsp;NO&nbsp;FIELDS<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WITH&nbsp;KEY&nbsp;MTART&nbsp;=&nbsp;GS_EXCEL-MTART&nbsp;BINARY&nbsp;SEARCH.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;NE&nbsp;0.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;검색&nbsp;실패<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'엑셀파일에&nbsp;존재하지&nbsp;않는&nbsp;자재유형이&nbsp;입력되어&nbsp;있습니다.'<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;'E'&nbsp;DISPLAY&nbsp;LIKE&nbsp;'I'.&nbsp;"&nbsp;에러메시지&nbsp;+&nbsp;팝업<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;GS_MARA-BPVEN&nbsp;=&nbsp;GS_EXCEL-BPVEN.&nbsp;"&nbsp;자재유형&nbsp;&nbsp;&nbsp;문자&nbsp;&lt;-&nbsp;문자<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;REPLACE&nbsp;ALL&nbsp;OCCURRENCES&nbsp;OF&nbsp;','&nbsp;IN&nbsp;GS_EXCEL-LENGT&nbsp;WITH&nbsp;''.&nbsp;"&nbsp;길이에&nbsp;,&nbsp;가&nbsp;있으면&nbsp;제거<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;REPLACE&nbsp;ALL&nbsp;OCCURRENCES&nbsp;OF&nbsp;','&nbsp;IN&nbsp;GS_EXCEL-BRGEW&nbsp;WITH&nbsp;''.&nbsp;"&nbsp;무게에&nbsp;,&nbsp;가&nbsp;있으면&nbsp;제거<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;GS_MARA-BPCSNR&nbsp;=&nbsp;GS_EXCEL-BPCSNR.&nbsp;"&nbsp;길이&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;숫자&nbsp;&lt;-&nbsp;문자<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GS_MARA-BPHAED&nbsp;=&nbsp;GS_EXCEL-BPHAED.&nbsp;"무게&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;숫자&nbsp;&lt;-&nbsp;문자<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GS_MARA-BPADRR&nbsp;=&nbsp;GS_EXCEL-BPADRR.&nbsp;"자재단위&nbsp;&nbsp;&nbsp;문자&nbsp;&lt;-&nbsp;문자<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GS_MARA-BPSTAT&nbsp;=&nbsp;GS_EXCEL-BPSTAT.&nbsp;"자재단위&nbsp;&nbsp;&nbsp;문자&nbsp;&lt;-&nbsp;문자<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GS_MARA-ZLSCH&nbsp;=&nbsp;GS_EXCEL-ZLSCH.&nbsp;"자재단위&nbsp;&nbsp;&nbsp;문자&nbsp;&lt;-&nbsp;문자<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GS_MARA-LAND1&nbsp;=&nbsp;GS_EXCEL-LAND1.&nbsp;"자재단위&nbsp;&nbsp;&nbsp;문자&nbsp;&lt;-&nbsp;문자<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;GS_MARA-ACCNT&nbsp;=&nbsp;GS_EXCEL-ACCNT.&nbsp;"자재단위&nbsp;&nbsp;&nbsp;문자&nbsp;&lt;-&nbsp;문자<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;GS_MARA-BANKS&nbsp;=&nbsp;GS_EXCEL-BANKS.&nbsp;"자재단위&nbsp;&nbsp;&nbsp;문자&nbsp;&lt;-&nbsp;문자<br />
+<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;REPLACE&nbsp;ALL&nbsp;OCCURRENCES&nbsp;OF&nbsp;'-'&nbsp;IN&nbsp;GS_EXCEL-BEGDA&nbsp;WITH&nbsp;''.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;GS_MARA-BEGDA&nbsp;=&nbsp;GS_EXCEL-BEGDA.&nbsp;"&nbsp;길이&nbsp;단위&nbsp;&nbsp;문자&nbsp;&lt;-&nbsp;문자<br />
+*<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;GS_MARA-DATAB&nbsp;=&nbsp;GS_EXCEL-DATAB.&nbsp;"&nbsp;시작일&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;날짜&nbsp;&lt;-&nbsp;문자<br />
+*<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;GS_MARA-ERDAT&nbsp;=&nbsp;SY-DATUM.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;현재일자&nbsp;&nbsp;&nbsp;날짜&nbsp;&lt;-&nbsp;날짜<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;GS_MARA-ERZET&nbsp;=&nbsp;SY-UZEIT.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;현재시간&nbsp;&nbsp;&nbsp;시간&nbsp;&lt;-&nbsp;시간<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;GS_MARA-ERNAM&nbsp;=&nbsp;SY-UNAME.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;현재사용자&nbsp;문자&nbsp;&lt;-&nbsp;문자<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_MARA&nbsp;TO&nbsp;GT_MARA.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;INSERT&nbsp;ZEA_LFA1&nbsp;FROM&nbsp;@GS_MARA.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;NE&nbsp;0.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;이미&nbsp;데이터가&nbsp;존재하는&nbsp;경우에는&nbsp;특정&nbsp;필드만&nbsp;업데이트를&nbsp;한다.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;이때&nbsp;기존에&nbsp;존재하던&nbsp;데이터의&nbsp;생성일자,&nbsp;생성시간,&nbsp;생성자를&nbsp;보존하기&nbsp;위해<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;생성일자,&nbsp;생성시간,&nbsp;생성자는&nbsp;업데이트&nbsp;대상에서&nbsp;제외시켜야한다.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;UPDATE&nbsp;YE00_MARA&nbsp;SET&nbsp;MTART&nbsp;=&nbsp;GS_MARA-MTART<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MEINS&nbsp;=&nbsp;GS_MARA-MEINS<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LENGT&nbsp;=&nbsp;GS_MARA-LENGT<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LENGM&nbsp;=&nbsp;GS_MARA-LENGM<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BRGEW&nbsp;=&nbsp;GS_MARA-BRGEW<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GEWEI&nbsp;=&nbsp;GS_MARA-GEWEI<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DATAB&nbsp;=&nbsp;GS_MARA-DATAB<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AEDAT&nbsp;=&nbsp;SY-DATUM<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AEZET&nbsp;=&nbsp;SY-UZEIT<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AENAM&nbsp;=&nbsp;SY-UNAME<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;MATNR&nbsp;EQ&nbsp;GS_MARA-MATNR.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;자재명에&nbsp;대한&nbsp;테이블&nbsp;레코드&nbsp;생성<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;GS_MAKT.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;GS_MAKT-MATNR&nbsp;=&nbsp;GS_EXCEL-MATNR.&nbsp;"&nbsp;자재코드<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;GS_MAKT-SPRAS&nbsp;=&nbsp;SY-LANGU.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;현재&nbsp;로그인한&nbsp;언어코드<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;GS_MAKT-MAKTX&nbsp;=&nbsp;GS_EXCEL-MAKTX.&nbsp;"&nbsp;자재명<br />
+*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;INSERT&nbsp;YE00_MAKT&nbsp;FROM&nbsp;@GS_MAKT.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;NE&nbsp;0.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;UPDATE&nbsp;YE00_MAKT&nbsp;SET&nbsp;MAKTX&nbsp;=&nbsp;GS_EXCEL-MAKTX<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;MATNR&nbsp;EQ&nbsp;GS_EXCEL-MATNR<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;SPRAS&nbsp;EQ&nbsp;SY-LANGU.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+&nbsp;&nbsp;MESSAGE&nbsp;'업로드&nbsp;과정이&nbsp;완료되었습니다.'&nbsp;TYPE&nbsp;'S'.<br />
+<br />
+ENDFORM.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI_KA</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for function ZEA_FI_KA</h2>
+<h3> Description: [FI] MM모듈 KA 자동함수 생성</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="code">
+FUNCTION ZEA_FI_KA .<br />
+   </div>
+   <div class="codeComment">
+*"----------------------------------------------------------------------<br />
+*"*"Local Interface:<br />
+*"  IMPORTING<br />
+*"     REFERENCE(IS_HEAD) TYPE  ZEA_MMT160<br />
+*"  EXPORTING<br />
+*"     REFERENCE(EV_BELNR) TYPE  ZEA_BKPF-BELNR<br />
+*"----------------------------------------------------------------------<br />
+*----------------------------------------------------------------------<br />
+*             MM 송장 검증 &gt; 구매 입고에 대한 FI 문서 자동발생<br />
+*----------------------------------------------------------------------<br />
+*** 준비사항<br />
+*----------------------------------------------------------------------<br />
+* 1. ZEA_MM_MMFG 함수에서 Exporting 테이블을 적어줘야한다. (총 금액이 있는 헤더만 사용할듯 : ZEA_MMT160)<br />
+* 2. 전표번호를 Exporting 값에 적어두었다. (EV_BELNR)<br />
+*----------------------------------------------------------------------<br />
+
+<div class="codeComment">*       <a href ="global-zea_fi_ka.html">Global data declarations</a></div><br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;""&nbsp;[MM]&nbsp;STATUS&nbsp;값은&nbsp;'Y',&nbsp;'N'&nbsp;로&nbsp;꼭&nbsp;필요합니다.<br />
+&nbsp;&nbsp;""&nbsp;[MM]&nbsp;IV_ZLSCHYN.&nbsp;"&nbsp;지급여부필드?&nbsp;=&gt;&nbsp;MM&nbsp;에서&nbsp;어떻게&nbsp;표시를&nbsp;하는지&nbsp;확인이&nbsp;필요합니다.<br />
+&nbsp;&nbsp;""&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&gt;&nbsp;'X'&nbsp;표시를&nbsp;한다면?&nbsp;자동으로&nbsp;반제전표가&nbsp;생겨야&nbsp;하는&nbsp;것인지.<br />
+&nbsp;&nbsp;""&nbsp;[MM]&nbsp;ZEA_MMT160&nbsp;(HEADER)&nbsp;와&nbsp;ZEA_MMT170&nbsp;(ITEM)&nbsp;현재&nbsp;아이템의&nbsp;금액이&nbsp;헤더에&nbsp;총금액과&nbsp;불일치합니다.<br />
+   </div>
+   <div class="codeComment">
+*"----------------------------------------------------------------------<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CLEAR:&nbsp;GS_BKPF,&nbsp;GS_BSEG.<br />
+&nbsp;&nbsp;REFRESH:&nbsp;GT_BKPF,&nbsp;GT_BSEG.<br />
+<br />
+&nbsp;&nbsp;call&nbsp;function&nbsp;<a&nbsp;href&nbsp;="../zea_belnr_nr/zea_belnr_nr.html">'ZEA_BELNR_NR'</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EV_NUMBER&nbsp;=&nbsp;GV_BELNR_NUMBER.&nbsp;"&nbsp;전표번호&nbsp;채번<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+*                            IMPORTING<br />
+*----------------------------------------------------------------------<br />
+*  IS_HEAD : 헤더 / IT_ITEM : 아이템<br />
+<br />
+* -- 1. MM =&gt; FI 전표발생 CHECK ---------------------------------------*<br />
+*  CHECK IS_HEAD-STATUS EQ 'Y'. " [MM] 처리상태 - 'Y' 일때, 아래 전표생성 로직이 실행됨<br />
+<br />
+* -- 2. FI 전표 헤더 생성 ---------------------------------------------*<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;GS_BKPF-BUKRS&nbsp;=&nbsp;'1000'.<br />
+&nbsp;&nbsp;GS_BKPF-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+&nbsp;&nbsp;GS_BKPF-GJAHR&nbsp;=&nbsp;'2024'.<br />
+&nbsp;&nbsp;GS_BKPF-BLART&nbsp;=&nbsp;'KA'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;매입전표<br />
+&nbsp;&nbsp;GS_BKPF-BLDAT&nbsp;=&nbsp;IS_HEAD-BLDAT.&nbsp;&nbsp;"&nbsp;[MM]&nbsp;증빙일자&nbsp;=&gt;&nbsp;[FI]&nbsp;헤더&nbsp;-&nbsp;증빙일자<br />
+&nbsp;&nbsp;GS_BKPF-BUDAT&nbsp;=&nbsp;SY-DATUM.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;증빙일자&nbsp;=&gt;&nbsp;[FI]&nbsp;헤더&nbsp;-&nbsp;전기일자<br />
+&nbsp;&nbsp;GS_BKPF-BLTXT&nbsp;=&nbsp;'[MM]&nbsp;송장전표'&nbsp;&&&nbsp;'&nbsp;(벤더사:'&nbsp;&&&nbsp;IS_HEAD-VENCODE&nbsp;&&&nbsp;'&nbsp;)'.<br />
+&nbsp;&nbsp;GS_BKPF-XBLNR&nbsp;=&nbsp;IS_HEAD-BELNR.&nbsp;&nbsp;"&nbsp;[MM]&nbsp;송장번호&nbsp;=&gt;&nbsp;[FI]&nbsp;헤더&nbsp;-&nbsp;참조문서<br />
+&nbsp;&nbsp;"&nbsp;송장검증&nbsp;헤더의&nbsp;송장번호는&nbsp;BELNR&nbsp;필드를&nbsp;사용함.<br />
+&nbsp;&nbsp;GS_BKPF-ERNAM&nbsp;=&nbsp;'ACA5-08'.<br />
+&nbsp;&nbsp;GS_BKPF-ERDAT&nbsp;=&nbsp;SY-DATUM.<br />
+&nbsp;&nbsp;GS_BKPF-ERZET&nbsp;=&nbsp;SY-UZEIT.<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 3. FI 전표 아이템 생성 -------------------------------------------*<br />
+<br />
+* 1) 환율 계산<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;SELECT&nbsp;*&nbsp;FROM&nbsp;ZEA_TCURR&nbsp;INTO&nbsp;TABLE&nbsp;GT_TCURR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;TCURR&nbsp;EQ&nbsp;IS_HEAD-WAERS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;GDATU&nbsp;&lt;=&nbsp;IS_HEAD-BLDAT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ORDER&nbsp;BY&nbsp;GDATU&nbsp;DESCENDING.<br />
+&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_TCURR&nbsp;INTO&nbsp;GS_TCURR&nbsp;INDEX&nbsp;1.<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 금액 변환 [BAPI]<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;값이&nbsp;*&nbsp;100&nbsp;증가하여&nbsp;BAPI&nbsp;삽입함.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CALL&nbsp;FUNCTION&nbsp;'BAPI_CURRENCY_CONV_TO_INTERNAL'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AMOUNT_EXTERNAL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;IS_HEAD-TOTCOST<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CURRENCY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;IS_HEAD-WAERS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MAX_NUMBER_OF_DIGITS&nbsp;=&nbsp;23&nbsp;&nbsp;"출력할&nbsp;금액필드의&nbsp;자릿수"<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AMOUNT_INTERNAL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;LV_TOTCOST.<br />
+<br />
+&nbsp;&nbsp;IF&nbsp;GS_TCURR-UKURS&nbsp;NE&nbsp;0.<br />
+   </div>
+   <div class="codeComment">
+*    GV_COVT_AMOUNT = IS_HEAD-TOTCOST * GS_TCURR-UKURS. " KRW 환산금액 = 외환금액(총합) * 환율<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;"원본<br />
+   </div>
+   <div class="codeComment">
+*    GV_COVT_AMOUNT = LV_TOTCOST * GS_TCURR-UKURS.       " KRW 환산금액 = 외환금액(총합) * 환율<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;0513&nbsp;-&nbsp;이세영&nbsp;고쳐봄&nbsp;...<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GV_COVT_AMOUNT&nbsp;=&nbsp;LV_TOTCOST&nbsp;*&nbsp;GS_TCURR-UKURS&nbsp;/&nbsp;100&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;KRW&nbsp;환산금액&nbsp;=&nbsp;외환금액(총합)&nbsp;*&nbsp;환율<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;0513&nbsp;-&nbsp;이세영&nbsp;다시&nbsp;원복<br />
+   </div>
+   <div class="codeComment">
+*    GV_COVT_AMOUNT = LV_TOTCOST * GS_TCURR-UKURS  .       " KRW 환산금액 = 외환금액(총합) * 환율<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;0513&nbsp;-&nbsp;이세영&nbsp;_&nbsp;금액에&nbsp;나누기&nbsp;100배&nbsp;되어&nbsp;나와서&nbsp;다시&nbsp;함.<br />
+   </div>
+   <div class="codeComment">
+*    GV_COVT_AMOUNT = LV_TOTCOST * GS_TCURR-UKURS * 100 .       " KRW 환산금액 = 외환금액(총합) * 환율<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;0513&nbsp;-&nbsp;이세영&nbsp;_&nbsp;원복시키기<br />
+   </div>
+   <div class="codeComment">
+*    GV_COVT_AMOUNT = LV_TOTCOST * GS_TCURR-UKURS  .       " KRW 환산금액 = 외환금액(총합) * 환율<br />
+<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;ELSE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'통화금액과&nbsp;통화코드를&nbsp;확인해주세요'&nbsp;TYPE&nbsp;'E'&nbsp;DISPLAY&nbsp;LIKE&nbsp;'I'.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+* 2) BP 코드 조회<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;SAKNR&nbsp;FROM&nbsp;ZEA_SKB1&nbsp;INTO&nbsp;LV_SAKNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BPCODE&nbsp;EQ&nbsp;IS_HEAD-VENCODE.<br />
+<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;EQ&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GV_RECON&nbsp;=&nbsp;LV_SAKNR.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+   </div>
+   <div class="codeComment">
+* 2) 아이템 생성<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;DO&nbsp;2&nbsp;TIMES.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-ITNUM&nbsp;=&nbsp;SY-INDEX.&nbsp;"&nbsp;Item&nbsp;번호<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;GS_BSEG-ITNUM.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;1.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BUKRS&nbsp;=&nbsp;'1000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GJAHR&nbsp;=&nbsp;SY-DATUM+0(4).<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BSCHL&nbsp;=&nbsp;'40'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;전기키&nbsp;=&nbsp;차변<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-SAKNR&nbsp;=&nbsp;'100110'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정&nbsp;:&nbsp;원재료<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GLTXT&nbsp;=&nbsp;'[MM]&nbsp;원재료&nbsp;매입'.&nbsp;"&nbsp;[FI]&nbsp;G/L계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BPCODE&nbsp;=&nbsp;IS_HEAD-VENCODE.&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;BP코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WERKS&nbsp;=&nbsp;'10000'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;플랜트&nbsp;:&nbsp;CDC<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;통화코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;IS_HEAD-WAERS.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'KRW'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;&nbsp;&nbsp;=&nbsp;IS_HEAD-TOTCOST.&nbsp;"&nbsp;[MM]&nbsp;총매입금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;IS_HEAD-WAERS.&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;KRW<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;&nbsp;&nbsp;=&nbsp;IS_HEAD-TOTCOST.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;IS_HEAD-WAERS.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;OTHERS.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;&nbsp;&nbsp;=&nbsp;IS_HEAD-TOTCOST.&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;지급금액&nbsp;=&nbsp;USD-&gt;&nbsp;KRW&nbsp;환산금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;IS_HEAD-WAERS.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;&nbsp;&nbsp;=&nbsp;GV_COVT_AMOUNT&nbsp;.&nbsp;&nbsp;"&nbsp;[MM]&nbsp;총매입금액&nbsp;(KRW)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;'KRW'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_BSEG&nbsp;TO&nbsp;GT_BSEG.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;2.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BUKRS&nbsp;=&nbsp;'1000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GJAHR&nbsp;=&nbsp;SY-DATUM+0(4).<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BSCHL&nbsp;=&nbsp;'31'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;전기키&nbsp;=&nbsp;송장<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-SAKNR&nbsp;=&nbsp;GV_RECON.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정&nbsp;(Recon)&nbsp;-&nbsp;VENDER&nbsp;CODE에&nbsp;일치하는&nbsp;계정<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GLTXT&nbsp;=&nbsp;'(A/P:'&nbsp;&&&nbsp;IS_HEAD-VENCODE&nbsp;&&&nbsp;')'.&nbsp;"&nbsp;[FI]&nbsp;G/L계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BPCODE&nbsp;=&nbsp;IS_HEAD-VENCODE.&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;BP코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WERKS&nbsp;=&nbsp;'10000'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;플랜트&nbsp;:&nbsp;CDC<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;통화코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;IS_HEAD-WAERS.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'KRW'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;&nbsp;&nbsp;=&nbsp;IS_HEAD-TOTCOST.&nbsp;"&nbsp;[MM]&nbsp;총매입금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;IS_HEAD-WAERS.&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;KRW<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;&nbsp;&nbsp;=&nbsp;IS_HEAD-TOTCOST.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;IS_HEAD-WAERS.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;OTHERS.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;&nbsp;&nbsp;=&nbsp;IS_HEAD-TOTCOST.&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;지급금액&nbsp;=&nbsp;USD-&gt;&nbsp;KRW&nbsp;환산금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;IS_HEAD-WAERS.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;&nbsp;&nbsp;=&nbsp;GV_COVT_AMOUNT&nbsp;.&nbsp;&nbsp;"&nbsp;[MM]&nbsp;총매입금액&nbsp;(KRW)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;'KRW'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_BSEG&nbsp;TO&nbsp;GT_BSEG.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+&nbsp;&nbsp;ENDDO.<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+*                  SAVE TO ZEA_BKPF / ZEA_BSEG<br />
+*----------------------------------------------------------------------<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;INSERT&nbsp;&nbsp;ZEA_BKPF&nbsp;FROM&nbsp;GS_BKPF.<br />
+&nbsp;&nbsp;INSERT&nbsp;&nbsp;ZEA_BSEG&nbsp;FROM&nbsp;TABLE&nbsp;GT_BSEG.<br />
+<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;EQ&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;COMMIT&nbsp;WORK&nbsp;AND&nbsp;WAIT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;GV_BELNR_NUMBER&nbsp;&&&nbsp;'번&nbsp;전표가&nbsp;생성되었습니다.&nbsp;'&nbsp;TYPE&nbsp;'S'.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+*                          EXPORTING<br />
+*----------------------------------------------------------------------<br />
+*                        &lt;&lt; FI =&gt; MM &gt;&gt;<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;EV_BELNR&nbsp;=&nbsp;&nbsp;GV_BELNR_NUMBER.&nbsp;"전표번호&nbsp;Exporting<br />
+ENDFUNCTION.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*Messages<br />
+*----------------------------------------------------------<br />
+*<br />
+* Message class: Hard coded<br />
+*   통화금액과 통화코드를 확인해주세요<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

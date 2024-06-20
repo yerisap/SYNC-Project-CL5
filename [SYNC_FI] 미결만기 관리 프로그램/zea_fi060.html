@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI060</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZEA_FI060</h2>
+<h3> Description: [FI] 미결만기 관리 프로그램 [완료] ACA5-17 이세영</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Report&nbsp;ZMEETROOM<br />
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;[FI]&nbsp;미결만기&nbsp;관리&nbsp;프로그램&nbsp;2024.04.14&nbsp;[생성]&nbsp;ACA5-17&nbsp;이세영<br />
+*&&nbsp;[FI]&nbsp;미결만기&nbsp;관리&nbsp;프로그램&nbsp;2024.04.24&nbsp;[완료]&nbsp;ACA5-17&nbsp;이세영<br />
+*&---------------------------------------------------------------------*<br />
+*&nbsp;[수정&nbsp;이력]<br />
+*&nbsp;2024-04-16&nbsp;(~16:00)<br />
+*&nbsp;1.&nbsp;ALV&nbsp;선택&nbsp;시,&nbsp;고객&nbsp;데이터/전표&nbsp;데이터&nbsp;조회&nbsp;구현&nbsp;(O)<br />
+*&nbsp;2.&nbsp;Radio&nbsp;Button&nbsp;에&nbsp;따라&nbsp;조회&nbsp;구현&nbsp;(O)<br />
+*&---------------------------------------------------------------------*<br />
+*&nbsp;2024-04-16&nbsp;(20:46)<br />
+*&nbsp;1.&nbsp;날짜&nbsp;검색&nbsp;시&nbsp;GT_DATA에&nbsp;데이터&nbsp;들어오지&nbsp;않는&nbsp;오류&nbsp;개선&nbsp;(O)<br />
+*&nbsp;2.&nbsp;2024-17&nbsp;(~14:00)&nbsp;-&nbsp;단위테스트요청<br />
+*&---------------------------------------------------------------------*<br />
+*&nbsp;[2024.04.18&nbsp;/&nbsp;단위&nbsp;테스트&nbsp;완료]&nbsp;-&nbsp;[PM]&nbsp;김건우&nbsp;:&nbsp;o<br />
+*&---------------------------------------------------------------------*<br />
+*&nbsp;[2024-04-24&nbsp;/&nbsp;고도화&nbsp;진행&nbsp;완료]<br />
+*&nbsp;1.&nbsp;DZ&nbsp;함수&nbsp;적용&nbsp;및&nbsp;최적화<br />
+*&nbsp;2.&nbsp;독촉장&nbsp;생성&nbsp;기능&nbsp;구현<br />
+*&---------------------------------------------------------------------*<br />
+*&nbsp;[2024-05-04&nbsp;/&nbsp;디테일&nbsp;수정&nbsp;완료]<br />
+*&nbsp;1.&nbsp;DZ&nbsp;함수&nbsp;적용&nbsp;및&nbsp;최적화&nbsp;(O)<br />
+*&nbsp;2.&nbsp;핫스팟&nbsp;기능&nbsp;적용&nbsp;완료<br />
+*&---------------------------------------------------------------------*<br />
+<br />
+   </div>
+   <div class="code">
+include <a href ="zea_fi060_top.html">ZEA_FI060_TOP</a>.       " Global Data<br />
+<br />
+include <a href ="zea_fi060_scr.html">ZEA_FI060_SCR</a>.       " Selection screen<br />
+<br />
+include <a href ="zea_fi060_cls.html">ZEA_FI060_CLS</a>.       " ALV Events<br />
+<br />
+include <a href ="zea_fi060_pbo.html">ZEA_FI060_PBO</a>.       " PBO-Modules<br />
+<br />
+include <a href ="zea_fi060_pai.html">ZEA_FI060_PAI</a>.       " PAI-Modules<br />
+<br />
+include <a href ="zea_fi060_f01.html">ZEA_FI060_F01</a>.       " FORM-Routines<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+**********************************************************************<br />
+*&nbsp;INITIALIZATION<br />
+**********************************************************************<br />
+   </div>
+   <div class="code">
+INITIALIZATION.<br />
+&nbsp;&nbsp;PERFORM&nbsp;SET_INIT_VALUE.<br />
+<br />
+   </div>
+   <div class="codeComment">
+**********************************************************************<br />
+*&nbsp;&nbsp;AT&nbsp;SELECTION&nbsp;SCREEN<br />
+**********************************************************************<br />
+   </div>
+   <div class="code">
+AT SELECTION-SCREEN.<br />
+<br />
+&nbsp;AT&nbsp;SELECTION-SCREEN&nbsp;ON&nbsp;VALUE-REQUEST&nbsp;FOR&nbsp;SO_CSTAC-LOW.<br />
+&nbsp;&nbsp;&nbsp;PERFORM&nbsp;F4_NAME.<br />
+<br />
+   </div>
+   <div class="codeComment">
+**********************************************************************<br />
+*&nbsp;START-OF-SELECTION<br />
+**********************************************************************<br />
+   </div>
+   <div class="code">
+START-OF-SELECTION.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;Radio&nbsp;Button&nbsp;선택&nbsp;시&nbsp;Select<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;PERFORM&nbsp;GET_BASE_DATA.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;검색&nbsp;결과&nbsp;Screen<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CALL&nbsp;SCREEN&nbsp;100.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*GUI&nbsp;Texts<br />
+*----------------------------------------------------------<br />
+*&nbsp;T0100&nbsp;--&gt;&nbsp;[FI]&nbsp;미결만기&nbsp;관리&nbsp;프로그램<br />
+<br />
+*Text&nbsp;elements<br />
+*----------------------------------------------------------<br />
+*&nbsp;E01&nbsp;<br />
+*&nbsp;F01&nbsp;반제<br />
+*&nbsp;F02&nbsp;지급코드<br />
+*&nbsp;F03&nbsp;만기일<br />
+*&nbsp;I01&nbsp;반제일<br />
+*&nbsp;I02&nbsp;Team<br />
+*&nbsp;L00&nbsp;전체<br />
+*&nbsp;L01&nbsp;만기일&nbsp;기준&nbsp;정렬<br />
+*&nbsp;L02&nbsp;&nbsp;미결<br />
+*&nbsp;L03&nbsp;&nbsp;반제<br />
+*&nbsp;L04&nbsp;모든&nbsp;채권<br />
+*&nbsp;M01&nbsp;&nbsp;성공<br />
+*&nbsp;T01&nbsp;&nbsp;고객&nbsp;검색조건<br />
+*&nbsp;T02&nbsp;&nbsp;라인&nbsp;아이템&nbsp;검색조건<br />
+*&nbsp;T03&nbsp;&nbsp;반제여부<br />
+<br />
+<br />
+*Selection&nbsp;texts<br />
+*----------------------------------------------------------<br />
+*&nbsp;OPEN_DAT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;미결&nbsp;일자<br />
+*&nbsp;RAD_ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;모든&nbsp;채권&nbsp;조회<br />
+*&nbsp;RAD_CLEA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;반제&nbsp;채권&nbsp;조회<br />
+*&nbsp;RAD_OPEN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;미결&nbsp;채권&nbsp;조회<br />
+*&nbsp;SO_COCO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;회사코드<br />
+*&nbsp;SO_CSTAC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;고객코드<br />
+*&nbsp;SO_C_DAT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;반제일<br />
+*&nbsp;SO_RESDT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;조회&nbsp;일자<br />
+<br />
+<br />
+*Messages<br />
+*----------------------------------------------------------<br />
+*<br />
+*&nbsp;Message&nbsp;class:&nbsp;Hard&nbsp;coded<br />
+*&nbsp;&nbsp;&nbsp;Line을&nbsp;한&nbsp;줄&nbsp;이상&nbsp;선택하세요.<br />
+*<br />
+*&nbsp;Message&nbsp;class:&nbsp;ZEA_MSG_FI<br />
+*000&nbsp;&nbsp;&nbsp;&<br />
+*001&nbsp;&nbsp;&nbsp;&&nbsp;&<br />
+*004&nbsp;&nbsp;&nbsp;&&nbsp;건의&nbsp;데이터가&nbsp;검색되었습니다.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

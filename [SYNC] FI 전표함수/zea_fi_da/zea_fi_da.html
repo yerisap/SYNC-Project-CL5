@@ -1,0 +1,462 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI_DA</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for function ZEA_FI_DA</h2>
+<h3> Description: For DA Document</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="code">
+FUNCTION ZEA_FI_DA.<br />
+   </div>
+   <div class="codeComment">
+*"----------------------------------------------------------------------<br />
+*"*"Local Interface:<br />
+*"  IMPORTING<br />
+*"     REFERENCE(IV_PAYNR) TYPE  ZEA_PAYNR<br />
+*"     REFERENCE(IV_INVDT) TYPE  ZEA_INVDT<br />
+*"     REFERENCE(IV_CUSCODE) TYPE  ZEA_CUSCODE<br />
+*"     REFERENCE(IV_CHARGE) TYPE  ZEA_CHARGE<br />
+*"     REFERENCE(IV_EATAX) TYPE  ZEA_EATAX<br />
+*"     REFERENCE(IV_WAERS) TYPE  ZEA_WAERS<br />
+*"     REFERENCE(IV_NETPR) TYPE  ZEA_DMBTR<br />
+*"     REFERENCE(IV_AUQUA) TYPE  ZEA_AUQUA<br />
+*"     REFERENCE(IV_PLANT) TYPE  ZEA_WERKS<br />
+*"     REFERENCE(IV_CHECK) TYPE  C<br />
+*"  EXPORTING<br />
+*"     REFERENCE(EV_BELNR) TYPE  ZEA_BELNR<br />
+*"     REFERENCE(EV_BUKRS) TYPE  ZEA_BUKRS<br />
+*"     REFERENCE(EV_GJAHR) TYPE  ZEA_GJAHR<br />
+*"----------------------------------------------------------------------<br />
+*& [SD-FI]                DA 전표 생성 함수<br />
+*&---------------------------------------------------------------------*<br />
+*& [생성일자 : 2024-04-21] / [생성자 : 5반 1조 이세영]<br />
+*& [완료일자 : 2024-04-28]<br />
+*& 완성도 [100%]<br />
+*& 1. 검토 내역 : FIT700, BKPF, BSEG 테이블 내 저장 확인<br />
+*& 2. 검토 내역 : 도/소매 레콘 기록 테스트 완료<br />
+*----------------------------------------------------------------------<br />
+*--- 1. 회계문서 전표번호 채번<br />
+
+<div class="codeComment">*       <a href ="global-zea_fi_da.html">Global data declarations</a></div><br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;PERFORM&nbsp;NR_ZEA_BELNR&nbsp;CHANGING&nbsp;GV_BELNR_NUMBER.<br />
+<br />
+&nbsp;&nbsp;"대금청구&nbsp;헤더&nbsp;구조체에&nbsp;채번한&nbsp;회계전표번호를&nbsp;넣는다.&nbsp;=&gt;&nbsp;함수&nbsp;Exporting&nbsp;으로&nbsp;해결<br />
+&nbsp;&nbsp;GS_BKPF-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.&nbsp;&nbsp;&nbsp;"회계전표&nbsp;헤더&nbsp;구조체에&nbsp;채번한&nbsp;회계전표번호를&nbsp;넣는다.<br />
+&nbsp;&nbsp;GS_BSEG-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.&nbsp;&nbsp;&nbsp;"회계전표&nbsp;아이템&nbsp;구조체에&nbsp;채번한&nbsp;회계전표를&nbsp;넣는다.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--- 2. A/R 인식을 위한 Recon Account 검색<br />
+*** 매출채권 계정 검색<br />
+*  1) 고객 Recon 검색을 위해 받아온 고객코드(=IV_CUSCODE)를 활용<br />
+*  2) A/R 인식을 위해 ZEA_SKB1 테이블 내 Recon Account를 Select<br />
+*  3) 검색에 성공하면, Recon Account(A/R) 를 GV_RECON 변수에 보관<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;*&nbsp;FROM&nbsp;ZEA_SKB1&nbsp;INTO&nbsp;ZEA_SKB1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BPCODE&nbsp;EQ&nbsp;IV_CUSCODE.<br />
+&nbsp;&nbsp;MOVE-CORRESPONDING&nbsp;ZEA_SKB1&nbsp;TO&nbsp;GS_SKB1.<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;EQ&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GV_RECON&nbsp;=&nbsp;GS_SKB1-SAKNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"A/R&nbsp;매출채권&nbsp;레콘계정<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*** 매출액 계정 검색<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;IF&nbsp;IV_CHECK&nbsp;EQ&nbsp;'X'.&nbsp;&nbsp;"&nbsp;IV_CHECK&nbsp;=&nbsp;'X'일&nbsp;경우에만&nbsp;진행<br />
+   </div>
+   <div class="codeComment">
+*  1) 직영점 Recon 검색을 위해 받아온 직영점코드(=IV_PLANT)를 활용<br />
+*  2) 매출액 인식을 위해 ZEA_SKB1 테이블 내 Recon Account를 Select<br />
+*  3) 검색에 성공하면, Recon Account(A/R) 를 GV_PRECON 변수에 보관<br />
+* BREAK-POINT.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;ZEA_SKB1.&nbsp;&nbsp;"사용&nbsp;전&nbsp;초기화<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;*&nbsp;FROM&nbsp;ZEA_SKB1&nbsp;INTO&nbsp;ZEA_SKB1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;GLTXT&nbsp;EQ&nbsp;'제품국내매출액'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;BPCODE&nbsp;EQ&nbsp;IV_PLANT.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GV_PRECON&nbsp;=&nbsp;ZEA_SKB1-SAKNR.&nbsp;&nbsp;&nbsp;&nbsp;"매출액&nbsp;레콘계정<br />
+<br />
+&nbsp;&nbsp;ELSE.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GV_PRECON&nbsp;=&nbsp;'410010'.&nbsp;"GLTXT&nbsp;:&nbsp;[제품국내매출액-소매]<br />
+<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--- 3. 매출원가 계산<br />
+*  [예시] (ZEA_SDT120-NETPR X ZEA_SDT120-AUQUA) WAERS<br />
+*  [예시] ( GV_COST )                           WAERS<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;DATA&nbsp;:&nbsp;GV_COST&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"매출원가<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_AUQUA&nbsp;TYPE&nbsp;N.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"수량<br />
+<br />
+&nbsp;&nbsp;GV_COST&nbsp;=&nbsp;IV_NETPR&nbsp;*&nbsp;IV_AUQUA.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"매출원가&nbsp;=&nbsp;완제품&nbsp;원가&nbsp;*&nbsp;수량<br />
+<br />
+   </div>
+   <div class="codeComment">
+*<br />
+** -- 3-1. 금액 변환<br />
+*  CASE IV_WAERS.<br />
+*    WHEN 'KRW'.<br />
+*      CALL FUNCTION 'BAPI_CURRENCY_CONV_TO_INTERNAL'<br />
+*        EXPORTING<br />
+*          AMOUNT_EXTERNAL      = GV_COST   "매출원가<br />
+*          CURRENCY             = 'KRW'<br />
+*          MAX_NUMBER_OF_DIGITS = 23        "출력할 금액필드의 자릿수"<br />
+*        IMPORTING<br />
+*          AMOUNT_INTERNAL      = CV_COST.<br />
+*  ENDCASE.<br />
+*<br />
+*--- 4. 매출액 계산<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;DATA&nbsp;LV_AMOUNT&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"매출액<br />
+&nbsp;&nbsp;LV_AMOUNT&nbsp;=&nbsp;IV_CHARGE&nbsp;+&nbsp;IV_EATAX.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"매출액&nbsp;=&nbsp;공제액&nbsp;+&nbsp;&nbsp;세액<br />
+<br />
+   </div>
+   <div class="codeComment">
+**------ 4-1. 매출액 변환<br />
+*  CASE IV_WAERS.<br />
+*    WHEN 'KRW'.<br />
+*      CALL FUNCTION 'BAPI_CURRENCY_CONV_TO_INTERNAL'<br />
+*        EXPORTING<br />
+*          AMOUNT_EXTERNAL      = LV_AMOUNT<br />
+*          CURRENCY             = 'KRW'<br />
+*          MAX_NUMBER_OF_DIGITS = 23  "출력할 금액필드의 자릿수"<br />
+*        IMPORTING<br />
+*          AMOUNT_INTERNAL      = CV_SALES.  "매출액<br />
+*  ENDCASE.<br />
+*<br />
+**------ 4-2. 공제액 변환<br />
+*  CASE IV_WAERS.<br />
+*    WHEN 'KRW'.<br />
+*      CALL FUNCTION 'BAPI_CURRENCY_CONV_TO_INTERNAL'<br />
+*        EXPORTING<br />
+*          AMOUNT_EXTERNAL      = IV_CHARGE<br />
+*          CURRENCY             = 'KRW'<br />
+*          MAX_NUMBER_OF_DIGITS = 23  "출력할 금액필드의 자릿수"<br />
+*        IMPORTING<br />
+*          AMOUNT_INTERNAL      = CV_CHARGE.  "공제액<br />
+*  ENDCASE.<br />
+*<br />
+**------ 4-3. 세액 변환<br />
+*  CASE IV_WAERS.<br />
+*    WHEN 'KRW'.<br />
+*      CALL FUNCTION 'BAPI_CURRENCY_CONV_TO_INTERNAL'<br />
+*        EXPORTING<br />
+*          AMOUNT_EXTERNAL      = IV_EATAX<br />
+*          CURRENCY             = 'KRW'<br />
+*          MAX_NUMBER_OF_DIGITS = 23  "출력할 금액필드의 자릿수"<br />
+*        IMPORTING<br />
+*          AMOUNT_INTERNAL      = CV_EATAX.  "세액<br />
+*  ENDCASE.<br />
+*<br />
+**--- 5. 통화코드<br />
+*  DATA GV_WAERS TYPE ZEA_WAERS.           "통화코드<br />
+*  GV_WAERS = IV_WAERS.<br />
+*<br />
+***--- DB로 들어갈 때, 00개가 빠져서 나옴.<br />
+**  "곱하기 X 100 해야 함.<br />
+**<br />
+**  CV_COST = CV_COST * 100.<br />
+**  CV_CHARGE = CV_CHARGE * 100.<br />
+**  CV_EATAX = CV_EATAX * 100.<br />
+**  CV_SALES = CV_SALES * 100.<br />
+<br />
+*  CV_COST = GV_COST.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CV_SALES&nbsp;=&nbsp;LV_AMOUNT&nbsp;.<br />
+&nbsp;&nbsp;CV_CHARGE&nbsp;=&nbsp;IV_CHARGE.<br />
+&nbsp;&nbsp;CV_EATAX&nbsp;=&nbsp;IV_EATAX.<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+*                      IMPORTING 변수  활용<br />
+*----------------------------------------------------------------------<br />
+<br />
+* -- 1. FI 전표 헤더 생성 ---------------------------------------------*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;GS_BKPF-BUKRS&nbsp;=&nbsp;1000.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"회사번호<br />
+&nbsp;&nbsp;GS_BKPF-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.&nbsp;&nbsp;"전표번호<br />
+&nbsp;&nbsp;GS_BKPF-GJAHR&nbsp;=&nbsp;'2024'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"회계연도<br />
+&nbsp;&nbsp;GS_BKPF-BLART&nbsp;=&nbsp;'DA'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"전표유형&nbsp;=&nbsp;DA<br />
+&nbsp;&nbsp;GS_BKPF-BLDAT&nbsp;=&nbsp;IV_INVDT.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"증빙일자&nbsp;=&nbsp;청구일자<br />
+&nbsp;&nbsp;GS_BKPF-BUDAT&nbsp;=&nbsp;SY-DATUM.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"전기일자&nbsp;=&nbsp;생성일자<br />
+&nbsp;&nbsp;GS_BKPF-XBLNR&nbsp;=&nbsp;IV_PAYNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"참조번호&nbsp;=&nbsp;청구번호<br />
+&nbsp;&nbsp;GS_BKPF-BLTXT&nbsp;=&nbsp;'매출전표'&nbsp;&&&nbsp;'(고객:'&nbsp;&&&nbsp;IV_CUSCODE&nbsp;&&&nbsp;'&nbsp;)'.<br />
+&nbsp;&nbsp;"매출전표(고객:&nbsp;customer&nbsp;code)<br />
+<br />
+&nbsp;&nbsp;"&nbsp;생성&nbsp;관련&nbsp;정보<br />
+&nbsp;&nbsp;GS_BKPF-ERDAT&nbsp;=&nbsp;SY-DATUM.&nbsp;"&nbsp;생성일자를&nbsp;오늘로<br />
+&nbsp;&nbsp;GS_BKPF-ERZET&nbsp;=&nbsp;SY-UZEIT.&nbsp;"&nbsp;생성시간을&nbsp;현재&nbsp;시간으로<br />
+&nbsp;&nbsp;GS_BKPF-ERNAM&nbsp;=&nbsp;'ACA5-17'.&nbsp;"&nbsp;생성자를&nbsp;현재&nbsp;로그인한&nbsp;사용자ID<br />
+<br />
+   </div>
+   <div class="codeComment">
+*-- SAVE TO ZEA_BKPF (전표 헤더)<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;INSERT&nbsp;&nbsp;ZEA_BKPF&nbsp;FROM&nbsp;GS_BKPF.<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 2. FI 전표 아이템 생성 -------------------------------------------*<br />
+* -- 2-1. FI 전표 아이템(차변: A/P 감소)<br />
+<br />
+*--- 1. GT_BSEG 에 5줄의 ITEM라인 생성<br />
+*       [공통 정보 입력]<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;DO&nbsp;3&nbsp;TIMES.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;총&nbsp;5개의&nbsp;Line이&nbsp;생성<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-ITNUM&nbsp;=&nbsp;SY-INDEX.&nbsp;"&nbsp;Item&nbsp;번호<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;GS_BSEG-ITNUM.<br />
+   </div>
+   <div class="codeComment">
+*      WHEN 1.<br />
+*        BREAK-POINT.<br />
+*        "공통정보<br />
+*        GS_BSEG-BELNR = GV_BELNR_NUMBER. " 전표번호<br />
+*        GS_BSEG-BUKRS = 1000.            " 회사코드<br />
+*        GS_BSEG-GJAHR = 2024.            " 회계연도<br />
+*<br />
+*        "[40] 매출원가 - (ZEA_SDT120-NETPR X ZEA_SDT120-AUQUA) WAERS<br />
+*        GS_BSEG-BSCHL = '40'.              "차변<br />
+*        GS_BSEG-SAKNR = '501040'.          "매출원가(제품)<br />
+*        GS_BSEG-GLTXT = '매출원가(제품)'.  "G/L Text<br />
+*        GS_BSEG-BPCODE = IV_CUSCODE.       "BP CODE<br />
+*<br />
+*        "현지 금액<br />
+*        GS_BSEG-WRBTR =   GV_COST.         "Amount<br />
+*        GS_BSEG-W_WAERS = IV_WAERS.        "통화코드<br />
+*        "국제(전표) 금액<br />
+*        GS_BSEG-DMBTR = GV_COST.           "Amount<br />
+*        GS_BSEG-D_WAERS = IV_WAERS.        "통화코드<br />
+*<br />
+*<br />
+*        APPEND GS_BSEG TO GT_BSEG.<br />
+*<br />
+**<br />
+*      WHEN 2.<br />
+*        "공통정보<br />
+*        GS_BSEG-BELNR = GV_BELNR_NUMBER. " 전표번호<br />
+*        GS_BSEG-BUKRS = 1000.            " 회사코드<br />
+*        GS_BSEG-GJAHR = 2024.            " 회계연도<br />
+*<br />
+*        "[50] 제품 - Amount는 매출원가와 동일<br />
+*        GS_BSEG-BSCHL = '50'.                " 대변<br />
+*        GS_BSEG-SAKNR = '100760'.            " 제품<br />
+*        GS_BSEG-GLTXT = '제품'.              " G/L Text<br />
+*        GS_BSEG-BPCODE = IV_CUSCODE.         "BP CODE<br />
+*<br />
+*        "현지 금액<br />
+*        GS_BSEG-WRBTR =   GV_COST.          "Amount<br />
+*        GS_BSEG-W_WAERS = IV_WAERS.         "통화코드<br />
+*        "국제(전표) 금액<br />
+*        GS_BSEG-DMBTR = GV_COST.            "Amount<br />
+*        GS_BSEG-D_WAERS = IV_WAERS.         "통화코드<br />
+*<br />
+*        APPEND GS_BSEG TO GT_BSEG.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;1.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"공통정보<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.&nbsp;"&nbsp;전표번호<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BUKRS&nbsp;=&nbsp;1000.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;회사코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GJAHR&nbsp;=&nbsp;2024.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;회계연도<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"[01]&nbsp;A/R&nbsp;(Recon)&nbsp;-&nbsp;Amount&nbsp;는&nbsp;(공제액&nbsp;+&nbsp;세액)&nbsp;IV_CHARGE&nbsp;+&nbsp;IV_EATAX<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BSCHL&nbsp;=&nbsp;'01'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"차변<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-SAKNR&nbsp;=&nbsp;GV_RECON.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"A/R<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GLTXT&nbsp;=&nbsp;'(A/R:'&nbsp;&&&nbsp;IV_CUSCODE&nbsp;&&')'.&nbsp;"G/L&nbsp;Text<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BPCODE&nbsp;=&nbsp;IV_CUSCODE.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"BP&nbsp;CODE<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"현지&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;=&nbsp;&nbsp;&nbsp;CV_SALES.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Amount<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;IV_WAERS.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"통화코드<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"국제(전표)&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;&nbsp;&nbsp;=&nbsp;CV_SALES&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Amount<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;IV_WAERS.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"통화코드<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_BSEG&nbsp;TO&nbsp;GT_BSEG.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;2.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"공통정보<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.&nbsp;"&nbsp;전표번호<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BUKRS&nbsp;=&nbsp;1000.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;회사코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GJAHR&nbsp;=&nbsp;2024.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;회계연도<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"[50]&nbsp;매출&nbsp;계정&nbsp;&nbsp;&nbsp;-&nbsp;공제액&nbsp;IV_CHARGE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BSCHL&nbsp;=&nbsp;'50'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"대변<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-SAKNR&nbsp;=&nbsp;GV_PRECON.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"G/L&nbsp;매출계정(직영점)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GLTXT&nbsp;=&nbsp;'(매출'&nbsp;&&&nbsp;IV_PLANT&nbsp;&&')'.&nbsp;&nbsp;&nbsp;&nbsp;"G/L&nbsp;Text<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;=&nbsp;&nbsp;&nbsp;IV_CHARGE.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Amount<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;IV_WAERS.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"통화코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BPCODE&nbsp;=&nbsp;&nbsp;IV_CUSCODE.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"BP&nbsp;CODE<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"현지&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;=&nbsp;&nbsp;&nbsp;CV_CHARGE.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Amount<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;IV_WAERS.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"통화코드<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"국제(전표)&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;CV_CHARGE.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Amount<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;IV_WAERS.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"통화코드<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_BSEG&nbsp;TO&nbsp;GT_BSEG.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;3.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"공통정보<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.&nbsp;"&nbsp;전표번호<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BUKRS&nbsp;=&nbsp;1000.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;회사코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GJAHR&nbsp;=&nbsp;2024.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;회계연도<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"[50]&nbsp;부가세&nbsp;예수금&nbsp;-&nbsp;세액&nbsp;&nbsp;IV_EATAX<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BSCHL&nbsp;=&nbsp;'50'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"대변<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-SAKNR&nbsp;=&nbsp;'210200'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"매출&nbsp;부가세<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GLTXT&nbsp;=&nbsp;'부가세예수금'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"G/L&nbsp;Text<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BPCODE&nbsp;=&nbsp;IV_CUSCODE.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"BP&nbsp;CODE<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"현지&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;=&nbsp;&nbsp;&nbsp;CV_EATAX.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Amount<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;IV_WAERS.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"통화코드<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"국제(전표)&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;CV_EATAX.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Amount<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;IV_WAERS.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"통화코드<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_BSEG&nbsp;TO&nbsp;GT_BSEG.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+&nbsp;&nbsp;ENDDO.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+*                         SAVE TO ZEA_BSEG<br />
+*----------------------------------------------------------------------<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;MODIFY&nbsp;ZEA_BSEG&nbsp;FROM&nbsp;TABLE&nbsp;GT_BSEG.<br />
+<br />
+&nbsp;&nbsp;MESSAGE&nbsp;GV_BELNR_NUMBER&nbsp;&&&nbsp;'번&nbsp;전표가&nbsp;생성되었습니다.&nbsp;'&nbsp;TYPE&nbsp;'S'.<br />
+<br />
+&nbsp;&nbsp;COMMIT&nbsp;WORK&nbsp;AND&nbsp;WAIT.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+*                     SAVE TO ZEA_FIT700<br />
+*----------------------------------------------------------------------<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;MOVE-CORRESPONDING&nbsp;GT_BSEG&nbsp;TO&nbsp;GT_FIT700.<br />
+<br />
+&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_FIT700&nbsp;INTO&nbsp;GS_FIT700&nbsp;.&nbsp;"WHERE&nbsp;BSCHL&nbsp;EQ&nbsp;'01'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GS_FIT700-XBLNR&nbsp;=&nbsp;IV_PAYNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GS_FIT700-BLDAT&nbsp;=&nbsp;IV_INVDT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GS_FIT700-BUDAT&nbsp;=&nbsp;SY-DATUM.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GS_FIT700-CUSCODE&nbsp;=&nbsp;GS_BSEG-BPCODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;GT_FIT700&nbsp;FROM&nbsp;GS_FIT700&nbsp;TRANSPORTING&nbsp;XBLNR&nbsp;CUSCODE&nbsp;BLDAT&nbsp;BUDAT.<br />
+&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+&nbsp;&nbsp;MODIFY&nbsp;ZEA_FIT700&nbsp;FROM&nbsp;TABLE&nbsp;GT_FIT700.<br />
+<br />
+&nbsp;&nbsp;COMMIT&nbsp;WORK&nbsp;AND&nbsp;WAIT.<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+*                          EXPORTING<br />
+*----------------------------------------------------------------------<br />
+*                        &lt;&lt; FI =&gt; SD &gt;&gt;<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;EV_BELNR&nbsp;=&nbsp;&nbsp;GV_BELNR_NUMBER.&nbsp;"전표번호&nbsp;Exporting<br />
+&nbsp;&nbsp;EV_BUKRS&nbsp;=&nbsp;&nbsp;1000.<br />
+&nbsp;&nbsp;EV_GJAHR&nbsp;=&nbsp;&nbsp;2024.<br />
+<br />
+ENDFUNCTION.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*Messages<br />
+*----------------------------------------------------------<br />
+*<br />
+* Message class: Hard coded<br />
+*   번 전표가 생성되었습니다.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,697 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI_KZ</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for function ZEA_FI_KZ</h2>
+<h3> Description: [FI] MM 모듈 KZ 자동함수 생성</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="code">
+FUNCTION ZEA_FI_KZ.<br />
+   </div>
+   <div class="codeComment">
+*"----------------------------------------------------------------------<br />
+*"*"Local Interface:<br />
+*"  IMPORTING<br />
+*"     REFERENCE(IV_AP_RECON) TYPE  ZEA_SAKNR<br />
+*"     REFERENCE(IV_BUDAT) TYPE  ZEA_BUDAT<br />
+*"     REFERENCE(IV_PAY_AMOUNT) TYPE  ZEA_DMBTR<br />
+*"     REFERENCE(IV_D_WAERS) TYPE  ZEA_WAERS<br />
+*"     REFERENCE(IV_KRW_AMOUNT) TYPE  ZEA_DMBTR<br />
+*"     REFERENCE(IV_WAERS) TYPE  ZEA_WAERS<br />
+*"     REFERENCE(IV_MBLNR) TYPE  ZEA_BELNR<br />
+*"     REFERENCE(IV_BANK_SAKNR) TYPE  ZEA_SAKNR<br />
+*"  EXPORTING<br />
+*"     REFERENCE(EV_BELNR) TYPE  ZEA_BELNR<br />
+*"----------------------------------------------------------------------<br />
+*& [MM-FI]                KZ 전표 생성 함수<br />
+*&---------------------------------------------------------------------*<br />
+*& [생성일자 : 2024-04-21] / [생성자 : 5반 1조 이세영]<br />
+*& [완료일자 : 2024-04-29] - 활용프로그램 [ZEA_FI070]<br />
+*& 1. 검토 내역 : FIT7800, BKPF, BSEG 테이블 내 저장 확인 (완료)<br />
+*& 2. 검토 내역 : 도/소매 레콘 기록 테스트 (완료)<br />
+*& 3. 고도화    : 환율 적용 (진행중)<br />
+*----------------------------------------------------------------------<br />
+*& [ CASE ]<br />
+
+<div class="codeComment">*       <a href ="global-zea_fi_kz.html">Global data declarations</a></div><br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;"STEP&nbsp;0.&nbsp;KA유형&nbsp;전표에서&nbsp;IV_WAERS와&nbsp;IV_D_WAERS가&nbsp;둘다&nbsp;KRW인&nbsp;경우,<br />
+   </div>
+   <div class="codeComment">
+*          즉, 국내 매입건인 경우는 차이없이 지급<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;"STEP&nbsp;1.&nbsp;USD로&nbsp;기록된&nbsp;AP를&nbsp;전기일(=환율기준일)&nbsp;기준&nbsp;환율을&nbsp;불러와&nbsp;환산<br />
+<br />
+&nbsp;&nbsp;"STEP&nbsp;2.&nbsp;지급일&nbsp;기준&nbsp;환율로&nbsp;환산된&nbsp;AP(KRW)와&nbsp;매입&nbsp;시&nbsp;인식한&nbsp;AP(KRW)를&nbsp;비교<br />
+&nbsp;&nbsp;"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;단,&nbsp;이&nbsp;때&nbsp;USD&nbsp;기준&nbsp;AP는&nbsp;동일하다.<br />
+<br />
+&nbsp;&nbsp;"STEP&nbsp;3.&nbsp;비교한&nbsp;이후&nbsp;아래와&nbsp;같은&nbsp;라인아이템을&nbsp;생성한다.<br />
+   </div>
+   <div class="codeComment">
+*& 1. KA(KRW) &gt; KZ(KRW)<br />
+*     [25] AP  [50] 예금<br />
+*              [50] 외환차익(710020)<br />
+*& 2.  KA(KRW) &lt; KZ(KRW)<br />
+*     [25] AP  [50] 예금<br />
+*     [40] 외환차손(730030)<br />
+*& 3.  KA(KRW) = KZ(KRW)<br />
+*     [25] AP  [50] 예금<br />
+<br />
+*& 4. &lt;CASE : 국내 매입건&gt;<br />
+*     KA(KRW) = KZ(KRW)<br />
+*     [25] AP  [50] 예금<br />
+*----------------------------------------------------------------------<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CLEAR:&nbsp;GS_BKPF,&nbsp;GS_BSEG.<br />
+&nbsp;&nbsp;REFRESH:&nbsp;GT_BKPF,&nbsp;GT_BSEG.<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+* -- 0. FI 전표번호 채번<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;PERFORM&nbsp;NR_ZEA_BELNR&nbsp;CHANGING&nbsp;GV_BELNR_NUMBER.&nbsp;&nbsp;"&nbsp;전표번호&nbsp;채번<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+* -- 1-1. 금액 변환(AP 지급 금액)<br />
+* ----- IV_PAY_AMOUNT =&gt; LV_AP_AMOUNT 옮김.<br />
+* 1000원으로 입력하는 경우 =&gt; 100,000 원으로 저장되는 경우가 있음. 그래서 00개를 떨궈줌.<br />
+*<br />
+*  CASE IV_WAERS.<br />
+*    WHEN 'KRW'.<br />
+*      CALL FUNCTION 'BAPI_CURRENCY_CONV_TO_INTERNAL'<br />
+*        EXPORTING<br />
+*          AMOUNT_EXTERNAL      = IV_PAY_AMOUNT   "총 미결금액( USD나 이런 애들을 넣어주면)<br />
+*          CURRENCY             = IV_WAERS<br />
+*          MAX_NUMBER_OF_DIGITS = 23              "출력할 금액필드의 자릿수<br />
+*        IMPORTING<br />
+*          AMOUNT_INTERNAL      = LV_AP_AMOUNT.   "여기서 (KRW마냥, .00을 없애줌)<br />
+*  ENDCASE.<br />
+*<br />
+** -- 1-2. 이외 저장 값 변환(AP 지급 금액)<br />
+*  CALL FUNCTION 'BAPI_CURRENCY_CONV_TO_INTERNAL'<br />
+*    EXPORTING<br />
+*      AMOUNT_EXTERNAL      = IV_KRW_AMOUNT   "총 미결금액<br />
+*      CURRENCY             = IV_WAERS<br />
+*      MAX_NUMBER_OF_DIGITS = 23        "출력할 금액필드의 자릿수"<br />
+*    IMPORTING<br />
+*      AMOUNT_INTERNAL      = GV_KAAP_AMT.<br />
+<br />
+*----------------------------------------------------------------------<br />
+*                        [FI 전표 헤더 생성]<br />
+*----------------------------------------------------------------------<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;GS_BKPF-BUKRS&nbsp;=&nbsp;'1000'.<br />
+&nbsp;&nbsp;GS_BKPF-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+&nbsp;&nbsp;GS_BKPF-GJAHR&nbsp;=&nbsp;'2024'.<br />
+&nbsp;&nbsp;GS_BKPF-BLART&nbsp;=&nbsp;'KZ'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;A/P&nbsp;대금지급&nbsp;전표<br />
+&nbsp;&nbsp;GS_BKPF-BUDAT&nbsp;=&nbsp;SY-DATUM.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;KA&nbsp;전기일자&nbsp;=&gt;&nbsp;[FI]&nbsp;헤더&nbsp;-&nbsp;전기일자<br />
+&nbsp;&nbsp;GS_BKPF-BLDAT&nbsp;=&nbsp;SY-DATUM.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;증빙일자<br />
+&nbsp;&nbsp;GS_BKPF-BLTXT&nbsp;=&nbsp;'[MM]&nbsp;지급전표'.<br />
+&nbsp;&nbsp;GS_BKPF-XBLNR&nbsp;=&nbsp;IV_MBLNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;KA전표&nbsp;번호&nbsp;=&gt;&nbsp;[FI]&nbsp;헤더&nbsp;-&nbsp;참조문서<br />
+<br />
+&nbsp;&nbsp;"&nbsp;생성&nbsp;관련&nbsp;정보<br />
+&nbsp;&nbsp;GS_BKPF-ERDAT&nbsp;=&nbsp;SY-DATUM.&nbsp;"&nbsp;생성일자를&nbsp;오늘로<br />
+&nbsp;&nbsp;GS_BKPF-ERZET&nbsp;=&nbsp;SY-UZEIT.&nbsp;"&nbsp;생성시간을&nbsp;현재&nbsp;시간으로<br />
+&nbsp;&nbsp;GS_BKPF-ERNAM&nbsp;=&nbsp;'ACA5-17'.&nbsp;"&nbsp;생성자를&nbsp;현재&nbsp;로그인한&nbsp;사용자ID<br />
+<br />
+   </div>
+   <div class="codeComment">
+*-- SAVE ZEA_BKPF(전표헤더)<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;EQ&nbsp;0&nbsp;.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;INSERT&nbsp;&nbsp;ZEA_BKPF&nbsp;FROM&nbsp;GS_BKPF.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;ZEA_BKPF&nbsp;FROM&nbsp;&nbsp;&nbsp;ZEA_BKPF.<br />
+&nbsp;&nbsp;ENDIF.<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+* -- 2. 환율 불러와  A/P(USD)를 원화로 환산<br />
+<br />
+* -- 2-1. KA전표 내 AP(KRW) 값 찾기<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;SELECT&nbsp;&nbsp;SINGLE&nbsp;*&nbsp;FROM&nbsp;ZEA_BSEG&nbsp;INTO&nbsp;ZEA_BSEG<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BELNR&nbsp;EQ&nbsp;IV_MBLNR&nbsp;"KA유형&nbsp;전표번호<br />
+&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;&nbsp;&nbsp;BSCHL&nbsp;EQ&nbsp;'31'.&nbsp;&nbsp;&nbsp;&nbsp;"A/P&nbsp;인식&nbsp;시&nbsp;사용하는&nbsp;전기키<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- [통화코드 확인]<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;"만약,&nbsp;A/P&nbsp;인식&nbsp;통화가&nbsp;모두&nbsp;KRW라면,&nbsp;굳이&nbsp;환산하지&nbsp;않아도&nbsp;됨.<br />
+&nbsp;&nbsp;IF&nbsp;ZEA_BSEG-D_WAERS&nbsp;EQ&nbsp;'USD'.&nbsp;"전표&nbsp;표시&nbsp;통화가&nbsp;USD인&nbsp;경우<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;ZEA_TCURR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;GT_TCURR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;GS_TCURR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;C_RATIO.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*------- 오늘 환율 읽어오기<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;*&nbsp;FROM&nbsp;ZEA_TCURR&nbsp;INTO&nbsp;&nbsp;ZEA_TCURR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;GDATU&nbsp;EQ&nbsp;SY-DATUM<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;FCURR&nbsp;EQ&nbsp;'KRW'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;TCURR&nbsp;EQ&nbsp;'USD'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_COVT_AMOUNT&nbsp;&nbsp;=&nbsp;ZEA_BSEG-DMBTR&nbsp;*&nbsp;ZEA_TCURR-UKURS&nbsp;/&nbsp;100.&nbsp;&nbsp;&nbsp;"당일&nbsp;환율&nbsp;활용<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-W_WAERS&nbsp;=&nbsp;'KRW'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C_RATIO&nbsp;=&nbsp;ZEA_TCURR-UKURS.&nbsp;"환율&nbsp;보관&nbsp;변수에&nbsp;보관<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;NE&nbsp;0.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;가장&nbsp;마지막&nbsp;환율&nbsp;값을&nbsp;읽어와야&nbsp;한다.<br />
+   </div>
+   <div class="codeComment">
+*      IF GS_TCURR-GDATU EQ '00000000'.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;*&nbsp;FROM&nbsp;ZEA_TCURR&nbsp;INTO&nbsp;TABLE&nbsp;GT_TCURR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;TCURR&nbsp;=&nbsp;'USD'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;FCURR&nbsp;=&nbsp;'KRW'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ORDER&nbsp;BY&nbsp;GDATU&nbsp;DESCENDING.<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_TCURR&nbsp;INTO&nbsp;GS_TCURR&nbsp;INDEX&nbsp;1.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*       환산금액(KRW) = 총 매입금액 / 환율<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_COVT_AMOUNT&nbsp;&nbsp;=&nbsp;ZEA_BSEG-DMBTR&nbsp;*&nbsp;GS_TCURR-UKURS&nbsp;/&nbsp;100&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;"주말인&nbsp;경우,&nbsp;환율&nbsp;활용<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C_RATIO&nbsp;=&nbsp;GS_TCURR-UKURS.&nbsp;"환율&nbsp;보관&nbsp;변수에&nbsp;보관<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-W_WAERS&nbsp;=&nbsp;'KRW'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- [통화코드 확인]<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;ELSE.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"그렇지&nbsp;않으면&nbsp;(=즉,&nbsp;둘다&nbsp;모두&nbsp;'KRW'통화키&nbsp;인&nbsp;경우에는&nbsp;환산하지&nbsp;않음)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"그냥&nbsp;아래&nbsp;변수&nbsp;그대로&nbsp;사용하면&nbsp;됨.&nbsp;&nbsp;IV_PAY_AMOUNT,&nbsp;IV_KRW_AMOUNT<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;DATA&nbsp;LV_X&nbsp;TYPE&nbsp;C.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"해외&nbsp;매입건인&nbsp;경우&nbsp;'&nbsp;',&nbsp;국내&nbsp;매입건인&nbsp;경우&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;LV_X&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+*                     [FI 전표 아이템 생성]<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CASE&nbsp;LV_X.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'&nbsp;'.&nbsp;&nbsp;&nbsp;"&nbsp;D&nbsp;=&nbsp;USD,&nbsp;W&nbsp;=&nbsp;KRW<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+*  GV_COVT_AMOUNT 와 IV_KRW_AMOUNT 값 중 비교   =&gt; 외환차손/외환차익 인식<br />
+* -- 1.  환산A/P(GV_COVT_AMOUNT) 와 매입시 인식한 A/P(KRW)비교<br />
+*     [25] AP  [50] 예금<br />
+*              [50] 외환차익(710020)<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;IV_KRW_AMOUNT&nbsp;&gt;&nbsp;GV_COVT_AMOUNT.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"[KA]&nbsp;A/P(KRW)&nbsp;&gt;&nbsp;[KZ]&nbsp;A/P(KRW)&nbsp;=&gt;&gt;&nbsp;외환차익&nbsp;인식<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DO&nbsp;3&nbsp;TIMES.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-ITNUM&nbsp;=&nbsp;SY-INDEX.&nbsp;&nbsp;"&nbsp;Item&nbsp;번호<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;GS_BSEG-ITNUM.<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 1.1.1.<br />
+* FI 전표 아이템(차변: A/P 감소)  [25] AP<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;1.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BUKRS&nbsp;=&nbsp;'1000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GJAHR&nbsp;=&nbsp;'2024'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BSCHL&nbsp;=&nbsp;'25'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;전기키<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-SAKNR&nbsp;=&nbsp;&nbsp;IV_AP_RECON.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정&nbsp;(Recon)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GLTXT&nbsp;=&nbsp;'A/P&nbsp;반제'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGBL&nbsp;=&nbsp;&nbsp;IV_MBLNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;KA전표&nbsp;번호<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BPCODE&nbsp;=&nbsp;ZEA_BSEG-BPCODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGDT&nbsp;=&nbsp;'X'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"국제(전표)&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;&nbsp;&nbsp;=&nbsp;IV_PAY_AMOUNT.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;반제&nbsp;필요금액(USD)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;IV_D_WAERS.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;USD<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"현지&nbsp;금액(KRW)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;&nbsp;&nbsp;=&nbsp;IV_KRW_AMOUNT.<br />
+   </div>
+   <div class="codeComment">
+*              GS_BSEG-WRBTR    = GV_COVT_AMOUNT.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;&nbsp;IV_WAERS.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WERKS&nbsp;=&nbsp;'10000'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_BSEG&nbsp;TO&nbsp;GT_BSEG.<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 1.1.2.<br />
+* FI 전표 아이템(대변 : 예금 감소) [50] 예금<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;2.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BUKRS&nbsp;=&nbsp;'1000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GJAHR&nbsp;=&nbsp;'2024'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BSCHL&nbsp;=&nbsp;'50'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;전기키<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-SAKNR&nbsp;=&nbsp;IV_BANK_SAKNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정&nbsp;(Recon)&nbsp;-&nbsp;BANK&nbsp;CODE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GLTXT&nbsp;=&nbsp;'당좌예금'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGBL&nbsp;=&nbsp;&nbsp;IV_MBLNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;KA전표&nbsp;번호<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BPCODE&nbsp;=&nbsp;ZEA_BSEG-BPCODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGDT&nbsp;=&nbsp;'X'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"국제(전표)&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;IV_PAY_AMOUNT.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;반제&nbsp;필요금액(USD)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;IV_D_WAERS.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"현지&nbsp;금액(KRW)<br />
+   </div>
+   <div class="codeComment">
+*              GS_BSEG-WRBTR   = IV_PAY_AMOUNT * C_RATIO / 100.  " 기준일 환율 환산금액(KRW)<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;GV_COVT_AMOUNT&nbsp;&nbsp;.&nbsp;"&lt;==&nbsp;오늘&nbsp;일자로&nbsp;환산된&nbsp;금액이&nbsp;들어가야&nbsp;함.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;&nbsp;IV_WAERS.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WERKS&nbsp;=&nbsp;'10000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_BSEG&nbsp;TO&nbsp;GT_BSEG.<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 1.1.3.<br />
+* FI 전표 아이템(대변: 외환차익 인식)  [50] 외환차익(710020)<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;3.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BUKRS&nbsp;=&nbsp;'1000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GJAHR&nbsp;=&nbsp;'2024'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BSCHL&nbsp;=&nbsp;'50'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;전기키<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-SAKNR&nbsp;=&nbsp;'710020'&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정&nbsp;(Recon)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GLTXT&nbsp;=&nbsp;'외환차익'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGBL&nbsp;=&nbsp;&nbsp;IV_MBLNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;KA전표&nbsp;번호<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BPCODE&nbsp;=&nbsp;ZEA_BSEG-BPCODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGDT&nbsp;=&nbsp;'X'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"국제(전표)&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KRW&nbsp;금액&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;환율&nbsp;&nbsp;=&nbsp;USD<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;(&nbsp;IV_KRW_AMOUNT&nbsp;-&nbsp;GV_COVT_AMOUNT&nbsp;)&nbsp;&nbsp;/&nbsp;C_RATIO&nbsp;&nbsp;*&nbsp;100&nbsp;.&nbsp;&nbsp;&nbsp;"차액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;IV_D_WAERS.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"현지&nbsp;금액(KRW)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;=&nbsp;IV_KRW_AMOUNT&nbsp;-&nbsp;&nbsp;GV_COVT_AMOUNT&nbsp;.&nbsp;"차액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;&nbsp;IV_WAERS.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WERKS&nbsp;=&nbsp;'10000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_BSEG&nbsp;TO&nbsp;GT_BSEG.<br />
+<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDDO.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+*                     [FI 전표 아이템 생성]<br />
+*----------------------------------------------------------------------<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSEIF&nbsp;IV_KRW_AMOUNT&nbsp;&lt;&nbsp;GV_COVT_AMOUNT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"[KA]&nbsp;A/P(KRW)&nbsp;&lt;&nbsp;[KZ]&nbsp;A/P(KRW)&nbsp;=&gt;&gt;&nbsp;외환차손&nbsp;인식<br />
+   </div>
+   <div class="codeComment">
+*      KA(KRW) &lt; KZ(KRW)<br />
+*     [25] AP  [50] 예금<br />
+*     [40] 외환차손(730030)<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DO&nbsp;3&nbsp;TIMES.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-ITNUM&nbsp;=&nbsp;SY-INDEX.&nbsp;&nbsp;"&nbsp;Item&nbsp;번호<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;GS_BSEG-ITNUM.<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 3.2.1.  FI 전표 아이템(차변: A/P 감소)  [25] AP<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;1.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BUKRS&nbsp;=&nbsp;'1000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GJAHR&nbsp;=&nbsp;'2024'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BSCHL&nbsp;=&nbsp;'25'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;전기키<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-SAKNR&nbsp;=&nbsp;&nbsp;IV_AP_RECON.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정&nbsp;(Recon)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GLTXT&nbsp;=&nbsp;'A/P&nbsp;반제'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGBL&nbsp;=&nbsp;&nbsp;IV_MBLNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;KA전표&nbsp;번호<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BPCODE&nbsp;=&nbsp;ZEA_BSEG-BPCODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGDT&nbsp;=&nbsp;'X'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"국제(전표)&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;&nbsp;&nbsp;=&nbsp;IV_PAY_AMOUNT.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;반제&nbsp;필요금액(USD)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;IV_D_WAERS.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;USD<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"현지&nbsp;금액(KRW)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;&nbsp;&nbsp;=&nbsp;IV_KRW_AMOUNT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;IV_WAERS.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WERKS&nbsp;=&nbsp;'10000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_BSEG&nbsp;TO&nbsp;GT_BSEG.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 3.2.2. FI 전표 아이템(대변 : 예금 감소) [50] 예금<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;2.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BUKRS&nbsp;=&nbsp;'1000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GJAHR&nbsp;=&nbsp;'2024'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BSCHL&nbsp;=&nbsp;'50'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;전기키<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-SAKNR&nbsp;=&nbsp;IV_BANK_SAKNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정&nbsp;(Recon)&nbsp;-&nbsp;BANK&nbsp;CODE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GLTXT&nbsp;=&nbsp;'당좌예금'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGBL&nbsp;=&nbsp;&nbsp;IV_MBLNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;KA전표&nbsp;번호<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BPCODE&nbsp;=&nbsp;ZEA_BSEG-BPCODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGDT&nbsp;=&nbsp;'X'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"국제(전표)&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;&nbsp;&nbsp;=&nbsp;IV_PAY_AMOUNT&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;"&nbsp;반제&nbsp;필요금액(USD)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;IV_D_WAERS.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"현지&nbsp;금액(KRW)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;GV_COVT_AMOUNT&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"기준일&nbsp;환율&nbsp;환산금액(KRW)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;IV_WAERS.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WERKS&nbsp;=&nbsp;'10000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_BSEG&nbsp;TO&nbsp;GT_BSEG.<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 3.2.3.FI 전표 아이템(대변: 외환차손 인식)  [40] 외환차손(730030)<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;3.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BUKRS&nbsp;=&nbsp;'1000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GJAHR&nbsp;=&nbsp;'2024'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BSCHL&nbsp;=&nbsp;'40'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;전기키<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-SAKNR&nbsp;=&nbsp;&nbsp;'730030'&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정&nbsp;(Recon)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GLTXT&nbsp;=&nbsp;'외환차손'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGBL&nbsp;=&nbsp;&nbsp;IV_MBLNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;KA전표&nbsp;번호<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BPCODE&nbsp;=&nbsp;ZEA_BSEG-BPCODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGDT&nbsp;=&nbsp;'X'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"국제(전표)&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;&nbsp;&nbsp;=&nbsp;(&nbsp;GV_COVT_AMOUNT&nbsp;&nbsp;-&nbsp;&nbsp;IV_KRW_AMOUNT&nbsp;)&nbsp;&nbsp;/&nbsp;C_RATIO&nbsp;&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;"차액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;IV_D_WAERS.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"현지&nbsp;금액(KRW)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;GV_COVT_AMOUNT&nbsp;&nbsp;-&nbsp;&nbsp;IV_KRW_AMOUNT&nbsp;.&nbsp;"차액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;&nbsp;&nbsp;IV_WAERS.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WERKS&nbsp;=&nbsp;'10000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_BSEG&nbsp;TO&nbsp;GT_BSEG.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDDO.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+*                     [FI 전표 아이템 생성]<br />
+*----------------------------------------------------------------------<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSE.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;KA(KRW)&nbsp;=&nbsp;KZ(KRW)<br />
+   </div>
+   <div class="codeComment">
+*                   [25] AP  [50] 예금<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DO&nbsp;2&nbsp;TIMES.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-ITNUM&nbsp;=&nbsp;SY-INDEX.&nbsp;&nbsp;"&nbsp;Item&nbsp;번호<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 3-1. FI 전표 아이템 (차) A/P 감소<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;GS_BSEG-ITNUM.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;1.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BUKRS&nbsp;=&nbsp;'1000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GJAHR&nbsp;=&nbsp;'2024'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BSCHL&nbsp;=&nbsp;'25'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;전기키<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-SAKNR&nbsp;=&nbsp;&nbsp;IV_AP_RECON.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정&nbsp;(Recon)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GLTXT&nbsp;=&nbsp;'A/P&nbsp;반제'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGBL&nbsp;=&nbsp;&nbsp;IV_MBLNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;KA전표&nbsp;번호<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BPCODE&nbsp;=&nbsp;ZEA_BSEG-BPCODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGDT&nbsp;=&nbsp;'X'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"국제(전표)&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;IV_PAY_AMOUNT.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"매입&nbsp;시&nbsp;계약했던&nbsp;A/P(USD)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;&nbsp;IV_D_WAERS.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"현지&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;IV_KRW_AMOUNT.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;&nbsp;IV_WAERS.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WERKS&nbsp;=&nbsp;'10000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_BSEG&nbsp;TO&nbsp;GT_BSEG.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 3-2. FI 전표 아이템 (대) 예금 감소<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;2.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BUKRS&nbsp;=&nbsp;'1000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GJAHR&nbsp;=&nbsp;'2024'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BSCHL&nbsp;=&nbsp;'50'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;전기키<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-SAKNR&nbsp;=&nbsp;IV_BANK_SAKNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정&nbsp;(Recon)&nbsp;-&nbsp;BANK&nbsp;CODE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GLTXT&nbsp;=&nbsp;'당좌예금'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGBL&nbsp;=&nbsp;&nbsp;IV_MBLNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;KA전표&nbsp;번호<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BPCODE&nbsp;=&nbsp;ZEA_BSEG-BPCODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGDT&nbsp;=&nbsp;'X'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"국제(전표)&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;IV_PAY_AMOUNT.&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;ZEA_TCURR-UKURS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;IV_D_WAERS.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;환율&nbsp;기준일에&nbsp;해당하는&nbsp;USD의&nbsp;환율을&nbsp;보관<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"현지&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;GV_COVT_AMOUNT.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WERKS&nbsp;=&nbsp;'10000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;&nbsp;IV_WAERS.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_BSEG&nbsp;TO&nbsp;GT_BSEG.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDDO.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+*                     [FI 전표 아이템 생성]<br />
+*----------------------------------------------------------------------<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'X'.&nbsp;&nbsp;"&nbsp;D&nbsp;=&nbsp;KRW,&nbsp;W&nbsp;=&nbsp;KRW<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DO&nbsp;2&nbsp;TIMES.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[25]&nbsp;AP&nbsp;&nbsp;[50]&nbsp;예금<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-ITNUM&nbsp;=&nbsp;SY-INDEX.&nbsp;&nbsp;&nbsp;"&nbsp;Item&nbsp;번호<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 3-1. FI 전표 아이템 (차) A/P 감소<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;GS_BSEG-ITNUM.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;1.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BUKRS&nbsp;=&nbsp;'1000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GJAHR&nbsp;=&nbsp;'2024'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BSCHL&nbsp;=&nbsp;'25'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;전기키<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-SAKNR&nbsp;=&nbsp;&nbsp;IV_AP_RECON.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정&nbsp;(Recon)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GLTXT&nbsp;=&nbsp;'A/P&nbsp;반제'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGBL&nbsp;=&nbsp;&nbsp;IV_MBLNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;KA전표&nbsp;번호<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BPCODE&nbsp;=&nbsp;ZEA_BSEG-BPCODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGDT&nbsp;=&nbsp;'X'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"국제(전표)&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;IV_PAY_AMOUNT.&nbsp;&nbsp;"매입&nbsp;시&nbsp;계약했던&nbsp;A/P(USD)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;IV_D_WAERS.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"현지&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;IV_KRW_AMOUNT.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;&nbsp;IV_WAERS.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WERKS&nbsp;=&nbsp;'10000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_BSEG&nbsp;TO&nbsp;GT_BSEG.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 3-2. FI 전표 아이템 (대) 예금 감소<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;2.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BUKRS&nbsp;=&nbsp;'1000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GJAHR&nbsp;=&nbsp;'2024'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BSCHL&nbsp;=&nbsp;'50'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;전기키<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-SAKNR&nbsp;=&nbsp;IV_BANK_SAKNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정&nbsp;(Recon)&nbsp;-&nbsp;BANK&nbsp;CODE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GLTXT&nbsp;=&nbsp;'당좌예금'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정명<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGBL&nbsp;=&nbsp;&nbsp;IV_MBLNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;KA전표&nbsp;번호<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BPCODE&nbsp;=&nbsp;ZEA_BSEG-BPCODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGDT&nbsp;=&nbsp;'X'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"국제(전표)&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;IV_PAY_AMOUNT.&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;ZEA_TCURR-UKURS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;&nbsp;IV_D_WAERS.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;환율&nbsp;기준일에&nbsp;해당하는&nbsp;USD의&nbsp;환율을&nbsp;보관<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"현지&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;IV_KRW_AMOUNT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;&nbsp;IV_WAERS.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WERKS&nbsp;=&nbsp;'10000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_BSEG&nbsp;TO&nbsp;GT_BSEG.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDDO.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;ENDCASE.<br />
+   </div>
+   <div class="codeComment">
+*                       SAVE TO ZEA_BSEG<br />
+*----------------------------------------------------------------------<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;MODIFY&nbsp;ZEA_BSEG&nbsp;FROM&nbsp;TABLE&nbsp;GT_BSEG.<br />
+<br />
+&nbsp;&nbsp;MESSAGE&nbsp;GV_BELNR_NUMBER&nbsp;&&&nbsp;'번&nbsp;전표가&nbsp;생성되었습니다.&nbsp;'&nbsp;TYPE&nbsp;'S'.<br />
+<br />
+&nbsp;&nbsp;COMMIT&nbsp;WORK&nbsp;AND&nbsp;WAIT.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+*                     SAVE TO ZEA_FIT800<br />
+*----------------------------------------------------------------------<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;MOVE-CORRESPONDING&nbsp;GT_BSEG&nbsp;TO&nbsp;GT_FIT800.<br />
+&nbsp;&nbsp;MODIFY&nbsp;ZEA_FIT800&nbsp;FROM&nbsp;TABLE&nbsp;GT_FIT800.<br />
+<br />
+&nbsp;&nbsp;COMMIT&nbsp;WORK&nbsp;AND&nbsp;WAIT.<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+*                          EXPORTING<br />
+*----------------------------------------------------------------------<br />
+*                        &lt;&lt; FI =&gt; MM &gt;&gt;<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;EV_BELNR&nbsp;=&nbsp;&nbsp;GV_BELNR_NUMBER.&nbsp;"전표번호&nbsp;Exporting<br />
+<br />
+ENDFUNCTION.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*Messages<br />
+*----------------------------------------------------------<br />
+*<br />
+* Message class: Hard coded<br />
+*   번 전표가 생성되었습니다.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

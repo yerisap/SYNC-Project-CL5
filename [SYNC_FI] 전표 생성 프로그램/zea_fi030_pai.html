@@ -1,0 +1,662 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI030_PAI</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZEA_FI030_PAI</h2>
+<h3> Description: Include ZEA_GL_DISPLAY_PAI</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Include&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_GL_DISPLAY_PAI<br />
+*&---------------------------------------------------------------------*<br />
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;USER_COMMAND_0100&nbsp;&nbsp;INPUT<br />
+*&---------------------------------------------------------------------*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
+*----------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE USER_COMMAND_0100 INPUT.<br />
+&nbsp;&nbsp;CASE&nbsp;OK_CODE.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'BACK'.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;TO&nbsp;SCREEN&nbsp;0200.<br />
+<br />
+*&nbsp;--&nbsp;&nbsp;Item&nbsp;itab&nbsp;데이터&nbsp;저장&nbsp;/&nbsp;엔터시에도&nbsp;저장<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'FC_ADD'.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;''.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;SAVE_ITEM_DATA.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;사용&nbsp;설명<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'INFO'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CALL&nbsp;SCREEN&nbsp;0150&nbsp;STARTING&nbsp;AT&nbsp;5&nbsp;5.<br />
+<br />
+&nbsp;&nbsp;ENDCASE.<br />
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;EXIT_0200&nbsp;&nbsp;INPUT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE EXIT_0200 INPUT.<br />
+&nbsp;&nbsp;CASE&nbsp;OK_CODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'EXIT'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;PROGRAM.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'CANC'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;TO&nbsp;SCREEN&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'AUTO'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CALL&nbsp;TRANSACTION&nbsp;'ZEA_FI070'.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;환율&nbsp;조회<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'UKURS'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CALL&nbsp;TRANSACTION&nbsp;'ZEA_FI050_TCURR'.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;사용&nbsp;설명<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'INFO'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CALL&nbsp;SCREEN&nbsp;0250&nbsp;STARTING&nbsp;AT&nbsp;5&nbsp;5.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;BP&nbsp;Master<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'BP'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CALL&nbsp;SCREEN&nbsp;0300&nbsp;STARTING&nbsp;AT&nbsp;5&nbsp;5.<br />
+<br />
+&nbsp;&nbsp;ENDCASE.<br />
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;EXIT_0100&nbsp;&nbsp;INPUT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE EXIT_0100 INPUT.<br />
+&nbsp;&nbsp;CASE&nbsp;OK_CODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'EXIT'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;PROGRAM.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'CANC'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;TO&nbsp;SCREEN&nbsp;0.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;&nbsp;ZEA_BSEG&nbsp;테이블에&nbsp;값&nbsp;저장<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'SAVE'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;SAVE_ALL_DATA.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;&nbsp;Item&nbsp;itab&nbsp;데이터&nbsp;삭제<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'FC_DEL'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;DELETE_ITEM_DATA.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;환율&nbsp;조회<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'UKURS'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CALL&nbsp;TRANSACTION&nbsp;'ZEA_FI050_TCURR'.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;사용&nbsp;설명<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'INFO'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CALL&nbsp;SCREEN&nbsp;0150&nbsp;STARTING&nbsp;AT&nbsp;5&nbsp;5.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;BP&nbsp;Master<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'BP'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CALL&nbsp;SCREEN&nbsp;0300&nbsp;STARTING&nbsp;AT&nbsp;5&nbsp;5.<br />
+<br />
+&nbsp;&nbsp;ENDCASE.<br />
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;USER_COMMAND_0200&nbsp;&nbsp;INPUT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE USER_COMMAND_0200 INPUT.<br />
+<br />
+&nbsp;&nbsp;CASE&nbsp;OK_CODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;''.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;여기서&nbsp;RECON&nbsp;입력&nbsp;값은&nbsp;해당&nbsp;로직을&nbsp;타지&nbsp;않는다.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MOVE-CORRESPONDING&nbsp;ZEA_BKPF&nbsp;TO&nbsp;GS_BKPF.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;INPUT_CHECK.&nbsp;"&nbsp;전기키&nbsp;값&nbsp;체크<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'BACK'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;TO&nbsp;SCREEN&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;현재화면에&nbsp;머무르도록<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;TO&nbsp;SCREEN&nbsp;200.<br />
+&nbsp;&nbsp;ENDCASE.<br />
+<br />
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;CHECK_BSCHL&nbsp;&nbsp;INPUT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE CHECK_BSCHL INPUT.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;ZEA_TBSL-BSCHL&nbsp;"&nbsp;전기키<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;SELECT&nbsp;*&nbsp;FROM&nbsp;ZEA_TBSL<br />
+&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;TABLE&nbsp;GT_TBSL<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BSCHL&nbsp;EQ&nbsp;ZEA_TBSL-BSCHL.<br />
+<br />
+&nbsp;&nbsp;IF&nbsp;GT_TBSL[]&nbsp;IS&nbsp;INITIAL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'올바른&nbsp;전기키를&nbsp;선택해주세요'&nbsp;TYPE&nbsp;'E'.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;CHECK_ENTER&nbsp;&nbsp;INPUT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE CHECK_ENTER INPUT.<br />
+<br />
+&nbsp;&nbsp;IF&nbsp;OK_CODE&nbsp;EQ&nbsp;'SAVE'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;CHECK_BEFORE_SAVE.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;CHECK&nbsp;OK_CODE&nbsp;NE&nbsp;'SAVE'.<br />
+<br />
+&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_DATA&nbsp;INTO&nbsp;GS_DATA&nbsp;INDEX&nbsp;0.&nbsp;"&nbsp;마지막&nbsp;줄을&nbsp;읽어와서,<br />
+<br />
+&nbsp;&nbsp;"&nbsp;화면의&nbsp;입력한&nbsp;값이&nbsp;마지막&nbsp;줄&nbsp;GL코드/전기키&nbsp;다를때만&nbsp;아래&nbsp;로직이&nbsp;실행되도록&nbsp;CHECK<br />
+&nbsp;&nbsp;CHECK&nbsp;GS_DATA-SAKNR&nbsp;NE&nbsp;ZEA_BSEG-SAKNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;OR&nbsp;GS_DATA-BSCHL&nbsp;NE&nbsp;ZEA_TBSL-BSCHL<br />
+&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;OK_CODE&nbsp;EQ&nbsp;''.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;엔터&nbsp;시,&nbsp;0인&nbsp;금액이&nbsp;들어가지&nbsp;않도록&nbsp;Message<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;IF&nbsp;ZEA_BSEG-DMBTR&nbsp;EQ&nbsp;0&nbsp;AND&nbsp;S0100-DIFFERENC&nbsp;EQ&nbsp;0&nbsp;AND&nbsp;OK_CODE&nbsp;=&nbsp;''.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'금액을&nbsp;입력해주세요'&nbsp;TYPE&nbsp;'E'.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;Tax&nbsp;박스&nbsp;체크&nbsp;후&nbsp;엔터&nbsp;시,입력&nbsp;값을&nbsp;막음<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;IF&nbsp;ZEA_BSEG-DMBTR&nbsp;EQ&nbsp;0&nbsp;&nbsp;AND&nbsp;S0100-TAX&nbsp;EQ&nbsp;ABAP_ON.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'금액을&nbsp;입력해주세요'&nbsp;TYPE&nbsp;'E'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXIT.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;엔터&nbsp;시,&nbsp;다른&nbsp;Indicator&nbsp;에서만&nbsp;차액&nbsp;금액이&nbsp;들어가도록&nbsp;Message<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;IF&nbsp;ZEA_BSEG-DMBTR&nbsp;EQ&nbsp;0&nbsp;AND&nbsp;S0100-DIFFERENC&nbsp;&gt;&nbsp;0&nbsp;AND&nbsp;OK_CODE&nbsp;=&nbsp;''&nbsp;.&nbsp;"&nbsp;차변이&nbsp;크다<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;화면에&nbsp;입력한&nbsp;전기키가&nbsp;대변이면<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;엔터&nbsp;시,&nbsp;차액이&nbsp;들어가도록&nbsp;로직<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;1.&nbsp;화면에&nbsp;입력한&nbsp;전기키와&nbsp;일치하는&nbsp;한&nbsp;줄의&nbsp;데이터를&nbsp;읽어온다.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_TBSL&nbsp;INTO&nbsp;GS_TBSL&nbsp;WITH&nbsp;KEY&nbsp;BSCHL&nbsp;=&nbsp;ZEA_TBSL-BSCHL.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;2.&nbsp;전기키가&nbsp;H&nbsp;이여야만&nbsp;공백&nbsp;입력&nbsp;시,&nbsp;차액&nbsp;입력&nbsp;가능하도록<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;GS_TBSL-INDI_CD.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'H'.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;S0100-TAX&nbsp;EQ&nbsp;'X'.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-DMBTR&nbsp;=&nbsp;ABS(&nbsp;S0100-DIFFERENC&nbsp;*&nbsp;9&nbsp;/&nbsp;10&nbsp;).<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSE.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-DMBTR&nbsp;=&nbsp;ABS(&nbsp;S0100-DIFFERENC&nbsp;).<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'S'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'금액을&nbsp;입력해주세요'&nbsp;TYPE&nbsp;'E'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXIT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+<br />
+&nbsp;&nbsp;ELSEIF&nbsp;ZEA_BSEG-DMBTR&nbsp;EQ&nbsp;'0'&nbsp;AND&nbsp;S0100-DIFFERENC&nbsp;&lt;&nbsp;0&nbsp;AND&nbsp;OK_CODE&nbsp;=&nbsp;''.&nbsp;"&nbsp;대변이&nbsp;크다<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_TBSL&nbsp;INTO&nbsp;GS_TBSL&nbsp;WITH&nbsp;KEY&nbsp;BSCHL&nbsp;=&nbsp;ZEA_TBSL-BSCHL.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;GS_TBSL-INDI_CD.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'S'.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;S0100-TAX&nbsp;EQ&nbsp;'X'.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-DMBTR&nbsp;=&nbsp;ABS(&nbsp;S0100-DIFFERENC&nbsp;*&nbsp;9&nbsp;/&nbsp;10&nbsp;).<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ELSE.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-DMBTR&nbsp;=&nbsp;ABS(&nbsp;S0100-DIFFERENC&nbsp;).<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'H'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'금액을&nbsp;입력해주세요'&nbsp;TYPE&nbsp;'E'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXIT.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Module&nbsp;STATUS_0150&nbsp;OUTPUT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE STATUS_0150 OUTPUT.<br />
+&nbsp;&nbsp;SET&nbsp;PF-STATUS&nbsp;'S0150'.<br />
+&nbsp;&nbsp;SET&nbsp;TITLEBAR&nbsp;'T0150'.&nbsp;"&nbsp;전표&nbsp;생성&nbsp;프로그램&nbsp;사용&nbsp;설명서<br />
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;USER_COMMAND_0150&nbsp;&nbsp;INPUT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE USER_COMMAND_0150 INPUT.<br />
+&nbsp;&nbsp;CASE&nbsp;OK_CODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'OKAY'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;TO&nbsp;SCREEN&nbsp;0.<br />
+&nbsp;&nbsp;ENDCASE.<br />
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;EXIT_0150&nbsp;&nbsp;INPUT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE EXIT_0150 INPUT.<br />
+&nbsp;&nbsp;CASE&nbsp;OK_CODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'CANC'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;TO&nbsp;SCREEN&nbsp;0.<br />
+&nbsp;&nbsp;ENDCASE.<br />
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;F4_BSCHL&nbsp;&nbsp;INPUT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE F4_BSCHL INPUT.<br />
+<br />
+&nbsp;&nbsp;DATA&nbsp;LT_RETURN&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;DDSHRETVAL.<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;FUNCTION&nbsp;'F4IF_FIELD_VALUE_REQUEST'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TABNAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'ZEA_TBSL'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Table/structure&nbsp;name&nbsp;from&nbsp;Dictionary<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FIELDNAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'BSCHL'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Field&nbsp;name&nbsp;from&nbsp;Dictionary<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SEARCHHELP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'ZEA_SHOW_BSTXT'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Search&nbsp;help&nbsp;as&nbsp;screen&nbsp;field&nbsp;attribute<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SHLPPARAM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;SPACE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Search&nbsp;help&nbsp;parameter&nbsp;in&nbsp;screen&nbsp;field<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DYNPPROG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;SPACE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Current&nbsp;program<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DYNPNR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;SPACE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Screen&nbsp;number<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DYNPROFIELD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;SPACE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Name&nbsp;of&nbsp;screen&nbsp;field&nbsp;for&nbsp;value&nbsp;return<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;STEPL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Steploop&nbsp;line&nbsp;of&nbsp;screen&nbsp;field<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VALUE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;SPACE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Field&nbsp;contents&nbsp;for&nbsp;F4&nbsp;call<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MULTIPLE_CHOICE&nbsp;&nbsp;&nbsp;=&nbsp;SPACE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Switch&nbsp;on&nbsp;multiple&nbsp;selection<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DISPLAY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;SPACE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Override&nbsp;readiness&nbsp;for&nbsp;input<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUPPRESS_RECORDLIST&nbsp;=&nbsp;SPACE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Skip&nbsp;display&nbsp;of&nbsp;the&nbsp;hit&nbsp;list<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CALLBACK_PROGRAM&nbsp;&nbsp;=&nbsp;SPACE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Program&nbsp;for&nbsp;callback&nbsp;before&nbsp;F4&nbsp;start<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CALLBACK_FORM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;SPACE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Form&nbsp;for&nbsp;callback&nbsp;before&nbsp;F4&nbsp;start&nbsp;(-&gt;&nbsp;long&nbsp;docu)<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CALLBACK_METHOD&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Interface&nbsp;for&nbsp;Callback&nbsp;Routines<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECTION_SCREEN&nbsp;&nbsp;=&nbsp;SPACE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Behavior&nbsp;as&nbsp;in&nbsp;Selection&nbsp;Screen&nbsp;(-&gt;Long&nbsp;Docu)<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USER_RESET&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Single-Character&nbsp;Flag<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;TABLES<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RETURN_TAB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;LT_RETURN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Return&nbsp;the&nbsp;selected&nbsp;value<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FIELD_NOT_FOUND&nbsp;&nbsp;&nbsp;=&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Field&nbsp;does&nbsp;not&nbsp;exist&nbsp;in&nbsp;the&nbsp;Dictionary<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NO_HELP_FOR_FIELD&nbsp;=&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;No&nbsp;F4&nbsp;help&nbsp;is&nbsp;defined&nbsp;for&nbsp;the&nbsp;field<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INCONSISTENT_HELP&nbsp;=&nbsp;3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;F4&nbsp;help&nbsp;for&nbsp;the&nbsp;field&nbsp;is&nbsp;inconsistent<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NO_VALUES_FOUND&nbsp;&nbsp;&nbsp;=&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;No&nbsp;values&nbsp;found<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;5.<br />
+<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;EQ&nbsp;0.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;LT_RETURN&nbsp;INTO&nbsp;DATA(LS_RETURN)&nbsp;INDEX&nbsp;1.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;ZEA_TBSL.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;*<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FROM&nbsp;ZEA_TBSL<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BSCHL&nbsp;EQ&nbsp;LS_RETURN-FIELDVAL.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;SCREEN.<br />
+<br />
+&nbsp;&nbsp;ELSE..<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;ID&nbsp;SY-MSGID&nbsp;TYPE&nbsp;SY-MSGTY&nbsp;NUMBER&nbsp;SY-MSGNO<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WITH&nbsp;SY-MSGV1&nbsp;SY-MSGV2&nbsp;SY-MSGV3&nbsp;SY-MSGV4.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;CHECK_SAKNR&nbsp;&nbsp;INPUT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE CHECK_SAKNR INPUT.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;전기키&nbsp;점검<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;"&nbsp;채권(AR)&nbsp;범위<br />
+&nbsp;&nbsp;IF&nbsp;ZEA_TBSL-BSCHL&nbsp;BETWEEN&nbsp;'01'&nbsp;AND&nbsp;'19'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;ZEA_BSEG-SAKNR&nbsp;NOT&nbsp;BETWEEN&nbsp;'20001'&nbsp;AND&nbsp;'20006'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;오류<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'계정오류:&nbsp;고객코드(20001&nbsp;~&nbsp;20006)&nbsp;를&nbsp;입력하세요.'&nbsp;TYPE&nbsp;'E'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ELSE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;성공&nbsp;-&nbsp;GL코드는&nbsp;매핑되는&nbsp;GL계정을&nbsp;넣어준다.&nbsp;고객코드는&nbsp;거래처코드에&nbsp;넣어준다.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;*&nbsp;FROM&nbsp;ZEA_SKB1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;GS_SKB1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BPCODE&nbsp;EQ&nbsp;ZEA_BSEG-SAKNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;RECON_YN&nbsp;EQ&nbsp;'X'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-SAKNR&nbsp;=&nbsp;GS_SKB1-SAKNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-BPCODE&nbsp;=&nbsp;GS_SKB1-BPCODE.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MOVE-CORRESPONDING&nbsp;ZEA_BKPF&nbsp;TO&nbsp;GS_BKPF.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;INPUT_CHECK.&nbsp;"&nbsp;전기키&nbsp;값&nbsp;체크<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;SCREEN.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;채권(AP)&nbsp;범위<br />
+&nbsp;&nbsp;ELSEIF&nbsp;ZEA_TBSL-BSCHL&nbsp;BETWEEN&nbsp;'20'&nbsp;AND&nbsp;'39'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;ZEA_BSEG-SAKNR&nbsp;EQ&nbsp;'50000'&nbsp;OR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-SAKNR&nbsp;EQ&nbsp;'50100'&nbsp;OR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-SAKNR&nbsp;EQ&nbsp;'50200'&nbsp;OR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-SAKNR&nbsp;EQ&nbsp;'50300'&nbsp;OR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-SAKNR&nbsp;EQ&nbsp;'50400'&nbsp;OR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-SAKNR&nbsp;EQ&nbsp;'50500'&nbsp;OR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-SAKNR&nbsp;EQ&nbsp;'50600'&nbsp;OR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-SAKNR&nbsp;EQ&nbsp;'50700'&nbsp;OR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-SAKNR&nbsp;EQ&nbsp;'50800'&nbsp;OR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-SAKNR&nbsp;EQ&nbsp;'50900'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;성공&nbsp;-&nbsp;GL코드는&nbsp;매핑되는&nbsp;GL계정을&nbsp;넣어준다.&nbsp;고객코드는&nbsp;거래처코드에&nbsp;넣어준다.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;*&nbsp;FROM&nbsp;ZEA_SKB1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;GS_SKB1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BPCODE&nbsp;EQ&nbsp;ZEA_BSEG-SAKNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;RECON_YN&nbsp;EQ&nbsp;'X'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-SAKNR&nbsp;=&nbsp;GS_SKB1-SAKNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-BPCODE&nbsp;=&nbsp;GS_SKB1-BPCODE.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MOVE-CORRESPONDING&nbsp;ZEA_BKPF&nbsp;TO&nbsp;GS_BKPF.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;INPUT_CHECK.&nbsp;"&nbsp;전기키&nbsp;값&nbsp;체크<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;SCREEN.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ELSE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;오류<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'계정오류:&nbsp;벤더코드(50000&nbsp;~&nbsp;50900)&nbsp;를&nbsp;입력하세요.&nbsp;벤더코드는&nbsp;100번&nbsp;단위로&nbsp;증가합니다.'&nbsp;TYPE&nbsp;'E'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;ELSE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;이&nbsp;외&nbsp;범위에서는&nbsp;G/L코드만&nbsp;들어갈&nbsp;수&nbsp;있도록.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;DATA:&nbsp;LV_SAKNR&nbsp;TYPE&nbsp;ZEA_BSEG-SAKNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;SAKNR&nbsp;FROM&nbsp;ZEA_SKB1&nbsp;INTO&nbsp;LV_SAKNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;SAKNR&nbsp;EQ&nbsp;ZEA_BSEG-SAKNR.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;ZEA_BSEG-SAKNR&nbsp;EQ&nbsp;'10000'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OR&nbsp;ZEA_BSEG-SAKNR&nbsp;EQ&nbsp;'10001'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OR&nbsp;ZEA_BSEG-SAKNR&nbsp;EQ&nbsp;'10002'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OR&nbsp;ZEA_BSEG-SAKNR&nbsp;EQ&nbsp;'10003'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OR&nbsp;ZEA_BSEG-SAKNR&nbsp;EQ&nbsp;'10004'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OR&nbsp;ZEA_BSEG-SAKNR&nbsp;EQ&nbsp;'10005'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OR&nbsp;ZEA_BSEG-SAKNR&nbsp;EQ&nbsp;'10006'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OR&nbsp;ZEA_BSEG-SAKNR&nbsp;EQ&nbsp;'10007'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OR&nbsp;ZEA_BSEG-SAKNR&nbsp;EQ&nbsp;'10008'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OR&nbsp;ZEA_BSEG-SAKNR&nbsp;EQ&nbsp;'10009'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CLEAR:&nbsp;GS_SKB1.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;*&nbsp;FROM&nbsp;ZEA_SKB1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;TABLE&nbsp;GT_SKB1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BPCODE&nbsp;EQ&nbsp;ZEA_BSEG-SAKNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;RECON_YN&nbsp;EQ&nbsp;'X'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_TBSL&nbsp;INTO&nbsp;GS_TBSL&nbsp;WITH&nbsp;KEY&nbsp;BSCHL&nbsp;=&nbsp;ZEA_TBSL-BSCHL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;GS_TBSL-INDI_CD.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;전기기카&nbsp;차변이면,&nbsp;제품&nbsp;계정<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'S'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;GS_SKB1.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;*&nbsp;FROM&nbsp;ZEA_SKB1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;GS_SKB1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BPCODE&nbsp;EQ&nbsp;ZEA_BSEG-SAKNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;XBILK&nbsp;EQ&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;RECON_YN&nbsp;EQ&nbsp;'X'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;거래처&nbsp;필드로&nbsp;이동<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DATA-WERKS&nbsp;=&nbsp;ZEA_BSEG-SAKNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-WERKS&nbsp;=&nbsp;ZEA_BSEG-SAKNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-SAKNR&nbsp;&nbsp;=&nbsp;GS_SKB1-SAKNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;SCREEN.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;전기키가&nbsp;대변이면,&nbsp;제품매출&nbsp;계정<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'H'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;GS_SKB1.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;*&nbsp;FROM&nbsp;ZEA_SKB1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;GS_SKB1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BPCODE&nbsp;EQ&nbsp;ZEA_BSEG-SAKNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;XBILK&nbsp;NE&nbsp;'X'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;RECON_YN&nbsp;EQ&nbsp;'X'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;거래처&nbsp;필드&nbsp;X&nbsp;-&gt;&nbsp;플랜트&nbsp;필드로&nbsp;이동<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DATA-WERKS&nbsp;=&nbsp;ZEA_BSEG-SAKNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-WERKS&nbsp;=&nbsp;ZEA_BSEG-SAKNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-SAKNR&nbsp;&nbsp;=&nbsp;GS_SKB1-SAKNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;SCREEN.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;거래처&nbsp;필드로&nbsp;이동<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-BPCODE&nbsp;=&nbsp;ZEA_BSEG-SAKNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-SAKNR&nbsp;&nbsp;=&nbsp;GS_SKB1-SAKNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;SCREEN.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ELSEIF&nbsp;(&nbsp;ZEA_BSEG-SAKNR&nbsp;NOT&nbsp;BETWEEN&nbsp;'10000'&nbsp;AND&nbsp;'10009'&nbsp;)&nbsp;AND&nbsp;SY-SUBRC&nbsp;NE&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;오류<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'계정오류:&nbsp;올바른&nbsp;G/L&nbsp;계정을&nbsp;입력하세요.'&nbsp;TYPE&nbsp;'E'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;--&nbsp;GL코드&nbsp;점검<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;"&nbsp;1.&nbsp;입력한&nbsp;GL코드가&nbsp;BP코드가&nbsp;연결된&nbsp;GL코드이면은&nbsp;막는다.<br />
+&nbsp;&nbsp;"&nbsp;대신&nbsp;직영점&nbsp;매출액&nbsp;계정은&nbsp;입력가능해야한다.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;IF&nbsp;ZEA_BSEG-SAKNR&nbsp;BETWEEN&nbsp;'10000'&nbsp;AND&nbsp;'10009'.<br />
+*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;CLEAR:&nbsp;GS_SKB1.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;*&nbsp;FROM&nbsp;ZEA_SKB1<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;GS_SKB1<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BPCODE&nbsp;NE&nbsp;ZEA_BSEG-SAKNR<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;RECON_YN&nbsp;EQ&nbsp;'X'.<br />
+*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;거래처&nbsp;필드로&nbsp;이동<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-BPCODE&nbsp;=&nbsp;ZEA_BSEG-SAKNR.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG-SAKNR&nbsp;&nbsp;=&nbsp;GS_SKB1-SAKNR.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;SCREEN.<br />
+*<br />
+*&nbsp;&nbsp;ELSE.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CLEAR:&nbsp;GS_SKB1.<br />
+&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;*&nbsp;FROM&nbsp;ZEA_SKB1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;GS_SKB1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;SAKNR&nbsp;EQ&nbsp;ZEA_BSEG-SAKNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;BPCODE&nbsp;NE&nbsp;''<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;RECON_YN&nbsp;EQ&nbsp;'X'.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;BP코드와&nbsp;연결된&nbsp;계정은&nbsp;조회가&nbsp;된다&nbsp;:&nbsp;ZEA_BSEG-SAKNR<br />
+&nbsp;&nbsp;IF&nbsp;GS_SKB1-SAKNR&nbsp;IS&nbsp;NOT&nbsp;INITIAL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'계정오류:&nbsp;입력하신&nbsp;계정은&nbsp;AR/AP&nbsp;관련&nbsp;계정입니다.&nbsp;계정을&nbsp;변경해주세요.'&nbsp;TYPE&nbsp;'E'.<br />
+&nbsp;&nbsp;ENDIF.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;ENDIF.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;"&nbsp;2.&nbsp;부가세&nbsp;계정은&nbsp;입력하지&nbsp;못하게&nbsp;막는다.<br />
+&nbsp;&nbsp;CASE&nbsp;ZEA_BSEG-SAKNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'210210'&nbsp;OR&nbsp;'210200'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'계정오류:&nbsp;입력하신&nbsp;계정은&nbsp;부가세&nbsp;계정입니다.&nbsp;계정을&nbsp;변경해주세요.'&nbsp;TYPE&nbsp;'E'.<br />
+&nbsp;&nbsp;ENDCASE.<br />
+<br />
+<br />
+<br />
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;CHECK_SAKNR_TAX&nbsp;&nbsp;INPUT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE CHECK_SAKNR_TAX INPUT.<br />
+<br />
+&nbsp;&nbsp;CHECK&nbsp;OK_CODE&nbsp;NE&nbsp;'FC_DEL'.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;입력한&nbsp;GL코드가&nbsp;부가세&nbsp;계정이라면&nbsp;막는다.<br />
+&nbsp;&nbsp;CASE&nbsp;ZEA_BSEG-SAKNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'210200'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;ZEA_BSEG-SAKNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'계정오류:&nbsp;입력하신&nbsp;계정은&nbsp;부가세&nbsp;계정입니다.&nbsp;계정을&nbsp;변경하여&nbsp;Tax를&nbsp;선택해주세요.'&nbsp;TYPE&nbsp;'S'&nbsp;DISPLAY&nbsp;LIKE&nbsp;'E'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'210210'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;ZEA_BSEG-SAKNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'계정오류:&nbsp;입력하신&nbsp;계정은&nbsp;부가세&nbsp;계정입니다.&nbsp;계정을&nbsp;변경하여&nbsp;Tax를&nbsp;선택해주세요.'&nbsp;TYPE&nbsp;'S'&nbsp;DISPLAY&nbsp;LIKE&nbsp;'E'.<br />
+&nbsp;&nbsp;ENDCASE.<br />
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;CHECK_BLDAT&nbsp;&nbsp;INPUT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE CHECK_BLDAT INPUT.<br />
+<br />
+&nbsp;&nbsp;IF&nbsp;ZEA_TCURR-GDATU&nbsp;NE&nbsp;SY-DATUM.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BKPF-BLDAT&nbsp;=&nbsp;ZEA_TCURR-GDATU.&nbsp;"&nbsp;증빙일자&nbsp;=&nbsp;환산일자<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'환율기준일에&nbsp;따라&nbsp;증빙일자가&nbsp;변경되었습니다.'&nbsp;TYPE&nbsp;'S'.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+ENDMODULE.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

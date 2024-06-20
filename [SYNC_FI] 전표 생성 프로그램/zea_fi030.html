@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI030</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZEA_FI030</h2>
+<h3> Description: [FI] 전표생성 프로그램 [완료] - ACA5-08 김예리</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Report&nbsp;ZEA_FI030<br />
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;[FI]&nbsp;전표생성&nbsp;프로그램&nbsp;2024.04.13&nbsp;[완료]&nbsp;-&nbsp;ACA5-08&nbsp;김예리<br />
+*&&nbsp;[FI]&nbsp;전표생성&nbsp;프로그램&nbsp;2024.04.21&nbsp;[수정완료]&nbsp;-&nbsp;ACA5-08&nbsp;김예리<br />
+*&---------------------------------------------------------------------*<br />
+*&nbsp;[2024.04.18&nbsp;/&nbsp;단위&nbsp;테스트&nbsp;완료]&nbsp;-&nbsp;[PM]&nbsp;김건우&nbsp;:&nbsp;△<br />
+*<br />
+*&nbsp;[수정이력]<br />
+*&nbsp;1.&nbsp;2024.04.21&nbsp;:&nbsp;벤더원장/&nbsp;고객원장&nbsp;테이블에도&nbsp;데이터가&nbsp;생성되도록&nbsp;변경함.<br />
+*&nbsp;2.&nbsp;2024.04.23&nbsp;:&nbsp;외화(USD)&nbsp;입력&nbsp;시,&nbsp;KRW&nbsp;로&nbsp;환산된&nbsp;금액이&nbsp;입력되도록&nbsp;변경함.<br />
+*&nbsp;3.&nbsp;2024.04.26&nbsp;:&nbsp;전표&nbsp;금액입력&nbsp;화면에서&nbsp;G/L코드&nbsp;및&nbsp;전기키는&nbsp;값&nbsp;입력&nbsp;후&nbsp;엔터만&nbsp;쳐도&nbsp;TXT(텍스트)&nbsp;가&nbsp;자동으로&nbsp;변경되도록&nbsp;설정함.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(기존&nbsp;:&nbsp;Search&nbsp;Help&nbsp;로&nbsp;입력해야만&nbsp;TXT&nbsp;변경되었음)<br />
+*&nbsp;4.&nbsp;2024.04.27&nbsp;:&nbsp;ITNUM&nbsp;숫자를&nbsp;N3으로&nbsp;바꿔서&nbsp;아이템넘버를&nbsp;1~9&nbsp;이상&nbsp;입력이&nbsp;가능하도록&nbsp;변경함.<br />
+*&nbsp;5.&nbsp;2024.04.27&nbsp;:&nbsp;전표&nbsp;금액입력&nbsp;화면에&nbsp;선택한&nbsp;통화키와&nbsp;환율시작일에&nbsp;따른&nbsp;환율이&nbsp;보이게끔&nbsp;설정함.<br />
+*&nbsp;6.&nbsp;2024.04.29&nbsp;:&nbsp;부가세&nbsp;필드&nbsp;삭제,&nbsp;부가세&nbsp;선택&nbsp;시&nbsp;전표금액에&nbsp;통합되도록&nbsp;설정.<br />
+*&nbsp;7.&nbsp;2024.04.29&nbsp;:&nbsp;서치헬프,&nbsp;엔터&nbsp;이벤트&nbsp;외&nbsp;화면&nbsp;값이&nbsp;바뀐&nbsp;것을&nbsp;읽어와서&nbsp;올바른&nbsp;전표&nbsp;GL코드의&nbsp;TXT가&nbsp;매칭되도록&nbsp;설정함.<br />
+*&nbsp;8.&nbsp;2024.05.04&nbsp;:&nbsp;차/대&nbsp;합계&nbsp;볼&nbsp;수&nbsp;있도록&nbsp;ALV&nbsp;수정<br />
+*<br />
+*&nbsp;[보완필요]<br />
+*&nbsp;1.&nbsp;전표생성&nbsp;&gt;&nbsp;전표조회(모듈풀)&nbsp;&gt;&nbsp;본&nbsp;프로그램&nbsp;200번&nbsp;화면(초기화면)&nbsp;및&nbsp;REFRESH된&nbsp;화면이&nbsp;실행되도록&nbsp;설정&nbsp;필요<br />
+*&nbsp;2.모듈프로그램에서&nbsp;-&gt;&nbsp;LEAVE&nbsp;TO&nbsp;TRANSACTION.&nbsp;을&nbsp;적으면&nbsp;-&gt;&nbsp;조회프로그램&nbsp;으로&nbsp;이동한다.<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+REPORT ZEA_FI030 MESSAGE-ID ZEA_MSG.<br />
+<br />
+include <a href ="zea_fi030_top.html">ZEA_FI030_TOP</a>.<br />
+include <a href ="zea_fi030_scr.html">ZEA_FI030_SCR</a>.<br />
+include <a href ="zea_fi030_cls.html">ZEA_FI030_CLS</a>.<br />
+<br />
+include <a href ="zea_fi030_pbo.html">ZEA_FI030_PBO</a>.<br />
+include <a href ="zea_fi030_pai.html">ZEA_FI030_PAI</a>.<br />
+include <a href ="zea_fi030_f01.html">ZEA_FI030_F01</a>.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+INITIALIZATION.<br />
+&nbsp;&nbsp;PERFORM&nbsp;INIT_DATA.&nbsp;"&nbsp;GUI&nbsp;초기값&nbsp;설정&nbsp;(&nbsp;200번&nbsp;화면&nbsp;실행됨&nbsp;)<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+AT SELECTION-SCREEN.<br />
+AT SELECTION-SCREEN OUTPUT.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+START-OF-SELECTION.<br />
+&nbsp;&nbsp;PERFORM&nbsp;SELECT_DATA.<br />
+&nbsp;&nbsp;PERFORM&nbsp;MAKE_DISPLAY_DATA.<br />
+&nbsp;&nbsp;PERFORM&nbsp;DISPLAY_DATA.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*GUI&nbsp;Texts<br />
+*----------------------------------------------------------<br />
+*&nbsp;S0200&nbsp;--&gt;&nbsp;[FI]&nbsp;전표&nbsp;전기:&nbsp;헤더&nbsp;데이터<br />
+*&nbsp;T0100&nbsp;--&gt;&nbsp;[FI]&nbsp;G/L&nbsp;계정&nbsp;전표&nbsp;입력<br />
+*&nbsp;T0150&nbsp;--&gt;&nbsp;전표&nbsp;생성&nbsp;프로그램&nbsp;사용&nbsp;설명서<br />
+*&nbsp;T0200&nbsp;--&gt;&nbsp;전표&nbsp;전기:&nbsp;헤더&nbsp;데이터<br />
+<br />
+*Text&nbsp;elements<br />
+*----------------------------------------------------------<br />
+*&nbsp;L01&nbsp;&nbsp;항목&nbsp;추가<br />
+*&nbsp;L02&nbsp;&nbsp;항목&nbsp;삭제<br />
+*&nbsp;T01&nbsp;전표&nbsp;Header<br />
+<br />
+<br />
+*Messages<br />
+*----------------------------------------------------------<br />
+*<br />
+*&nbsp;Message&nbsp;class:&nbsp;Hard&nbsp;coded<br />
+*&nbsp;&nbsp;&nbsp;올바른&nbsp;전기키를&nbsp;선택해주세요<br />
+*<br />
+*&nbsp;Message&nbsp;class:&nbsp;ZEA_MSG<br />
+*000&nbsp;&nbsp;&nbsp;&&nbsp;&&nbsp;&&nbsp;&<br />
+*122&nbsp;&nbsp;&nbsp;동일한&nbsp;데이터가&nbsp;존재합니다.<br />
+*123&nbsp;&nbsp;&nbsp;&&nbsp;전표가&nbsp;1000번&nbsp;회사&nbsp;코드에&nbsp;전기되었습니다.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

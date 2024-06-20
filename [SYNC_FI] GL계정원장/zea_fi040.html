@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI040</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZEA_FI040</h2>
+<h3> Description: [FI] G/L 계정원장</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;REPORT&nbsp;ZEA_FI040<br />
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;[FI]&nbsp;G/L&nbsp;계정원장&nbsp;프로그램&nbsp;2024.04.17&nbsp;[완료]&nbsp;-&nbsp;ACA5-08&nbsp;김예리<br />
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;[2024.04.18&nbsp;/&nbsp;단위&nbsp;테스트&nbsp;완료]&nbsp;-&nbsp;[PM]&nbsp;김건우&nbsp;:&nbsp;o<br />
+*&&nbsp;[수정이력]<br />
+*&nbsp;1.&nbsp;전기키가&nbsp;없는&nbsp;데이터가&nbsp;있으면&nbsp;13번째&nbsp;줄이&nbsp;생김&nbsp;확인.<br />
+*&nbsp;2.&nbsp;금액+세금&nbsp;합계&nbsp;금액이&nbsp;보이도록&nbsp;수정함.<br />
+*&nbsp;3.&nbsp;2024.04.30&nbsp;:&nbsp;세금&nbsp;필드&nbsp;삭제(덤프)&nbsp;반영&nbsp;및&nbsp;SO_SAKNR&nbsp;INITIALIZATION&nbsp;수정.<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+REPORT ZEA_FI040 MESSAGE-ID ZEA_MSG.<br />
+<br />
+include <a href ="zea_fi040_top.html">ZEA_FI040_TOP</a>.<br />
+include <a href ="zea_fi040_scr.html">ZEA_FI040_SCR</a>.<br />
+include <a href ="zea_fi040_cls.html">ZEA_FI040_CLS</a>.<br />
+<br />
+include <a href ="zea_fi040_pbo.html">ZEA_FI040_PBO</a>.<br />
+include <a href ="zea_fi040_pai.html">ZEA_FI040_PAI</a>.<br />
+include <a href ="zea_fi040_f01.html">ZEA_FI040_F01</a>.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;ABAP&nbsp;Event-----------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+INITIALIZATION.<br />
+&nbsp;&nbsp;PA_BUKRS&nbsp;=&nbsp;1000.<br />
+&nbsp;&nbsp;PA_GJAHR&nbsp;=&nbsp;2024.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;재무제표에서&nbsp;SET&nbsp;Parameter&nbsp;호출<br />
+&nbsp;&nbsp;CLEAR:&nbsp;SO_SAKNR.&nbsp;"&nbsp;필드&nbsp;초기화<br />
+&nbsp;&nbsp;REFRESH&nbsp;SO_SAKNR[].<br />
+<br />
+&nbsp;&nbsp;SO_SAKNR-SIGN&nbsp;=&nbsp;'I'.<br />
+&nbsp;&nbsp;SO_SAKNR-OPTION&nbsp;=&nbsp;'EQ'.<br />
+&nbsp;&nbsp;GET&nbsp;PARAMETER&nbsp;ID&nbsp;'ZEA_SAKNR'&nbsp;FIELD&nbsp;SO_SAKNR-LOW.<br />
+&nbsp;&nbsp;APPEND&nbsp;SO_SAKNR.<br />
+<br />
+&nbsp;&nbsp;IF&nbsp;SO_SAKNR-LOW&nbsp;IS&nbsp;INITIAL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;SO_SAKNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;REFRESH&nbsp;SO_SAKNR[].<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+AT SELECTION-SCREEN OUTPUT.<br />
+<br />
+AT SELECTION-SCREEN.<br />
+<br />
+START-OF-SELECTION.<br />
+&nbsp;&nbsp;PERFORM&nbsp;SELECT_DATA.<br />
+&nbsp;&nbsp;PERFORM&nbsp;MODIFY_DISPLAY_DATA.<br />
+&nbsp;&nbsp;PERFORM&nbsp;DISPLAY_DATA.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*GUI&nbsp;Texts<br />
+*----------------------------------------------------------<br />
+*&nbsp;0100&nbsp;--&gt;&nbsp;[FI]&nbsp;잔액&nbsp;조회:&nbsp;G/L&nbsp;계정&nbsp;원장<br />
+<br />
+*Text&nbsp;elements<br />
+*----------------------------------------------------------<br />
+*&nbsp;T01&nbsp;G/L&nbsp;계정&nbsp;잔액&nbsp;조회<br />
+<br />
+<br />
+*Selection&nbsp;texts<br />
+*----------------------------------------------------------<br />
+*&nbsp;PA_BUKRS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;회사&nbsp;코드<br />
+*&nbsp;PA_GJAHR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;회계&nbsp;연도<br />
+*&nbsp;SO_SAKNR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;G/L&nbsp;계정<br />
+<br />
+<br />
+*Messages<br />
+*----------------------------------------------------------<br />
+*<br />
+*&nbsp;Message&nbsp;class:&nbsp;ZEA_MSG<br />
+*006&nbsp;&nbsp;&nbsp;&&nbsp;건의&nbsp;데이터가&nbsp;검색되었습니다.<br />
+*013&nbsp;&nbsp;&nbsp;해당&nbsp;조건의&nbsp;데이터가&nbsp;존재하지&nbsp;않습니다.<br />
+*020&nbsp;&nbsp;&nbsp;Custom&nbsp;Container&nbsp;생성&nbsp;중&nbsp;오류가&nbsp;발생했습니다.<br />
+*021&nbsp;&nbsp;&nbsp;ALV&nbsp;Grid&nbsp;생성&nbsp;중&nbsp;오류가&nbsp;발생했습니다.<br />
+*120&nbsp;&nbsp;&nbsp;분리&nbsp;컨테이너&nbsp;생성에&nbsp;실패했습니다.<br />
+*121&nbsp;&nbsp;&nbsp;월&nbsp;별&nbsp;데이터를&nbsp;선택해주세요.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

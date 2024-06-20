@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI070</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZEA_FI070</h2>
+<h3> Description: [FI] A/P 자동지급 프로그램 [완료] ACA5-17 이세영</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Report&nbsp;ZEA_FI070<br />
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;[FI]&nbsp;A/P&nbsp;자동지급&nbsp;프로그램&nbsp;2024.04.18&nbsp;[생성]&nbsp;ACA5-17&nbsp;이세영<br />
+*&&nbsp;[FI]&nbsp;A/P&nbsp;자동지급&nbsp;프로그램&nbsp;2024.04.23&nbsp;[완료]&nbsp;ACA5-17&nbsp;이세영<br />
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;[2024.04.23&nbsp;/&nbsp;단위&nbsp;테스트&nbsp;완료]&nbsp;-&nbsp;[PM]&nbsp;김건우&nbsp;:&nbsp;o<br />
+*&---------------------------------------------------------------------*<br />
+*&nbsp;[수정&nbsp;이력]<br />
+*&nbsp;1.&nbsp;2024-04-18&nbsp;(~13:30)<br />
+*&nbsp;Selection&nbsp;Screen&nbsp;/&nbsp;변수&nbsp;수정&nbsp;/&nbsp;테이블&nbsp;수정&nbsp;(0)<br />
+*&nbsp;2.&nbsp;2024-04-16&nbsp;(20:46)<br />
+*&nbsp;팝업&nbsp;다이올로그&nbsp;띄우기,&nbsp;대량&nbsp;지급&nbsp;처리&nbsp;진행<br />
+*&nbsp;3.&nbsp;2024-04-22&nbsp;(00:10)<br />
+*&nbsp;&nbsp;저장&nbsp;및&nbsp;예약&nbsp;처리&nbsp;진행&nbsp;(KZ&nbsp;함수&nbsp;생성&nbsp;및&nbsp;작동&nbsp;구현)&nbsp;=&gt;&nbsp;(0)<br />
+*&nbsp;&nbsp;ZEA_BSEG&nbsp;,&nbsp;ZEA_BKPF&nbsp;전표&nbsp;테이블&nbsp;내&nbsp;전표&nbsp;정상&nbsp;작동확인&nbsp;(0)<br />
+*&nbsp;4.&nbsp;2024-04-22&nbsp;(02:27)<br />
+*&nbsp;&nbsp;A/P&nbsp;지급&nbsp;이후&nbsp;벤더에게&nbsp;지급건에&nbsp;대한&nbsp;Notice&nbsp;기능&nbsp;(0)<br />
+*&nbsp;5.&nbsp;2024-04-23&nbsp;(12:00)<br />
+*&nbsp;&nbsp;지급통지건&nbsp;확인버튼&nbsp;구현&nbsp;(0)<br />
+*&---------------------------------------------------------------------*<br />
+<br />
+   </div>
+   <div class="code">
+include <a href ="zea_fi070_top.html">ZEA_FI070_TOP</a>.  " Global Data<br />
+<br />
+include <a href ="zea_fi070_scr.html">ZEA_FI070_SCR</a>.  " Selection screen<br />
+<br />
+include <a href ="zea_fi070_cls.html">ZEA_FI070_CLS</a>.  " ALV Events<br />
+<br />
+include <a href ="zea_fi070_pbo.html">ZEA_FI070_PBO</a>.  " PBO-Modules<br />
+<br />
+include <a href ="zea_fi070_pai.html">ZEA_FI070_PAI</a>.  " PAI-Modules<br />
+<br />
+include <a href ="zea_fi070_f01.html">ZEA_FI070_F01</a>.  " FORM-Routines<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+**********************************************************************<br />
+*&nbsp;INITIALIZATION<br />
+**********************************************************************<br />
+   </div>
+   <div class="code">
+INITIALIZATION.<br />
+&nbsp;&nbsp;PERFORM&nbsp;SET_INIT_VALUE.<br />
+<br />
+   </div>
+   <div class="codeComment">
+**********************************************************************<br />
+*&nbsp;&nbsp;AT&nbsp;SELECTION&nbsp;SCREEN<br />
+**********************************************************************<br />
+   </div>
+   <div class="code">
+AT SELECTION-SCREEN.<br />
+<br />
+&nbsp;AT&nbsp;SELECTION-SCREEN&nbsp;ON&nbsp;VALUE-REQUEST&nbsp;FOR&nbsp;SO_VENCO-LOW.<br />
+&nbsp;&nbsp;&nbsp;PERFORM&nbsp;F4_NAME.<br />
+<br />
+   </div>
+   <div class="codeComment">
+**********************************************************************<br />
+*&nbsp;START-OF-SELECTION<br />
+**********************************************************************<br />
+   </div>
+   <div class="code">
+START-OF-SELECTION.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;Radio&nbsp;Button&nbsp;선택&nbsp;시&nbsp;Select<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;PERFORM&nbsp;GET_BASE_DATA.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;검색&nbsp;결과&nbsp;Screen<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CALL&nbsp;SCREEN&nbsp;100.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*GUI&nbsp;Texts<br />
+*----------------------------------------------------------<br />
+*&nbsp;T0100&nbsp;--&gt;&nbsp;A/P&nbsp;자동지급&nbsp;프로그램<br />
+*&nbsp;T0200&nbsp;--&gt;&nbsp;A/P&nbsp;반제전표&nbsp;생성<br />
+<br />
+*Text&nbsp;elements<br />
+*----------------------------------------------------------<br />
+*&nbsp;E01&nbsp;<br />
+*&nbsp;F01&nbsp;지급&nbsp;여부<br />
+*&nbsp;F02&nbsp;지급조건<br />
+*&nbsp;F03&nbsp;만기일<br />
+*&nbsp;I01&nbsp;&nbsp;반제일<br />
+*&nbsp;I02&nbsp;Team<br />
+*&nbsp;L00&nbsp;전체<br />
+*&nbsp;L01&nbsp;지급&nbsp;예약<br />
+*&nbsp;L02&nbsp;미지급건&nbsp;조회<br />
+*&nbsp;L03&nbsp;지급건&nbsp;조회<br />
+*&nbsp;L04&nbsp;&nbsp;새로고침<br />
+*&nbsp;L05&nbsp;만기일&nbsp;기준&nbsp;정렬<br />
+*&nbsp;M01&nbsp;&nbsp;성공<br />
+*&nbsp;T01&nbsp;공급업체&nbsp;검색조건<br />
+*&nbsp;T02&nbsp;라인&nbsp;아이템&nbsp;검색조건<br />
+*&nbsp;T03&nbsp;반제&nbsp;여부&nbsp;선택<br />
+<br />
+<br />
+*Selection&nbsp;texts<br />
+*----------------------------------------------------------<br />
+*&nbsp;OPEN_DAT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;미결&nbsp;일자<br />
+*&nbsp;RAD_ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;모든&nbsp;아이템&nbsp;조회<br />
+*&nbsp;RAD_CLEA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;반제&nbsp;아이템&nbsp;조회<br />
+*&nbsp;RAD_OPEN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;미결&nbsp;아이템&nbsp;조회<br />
+*&nbsp;SO_COCO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;회사코드<br />
+*&nbsp;SO_C_DAT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;반제&nbsp;일자<br />
+*&nbsp;SO_RESDT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;미결&nbsp;일자<br />
+*&nbsp;SO_VENCO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;공급사&nbsp;코드<br />
+<br />
+<br />
+*Messages<br />
+*----------------------------------------------------------<br />
+*<br />
+*&nbsp;Message&nbsp;class:&nbsp;Hard&nbsp;coded<br />
+*&nbsp;&nbsp;&nbsp;(전표번호&nbsp;:<br />
+*<br />
+*&nbsp;Message&nbsp;class:&nbsp;ZEA_MSG_FI<br />
+*000&nbsp;&nbsp;&nbsp;&<br />
+*001&nbsp;&nbsp;&nbsp;&&nbsp;&<br />
+*004&nbsp;&nbsp;&nbsp;&&nbsp;건의&nbsp;데이터가&nbsp;검색되었습니다.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

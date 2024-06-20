@@ -1,0 +1,448 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI_WL</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for function ZEA_FI_WL</h2>
+<h3> Description: [FI] MM모듈 WL 자동함수 생성</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="code">
+FUNCTION ZEA_FI_WL.<br />
+   </div>
+   <div class="codeComment">
+*"----------------------------------------------------------------------<br />
+*"*"Local Interface:<br />
+*"  IMPORTING<br />
+*"     REFERENCE(IS_HEAD) TYPE  ZEA_MMT090<br />
+*"     REFERENCE(IT_ITEM) TYPE  ZEA_MMY100<br />
+*"  EXPORTING<br />
+*"     REFERENCE(EV_BELNR) TYPE  ZEA_BSEG-BELNR<br />
+*"----------------------------------------------------------------------<br />
+*"----------------------------------------------------------------------<br />
+*"*"Local Interface:<br />
+*"  IMPORTING<br />
+*"     REFERENCE(IS_HEAD) TYPE  ZEA_MMT090<br />
+*"     REFERENCE(IT_ITEM) TYPE  ZEA_MMY100<br />
+*"  EXPORTING<br />
+*"     REFERENCE(EV_BELNR) TYPE  ZEA_BSEG-BELNR<br />
+*----------------------------------------------------------------------<br />
+*           MM 자재 문서 &gt;  자재 이동에 대한 FI 문서 자동발생<br />
+*"----------------------------------------------------------------------<br />
+* [이동유형 정리]<br />
+
+<div class="codeComment">*       <a href ="global-zea_fi_wl.html">Global data declarations</a></div><br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;"&nbsp;[SD]&nbsp;출하&nbsp;플랜트에&nbsp;대한&nbsp;정보를&nbsp;레콘계정을&nbsp;변수로&nbsp;넣는다.&nbsp;-----&nbsp;&gt;&nbsp;완료&nbsp;(&nbsp;601&nbsp;)<br />
+&nbsp;&nbsp;"&nbsp;[MM]&nbsp;입출고&nbsp;플랜트에&nbsp;대한&nbsp;정보를&nbsp;레콘계정으로&nbsp;변수를&nbsp;넣는다.&nbsp;--&gt;&nbsp;완료&nbsp;(&nbsp;311&nbsp;)<br />
+&nbsp;&nbsp;"&nbsp;[PP]&nbsp;CDC&nbsp;RDC&nbsp;플랜트에&nbsp;대한&nbsp;정보를&nbsp;레콘계정으로&nbsp;변수를&nbsp;넣는다.&nbsp;-&gt;&nbsp;완료&nbsp;(&nbsp;131&nbsp;)<br />
+<br />
+   </div>
+   <div class="codeComment">
+* [테스트 진행이력]<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;"&nbsp;1.&nbsp;2024.04.30&nbsp;:&nbsp;SD&nbsp;(&nbsp;완료-성공&nbsp;)&nbsp;/&nbsp;MM&nbsp;(&nbsp;PP-개발중&nbsp;)&nbsp;/&nbsp;PP&nbsp;(&nbsp;PP-개발중&nbsp;)<br />
+&nbsp;&nbsp;"&nbsp;2.&nbsp;2024.05.04&nbsp;:&nbsp;SD&nbsp;(&nbsp;아이템의&nbsp;모든&nbsp;데이터를&nbsp;SUM&nbsp;값&nbsp;하는&nbsp;오류&nbsp;확인하여&nbsp;수정중&nbsp;)<br />
+&nbsp;&nbsp;"&nbsp;3.&nbsp;2024.05.07&nbsp;:&nbsp;SD&nbsp;(&nbsp;수정사항&nbsp;반영완료&nbsp;)<br />
+   </div>
+   <div class="codeComment">
+*"----------------------------------------------------------------------<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CLEAR:&nbsp;GS_BKPF,&nbsp;GS_BSEG.<br />
+&nbsp;&nbsp;REFRESH:&nbsp;GT_BKPF,&nbsp;GT_BSEG.<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 전표번호 채번<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;call&nbsp;function&nbsp;<a&nbsp;href&nbsp;="../zea_belnr_nr/zea_belnr_nr.html">'ZEA_BELNR_NR'</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EV_NUMBER&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+*                            SELECT DATA<br />
+*----------------------------------------------------------------------<br />
+* 헤더 : IS_HEAD / 아이템 : IT_ITEM<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;IV_MBLNR&nbsp;=&nbsp;IS_HEAD-MBLNR&nbsp;.&nbsp;&nbsp;"&nbsp;자재문서&nbsp;번호<br />
+&nbsp;&nbsp;IV_BUDAT&nbsp;=&nbsp;IS_HEAD-BUDAT.&nbsp;&nbsp;&nbsp;"&nbsp;전기일자(자재문서&nbsp;이동&nbsp;발생일)<br />
+<br />
+&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;IT_ITEM&nbsp;INTO&nbsp;GS_MMT100&nbsp;WHERE&nbsp;MBLNR&nbsp;EQ&nbsp;IV_MBLNR.<br />
+   </div>
+   <div class="codeComment">
+*    GV_TOTAL   =  GV_TOTAL + GS_MMT100-DMBTR. " [MM] ITEM - 자재 총 금액<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;IV_BWART&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;GS_MMT100-BWART.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;ITEM&nbsp;-&nbsp;이동유형<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IV_PLANTFR&nbsp;=&nbsp;&nbsp;GS_MMT100-PLANTFR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;ITEM&nbsp;-&nbsp;시작정보(플랜트)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IV_PLANTTO&nbsp;=&nbsp;&nbsp;GS_MMT100-PLANTTO.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;ITEM&nbsp;-&nbsp;도착정보(플랜트)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IV_DMBTR&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;GS_MMT100-DMBTR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;ITEM&nbsp;-&nbsp;통화금액&nbsp;(&nbsp;총&nbsp;통화금액&nbsp;)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IV_WAERS1&nbsp;&nbsp;=&nbsp;&nbsp;GS_MMT100-WAERS1.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;ITEM&nbsp;-&nbsp;통화코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IV_VENCODE&nbsp;=&nbsp;&nbsp;GS_MMT100-VENCODE.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;ITEM&nbsp;-&nbsp;벤더코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IV_CUSCODE&nbsp;=&nbsp;&nbsp;GS_MMT100-CUSCODE.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;ITEM&nbsp;-&nbsp;고객코드<br />
+&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+*                            IMPORTING<br />
+*----------------------------------------------------------------------<br />
+* -- 1. MM =&gt; FI 전표발생 CHECK ---------------------------------------*<br />
+*  CHECK GS_MMT090-MBLNR IS NOT INITIAL. " 자재문서 번호가 존재하는지 CHECK.<br />
+<br />
+* -- 2. FI 전표 헤더 생성 ---------------------------------------------*<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;"&nbsp;데이터&nbsp;생성<br />
+&nbsp;&nbsp;GS_BKPF-BUKRS&nbsp;=&nbsp;'1000'.<br />
+&nbsp;&nbsp;GS_BKPF-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+&nbsp;&nbsp;GS_BKPF-GJAHR&nbsp;=&nbsp;SY-DATUM+0(4).<br />
+&nbsp;&nbsp;GS_BKPF-BLART&nbsp;=&nbsp;'WL'.&nbsp;"&nbsp;자재이동<br />
+&nbsp;&nbsp;GS_BKPF-BLDAT&nbsp;=&nbsp;IV_BUDAT.&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;전기일자&nbsp;=&gt;&nbsp;[FI]&nbsp;헤더&nbsp;-&nbsp;증빙일자<br />
+&nbsp;&nbsp;GS_BKPF-BUDAT&nbsp;=&nbsp;IV_BUDAT.&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;증빙일자&nbsp;=&gt;&nbsp;[FI]&nbsp;헤더&nbsp;-&nbsp;전기일자<br />
+&nbsp;&nbsp;GS_BKPF-ERNAM&nbsp;=&nbsp;'ACA5-08'.&nbsp;"&nbsp;생성자&nbsp;이름<br />
+&nbsp;&nbsp;GS_BKPF-ERDAT&nbsp;=&nbsp;SY-DATUM.&nbsp;&nbsp;"&nbsp;생성일<br />
+&nbsp;&nbsp;GS_BKPF-ERZET&nbsp;=&nbsp;SY-UZEIT.&nbsp;&nbsp;"&nbsp;입력시간<br />
+<br />
+&nbsp;&nbsp;IF&nbsp;IV_VENCODE&nbsp;IS&nbsp;NOT&nbsp;INITIAL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GS_BKPF-BLTXT&nbsp;=&nbsp;'[MM]&nbsp;자재이동'&nbsp;&&&nbsp;'&nbsp;(벤더사:'&nbsp;&&&nbsp;IV_VENCODE&nbsp;&&&nbsp;'&nbsp;)'.<br />
+&nbsp;&nbsp;ELSEIF&nbsp;IV_CUSCODE&nbsp;IS&nbsp;NOT&nbsp;INITIAL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GS_BKPF-BLTXT&nbsp;=&nbsp;'[MM]&nbsp;자재이동'&nbsp;&&&nbsp;'&nbsp;(고객사:'&nbsp;&&&nbsp;IV_CUSCODE&nbsp;&&&nbsp;'&nbsp;)'.<br />
+&nbsp;&nbsp;ELSE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GS_BKPF-BLTXT&nbsp;=&nbsp;'[MM]&nbsp;자재이동'&nbsp;&&&nbsp;'&nbsp;(직영점:'&nbsp;&&&nbsp;IV_PLANTFR&nbsp;&&&nbsp;'&nbsp;-&gt;&nbsp;직영점:&nbsp;'&nbsp;&&&nbsp;IV_PLANTTO&nbsp;&&&nbsp;'&nbsp;)'.<br />
+&nbsp;&nbsp;ENDIF.<br />
+&nbsp;&nbsp;GS_BKPF-XBLNR&nbsp;=&nbsp;IV_MBLNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;자재문서&nbsp;번호&nbsp;=&gt;&nbsp;[FI]&nbsp;헤더&nbsp;-&nbsp;참조문서<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 3. FI 전표 아이템 생성 -------------------------------------------*<br />
+* -- 금액 변환 [BAPI]<br />
+*  CASE IV_WAERS1.<br />
+*    WHEN 'KRW'.<br />
+*      CALL FUNCTION 'BAPI_CURRENCY_CONV_TO_INTERNAL'<br />
+*        EXPORTING<br />
+*          AMOUNT_EXTERNAL      = IV_DMBTR<br />
+*          CURRENCY             = IV_WAERS1<br />
+*          MAX_NUMBER_OF_DIGITS = 23  "출력할 금액필드의 자릿수"<br />
+*        IMPORTING<br />
+*          AMOUNT_INTERNAL      = LV_AFTER_AMT.<br />
+*<br />
+*  ENDCASE.<br />
+<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CASE&nbsp;IV_BWART.&nbsp;"&nbsp;[MM]&nbsp;이동유형<br />
+   </div>
+   <div class="codeComment">
+* -- CASE1. 내부 이동 (생산창고 10000 -&gt; 보관창고 10001 ) -------------*<br />
+*    WHEN '131'. " 생산창고[PP] : 내부이동 ( 생산창고 -&gt; 보관창고 )<br />
+*    (131 번 유형은 사용하지 않음)<br />
+*<br />
+** --  Item Number 생성<br />
+*      DO 2 TIMES.<br />
+*        GS_BSEG-ITNUM = SY-INDEX. " Item 번호<br />
+*<br />
+** --  Item Number 에 따른 전표 생성<br />
+*        CASE GS_BSEG-ITNUM.<br />
+*          WHEN 1.<br />
+*<br />
+*            CLEAR: GV_RECON.<br />
+*            " 도착정보 플랜트의 제품 계정 코드 (S) - 보관창고<br />
+*            PERFORM GV_RECON USING GS_MMT100-PLANTFR<br />
+*                             CHANGING GV_RECON.<br />
+*<br />
+*            GS_BSEG-BUKRS = '1000'.<br />
+*            GS_BSEG-BELNR = GV_BELNR_NUMBER."[FI] 전표번호 (자동채번)<br />
+*            GS_BSEG-GJAHR = '2024'.<br />
+*            GS_BSEG-BSCHL = '40'.          " [FI] 전기키<br />
+*            GS_BSEG-SAKNR = GV_RECON.      " [FI] G/L계정 (Recon)<br />
+*            GS_BSEG-GLTXT = '[PP] 자재이동' && ' (Plant:' && IV_PLANTTO && ')'. " [FI] G/L계정명<br />
+*<br />
+*            GS_BSEG-DMBTR   = IV_DMBTR.     " [MM] 금액 =&gt; 도착정보(보관 Plant)의 총 금액<br />
+*            GS_BSEG-D_WAERS = IV_WAERS1.    " [MM] 통화코드<br />
+*            GS_BSEG-WRBTR   = IV_DMBTR.     " [MM] 금액<br />
+*            GS_BSEG-W_WAERS = IV_WAERS1.    " [MM] 통화코드<br />
+*            GS_BSEG-MATNR   = IV_MATNR.     " [MM] 자재코드 =&gt; [FI] 아이템 - 자재코드<br />
+*            GS_BSEG-WERKS   = IV_PLANTTO.   " [MM] 보관 플랜트ID(도착) =&gt; [FI] 아이템 - 플랜트ID<br />
+*<br />
+*            APPEND GS_BSEG TO GT_BSEG.<br />
+*<br />
+*          WHEN 2.<br />
+*<br />
+*            CLEAR: GV_RECON.<br />
+*            " 시작정보 플랜트의 제품 계정 코드 (H) - 생산창고<br />
+*            PERFORM GV_RECON USING GS_MMT100-PLANTFR<br />
+*                             CHANGING GV_RECON.<br />
+*<br />
+*            GS_BSEG-BUKRS = '1000'.<br />
+*            GS_BSEG-BELNR = GV_BELNR_NUMBER.<br />
+*            GS_BSEG-GJAHR = '2024'.<br />
+*            GS_BSEG-BSCHL = '50'.          " [FI] 전기키<br />
+*            GS_BSEG-SAKNR = GV_RECON.      " [FI] G/L계정 (Recon)<br />
+*            GS_BSEG-GLTXT = '[PP] 자재이동' && ' (Plant:' && IV_PLANTFR && ')'. " [FI] G/L계정명<br />
+*<br />
+*            GS_BSEG-DMBTR   = IV_DMBTR.     " [MM] 금액 =&gt; 출발정보(생산 Plant)의 금액<br />
+*            GS_BSEG-D_WAERS = IV_WAERS1.    " [MM] 통화코드<br />
+*            GS_BSEG-WRBTR   = IV_DMBTR.     " [MM] 금액<br />
+*            GS_BSEG-W_WAERS = IV_WAERS1.    " [MM] 통화코드<br />
+*            GS_BSEG-MATNR   = IV_MATNR.     " [MM] 자재코드 =&gt; [FI] 아이템 - 자재코드<br />
+*            GS_BSEG-WERKS   = IV_PLANTFR.   " [MM] 생산 플랜트ID(출고) =&gt; [FI] 아이템 - 플랜트ID<br />
+*<br />
+*            APPEND GS_BSEG TO GT_BSEG.<br />
+*        ENDCASE.<br />
+*<br />
+*      ENDDO.<br />
+<br />
+<br />
+* -- CASE2. 내부 이동 (A Plant -&gt; B Plant [직영점] )-------------------*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'311'.&nbsp;"&nbsp;재고이전[MM]&nbsp;:&nbsp;내부이동&nbsp;(&nbsp;보관창고&nbsp;&lt;-&gt;&nbsp;보관창고)<br />
+<br />
+   </div>
+   <div class="codeComment">
+* --  Item Number 생성<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DO&nbsp;2&nbsp;TIMES.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-ITNUM&nbsp;=&nbsp;SY-INDEX.&nbsp;"&nbsp;Item&nbsp;번호<br />
+<br />
+   </div>
+   <div class="codeComment">
+* --  Item Number 에 따른 전표 생성<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;GS_BSEG-ITNUM.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;1.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CLEAR:&nbsp;GV_RECON.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;출발정보&nbsp;플랜트의&nbsp;제품&nbsp;계정&nbsp;코드&nbsp;(S)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;GV_RECON&nbsp;USING&nbsp;GS_MMT100-PLANTTO<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;GV_RECON.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BUKRS&nbsp;=&nbsp;'1000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GJAHR&nbsp;=&nbsp;'2024'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BSCHL&nbsp;=&nbsp;'40'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;전기키<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-SAKNR&nbsp;=&nbsp;GV_RECON.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정&nbsp;(Recon)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GLTXT&nbsp;=&nbsp;'[MM]&nbsp;제품'&nbsp;&&&nbsp;'&nbsp;(Plant:'&nbsp;&&&nbsp;IV_PLANTTO&nbsp;&&&nbsp;')'.&nbsp;"&nbsp;[FI]&nbsp;G/L계정명<br />
+<br />
+   </div>
+   <div class="codeComment">
+*     -- 자재 이동 시, 자재원가 차이 발생하지 않는다고 가정.<br />
+*     -- 따라서 출고 시 -&gt; 입고 시 자산의 금액은 동일하다.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;&nbsp;&nbsp;=&nbsp;IV_DMBTR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;금액&nbsp;=&gt;&nbsp;도착정보(B&nbsp;Plant)의&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;IV_WAERS1.&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;통화코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;&nbsp;&nbsp;=&nbsp;IV_DMBTR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;IV_WAERS1.&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;통화코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-MATNR&nbsp;&nbsp;&nbsp;=&nbsp;IV_MATNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;자재코드&nbsp;=&gt;&nbsp;[FI]&nbsp;아이템&nbsp;-&nbsp;자재코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BPCODE&nbsp;&nbsp;=&nbsp;IV_PLANTTO.&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;BPCODE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WERKS&nbsp;&nbsp;&nbsp;=&nbsp;IV_PLANTTO.&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;B&nbsp;플랜트ID(도착)&nbsp;=&gt;&nbsp;[FI]&nbsp;아이템&nbsp;-&nbsp;플랜트ID<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_BSEG&nbsp;TO&nbsp;GT_BSEG.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;2.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CLEAR:&nbsp;GV_RECON.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;출발정보&nbsp;플랜트의&nbsp;제품&nbsp;계정&nbsp;코드&nbsp;(H)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;GV_RECON&nbsp;USING&nbsp;GS_MMT100-PLANTFR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;GV_RECON.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BUKRS&nbsp;=&nbsp;'1000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GJAHR&nbsp;=&nbsp;'2024'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BSCHL&nbsp;=&nbsp;'50'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;전기키<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-SAKNR&nbsp;=&nbsp;GV_RECON.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정&nbsp;(Recon)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GLTXT&nbsp;=&nbsp;'[MM]&nbsp;제품'&nbsp;&&&nbsp;'&nbsp;(Plant:'&nbsp;&&&nbsp;IV_PLANTFR&nbsp;&&&nbsp;')'.&nbsp;"&nbsp;[FI]&nbsp;G/L계정명<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;&nbsp;&nbsp;=&nbsp;IV_DMBTR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;금액&nbsp;=&gt;&nbsp;출발정보(A&nbsp;Plant)의&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;IV_WAERS1.&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;통화코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;&nbsp;&nbsp;=&nbsp;IV_DMBTR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;IV_WAERS1.&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;통화코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-MATNR&nbsp;&nbsp;&nbsp;=&nbsp;IV_MATNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;자재코드&nbsp;=&gt;&nbsp;[FI]&nbsp;아이템&nbsp;-&nbsp;자재코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BPCODE&nbsp;&nbsp;=&nbsp;IV_PLANTFR.&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;BPCODE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WERKS&nbsp;&nbsp;&nbsp;=&nbsp;IV_PLANTFR.&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;A&nbsp;플랜트ID(출고)&nbsp;&nbsp;=&gt;&nbsp;[FI]&nbsp;아이템&nbsp;-&nbsp;플랜트ID<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_BSEG&nbsp;TO&nbsp;GT_BSEG.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDDO.<br />
+<br />
+<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- CASE3. 외부 이동 ( 납품- WL 발생시점: 본사 =&gt; 거래처 )------------*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'601'.&nbsp;"&nbsp;완제품&nbsp;출고[SD]&nbsp;:&nbsp;외부이동&nbsp;(도매)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CLEAR:&nbsp;GV_RECON.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;출발정보&nbsp;플랜트의&nbsp;제품&nbsp;계정&nbsp;코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;GV_RECON&nbsp;USING&nbsp;GS_MMT100-PLANTFR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHANGING&nbsp;GV_RECON.<br />
+<br />
+   </div>
+   <div class="codeComment">
+* --  Item Number 생성<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DO&nbsp;2&nbsp;TIMES.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-ITNUM&nbsp;=&nbsp;SY-INDEX.&nbsp;"&nbsp;Item&nbsp;번호<br />
+<br />
+   </div>
+   <div class="codeComment">
+* --  Item Number 에 따른 전표 생성<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;GS_BSEG-ITNUM.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;1.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BUKRS&nbsp;=&nbsp;'1000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GJAHR&nbsp;=&nbsp;'2024'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BSCHL&nbsp;=&nbsp;'40'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;전기키<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-SAKNR&nbsp;=&nbsp;'510040'.&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정&nbsp;(Recon)&nbsp;=&nbsp;매출원가<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GLTXT&nbsp;=&nbsp;'매출원가'.&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정명<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;&nbsp;&nbsp;=&nbsp;IV_DMBTR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;IV_WAERS1.&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;통화코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;&nbsp;&nbsp;=&nbsp;IV_DMBTR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;금액&nbsp;(&nbsp;모든&nbsp;ITEM&nbsp;의&nbsp;총&nbsp;금액&nbsp;)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;IV_WAERS1.&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;통화코드<br />
+   </div>
+   <div class="codeComment">
+*            GS_BSEG-MATNR   = IV_MATNR.    " [MM] 자재코드 =&gt; [FI] 아이템 - 자재코드 ( 자재코드가 여러 개인 경우가 있기에 생략함 )<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WERKS&nbsp;&nbsp;&nbsp;=&nbsp;'10000'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;플랜트ID&nbsp;=&gt;&nbsp;매출원가가&nbsp;발생하는&nbsp;플랜트ID&nbsp;=&nbsp;본사<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_BSEG&nbsp;TO&nbsp;GT_BSEG.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;2.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BUKRS&nbsp;=&nbsp;'1000'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BELNR&nbsp;=&nbsp;GV_BELNR_NUMBER.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GJAHR&nbsp;=&nbsp;'2024'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-BSCHL&nbsp;=&nbsp;'50'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;전기키<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-SAKNR&nbsp;=&nbsp;GV_RECON.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[FI]&nbsp;G/L계정&nbsp;(Recon)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-GLTXT&nbsp;=&nbsp;'[SD]&nbsp;제품'&nbsp;&&&nbsp;'&nbsp;(Plant:'&nbsp;&&&nbsp;IV_PLANTFR&nbsp;&&&nbsp;')'.&nbsp;"&nbsp;[FI]&nbsp;G/L계정명<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-DMBTR&nbsp;&nbsp;&nbsp;=&nbsp;IV_DMBTR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-D_WAERS&nbsp;=&nbsp;IV_WAERS1.&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;통화코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WRBTR&nbsp;&nbsp;&nbsp;=&nbsp;IV_DMBTR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-W_WAERS&nbsp;=&nbsp;IV_WAERS1.&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;통화코드<br />
+   </div>
+   <div class="codeComment">
+*            GS_BSEG-MATNR   = IV_MATNR.    " [MM] 자재코드 =&gt; [FI] 아이템 - 자재코드 ( 자재코드가 여러 개인 경우가 있기에 생략함 )<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-WERKS&nbsp;&nbsp;&nbsp;=&nbsp;IV_PLANTFR.&nbsp;&nbsp;&nbsp;"&nbsp;[MM]&nbsp;플랜트ID&nbsp;=&gt;&nbsp;출고가&nbsp;발생하는&nbsp;플랜트<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_BSEG&nbsp;TO&nbsp;GT_BSEG.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDDO.<br />
+   </div>
+   <div class="codeComment">
+*    WHEN . " 입고 ( 벤더 =&gt; 송장검증으로 대체 )<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;ENDCASE.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+*                  SAVE TO ZEA_BKPF / ZEA_BSEG<br />
+*----------------------------------------------------------------------<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;INSERT&nbsp;&nbsp;ZEA_BKPF&nbsp;FROM&nbsp;GS_BKPF.<br />
+&nbsp;&nbsp;INSERT&nbsp;&nbsp;ZEA_BSEG&nbsp;FROM&nbsp;TABLE&nbsp;GT_BSEG.<br />
+<br />
+<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;EQ&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;COMMIT&nbsp;WORK&nbsp;AND&nbsp;WAIT.<br />
+   </div>
+   <div class="codeComment">
+*    MESSAGE GV_BELNR_NUMBER && '번 전표가 생성되었습니다. ' TYPE 'S'.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----------------------------------------------------------------------<br />
+*                          EXPORTING<br />
+*----------------------------------------------------------------------<br />
+*                        &lt;&lt; FI =&gt; MM &gt;&gt;<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;EV_BELNR&nbsp;=&nbsp;&nbsp;GV_BELNR_NUMBER.&nbsp;"전표번호&nbsp;Exporting<br />
+<br />
+ENDFUNCTION.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

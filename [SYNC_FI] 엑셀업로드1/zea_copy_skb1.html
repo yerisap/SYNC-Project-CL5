@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_COPY_SKB1</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZEA_COPY_SKB1</h2>
+<h3> Description: [FI] G/L Master 엑셀 업로드 [완료] - ACA5-17 이세영</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Report&nbsp;YE00_EX005<br />
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;[연습]&nbsp;엑셀&nbsp;업로드<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+REPORT ZEA_COPY_SKB1.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;Include<br />
+   </div>
+   <div class="code">
+include <a href ="zea_copy_skb1_top.html">ZEA_COPY_SKB1_TOP</a>.<br />
+   </div>
+   <div class="codeComment">
+*INCLUDE&nbsp;YE00_EX005_COPY_TOP.<br />
+*INCLUDE&nbsp;YE00_EX005_TOP.&nbsp;"&nbsp;전역변수&nbsp;&nbsp;&nbsp;&nbsp;Global&nbsp;Variable<br />
+   </div>
+   <div class="code">
+include <a href ="zea_copy_skb1_scr.html">ZEA_COPY_SKB1_SCR</a>.<br />
+   </div>
+   <div class="codeComment">
+*INCLUDE&nbsp;YE00_EX005_COPY_SCR.<br />
+*INCLUDE&nbsp;YE00_EX005_SCR.&nbsp;"&nbsp;선택화면&nbsp;&nbsp;&nbsp;&nbsp;Selection&nbsp;Screen<br />
+   </div>
+   <div class="code">
+include <a href ="zea_copy_skb1_pbo.html">ZEA_COPY_SKB1_PBO</a>.<br />
+   </div>
+   <div class="codeComment">
+*INCLUDE&nbsp;YE00_EX005_COPY_PBO.<br />
+*INCLUDE&nbsp;YE00_EX005_PBO.&nbsp;"&nbsp;출력전&nbsp;모듈&nbsp;Process&nbsp;Before&nbsp;Output<br />
+   </div>
+   <div class="code">
+include <a href ="zea_copy_skb1_pai.html">ZEA_COPY_SKB1_PAI</a>.<br />
+   </div>
+   <div class="codeComment">
+*INCLUDE&nbsp;YE00_EX005_COPY_PAI.<br />
+*INCLUDE&nbsp;YE00_EX005_PAI.&nbsp;"&nbsp;출력후&nbsp;모듈&nbsp;Process&nbsp;After&nbsp;&nbsp;Input<br />
+   </div>
+   <div class="code">
+include <a href ="zea_copy_skb1_f01.html">ZEA_COPY_SKB1_F01</a>.<br />
+   </div>
+   <div class="codeComment">
+*INCLUDE&nbsp;YE00_EX005_COPY_F01.<br />
+*INCLUDE&nbsp;YE00_EX005_F01.&nbsp;"&nbsp;내부로직&nbsp;&nbsp;&nbsp;&nbsp;Subroutine<br />
+<br />
+*&nbsp;ABAP&nbsp;Event<br />
+   </div>
+   <div class="code">
+INITIALIZATION.<br />
+&nbsp;&nbsp;"&nbsp;Selection&nbsp;screen에서&nbsp;앱툴바에&nbsp;버튼을&nbsp;추가할&nbsp;때&nbsp;아이콘을&nbsp;다루고&nbsp;싶을&nbsp;때&nbsp;사용<br />
+&nbsp;&nbsp;DATA&nbsp;LS_DYNTXT&nbsp;TYPE&nbsp;SMP_DYNTXT.<br />
+&nbsp;&nbsp;LS_DYNTXT-ICON_ID&nbsp;=&nbsp;ICON_XXL.&nbsp;"&nbsp;Icon은&nbsp;se38에서&nbsp;showicon&nbsp;프로그램을&nbsp;실행해서&nbsp;찾을&nbsp;수&nbsp;있다.<br />
+&nbsp;&nbsp;LS_DYNTXT-ICON_TEXT&nbsp;=&nbsp;'엑셀&nbsp;템플릿&nbsp;다운로드'.<br />
+&nbsp;&nbsp;SSCRFIELDS-FUNCTXT_01&nbsp;=&nbsp;LS_DYNTXT.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;SSCRFIELDS-FUNCTXT_01&nbsp;=&nbsp;'엑셀&nbsp;템플릿&nbsp;다운로드'.<br />
+<br />
+   </div>
+   <div class="code">
+AT SELECTION-SCREEN OUTPUT.<br />
+<br />
+AT SELECTION-SCREEN ON VALUE-REQUEST FOR PA_FNAME.<br />
+   </div>
+   <div class="codeComment">
+**&nbsp;&nbsp;MESSAGE&nbsp;'Possible&nbsp;Entry&nbsp;버튼을&nbsp;누르셨네요.'&nbsp;TYPE&nbsp;'I'.<br />
+**&nbsp;&nbsp;PA_FNAME&nbsp;=&nbsp;'TEST.XLSX'.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;PERFORM&nbsp;F4_FNAME&nbsp;CHANGING&nbsp;PA_FNAME.<br />
+<br />
+<br />
+AT SELECTION-SCREEN.<br />
+&nbsp;&nbsp;"&nbsp;Selection&nbsp;Screen의&nbsp;앱툴바에&nbsp;추가된&nbsp;버튼은<br />
+&nbsp;&nbsp;"&nbsp;FC01&nbsp;부터&nbsp;FC05&nbsp;까지&nbsp;사전에&nbsp;정의가&nbsp;되어&nbsp;있다.&nbsp;(&nbsp;외어야&nbsp;한다.&nbsp;)<br />
+&nbsp;&nbsp;CASE&nbsp;SSCRFIELDS-UCOMM.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'FC01'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'엑셀파일을&nbsp;다운로드&nbsp;합니다.'&nbsp;TYPE&nbsp;'I'.<br />
+&nbsp;&nbsp;ENDCASE.<br />
+<br />
+START-OF-SELECTION.<br />
+<br />
+&nbsp;&nbsp;PERFORM&nbsp;UPLOAD_EXCEL.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;엑셀파일을&nbsp;읽어온다.<br />
+&nbsp;&nbsp;PERFORM&nbsp;MOVE_INTERN_TO_ITAB.&nbsp;&nbsp;"&nbsp;엑셀파일&nbsp;내용을&nbsp;Internal&nbsp;Table로&nbsp;옮긴다.<br />
+&nbsp;&nbsp;PERFORM&nbsp;MAKE_SAVE_DATA.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;저장을&nbsp;위한&nbsp;데이터를&nbsp;만든다.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*Text&nbsp;elements<br />
+*----------------------------------------------------------<br />
+*&nbsp;T01&nbsp;Selection&nbsp;Options<br />
+<br />
+<br />
+*Selection&nbsp;texts<br />
+*----------------------------------------------------------<br />
+*&nbsp;PA_FNAME&nbsp;D&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.<br />
+<br />
+<br />
+*Messages<br />
+*----------------------------------------------------------<br />
+*<br />
+*&nbsp;Message&nbsp;class:&nbsp;Hard&nbsp;coded<br />
+*&nbsp;&nbsp;&nbsp;파일이&nbsp;선택되었습니다.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

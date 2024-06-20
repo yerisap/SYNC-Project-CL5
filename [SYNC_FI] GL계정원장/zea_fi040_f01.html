@@ -1,0 +1,762 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI040_F01</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZEA_FI040_F01</h2>
+<h3> Description: Include YE00_EX001_F01</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Include&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;YE00_EX001_F01<br />
+*&---------------------------------------------------------------------*<br />
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SELECT_DATA<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SELECT_DATA .<br />
+<br />
+&nbsp;&nbsp;"&nbsp;BPCODE에&nbsp;GL코드가&nbsp;1개이상&nbsp;매핑된&nbsp;경우<br />
+&nbsp;&nbsp;SELECT&nbsp;C~INDI_CD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;차/대변&nbsp;구분자<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A~BUDAT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;전기일자<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUM(&nbsp;B~DMBTR&nbsp;)&nbsp;"&nbsp;통화금액&nbsp;합계<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B~BPCODE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;FROM&nbsp;ZEA_BKPF&nbsp;AS&nbsp;A<br />
+&nbsp;&nbsp;&nbsp;&nbsp;JOIN&nbsp;ZEA_BSEG&nbsp;AS&nbsp;B&nbsp;ON&nbsp;B~BUKRS&nbsp;EQ&nbsp;A~BUKRS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;B~BELNR&nbsp;EQ&nbsp;A~BELNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;JOIN&nbsp;ZEA_TBSL&nbsp;AS&nbsp;C&nbsp;ON&nbsp;C~BSCHL&nbsp;EQ&nbsp;B~BSCHL<br />
+&nbsp;&nbsp;&nbsp;&nbsp;JOIN&nbsp;ZEA_SKB1&nbsp;AS&nbsp;D&nbsp;ON&nbsp;D~BUKRS&nbsp;EQ&nbsp;A~BUKRS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;D~SAKNR&nbsp;EQ&nbsp;B~SAKNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;TABLE&nbsp;GT_DATA<br />
+&nbsp;&nbsp;&nbsp;WHERE&nbsp;B~SAKNR&nbsp;IN&nbsp;SO_SAKNR&nbsp;&nbsp;"&nbsp;G/L코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;A~BUKRS&nbsp;EQ&nbsp;PA_BUKRS&nbsp;&nbsp;"&nbsp;회사코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;A~GJAHR&nbsp;EQ&nbsp;PA_GJAHR&nbsp;&nbsp;"&nbsp;회계연도<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;B~BPCODE&nbsp;EQ&nbsp;D~BPCODE<br />
+&nbsp;&nbsp;&nbsp;GROUP&nbsp;BY&nbsp;C~INDI_CD&nbsp;A~BUDAT&nbsp;B~BPCODE&nbsp;"&nbsp;&lt;==&nbsp;GROUP&nbsp;BY는&nbsp;위&nbsp;SELECT&nbsp;LIST&nbsp;순서대로&nbsp;적어줘야함.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ORDER&nbsp;BY&nbsp;A~BUDAT.<br />
+<br />
+<br />
+&nbsp;&nbsp;"&nbsp;BPCODE에&nbsp;매핑된&nbsp;GL코드가&nbsp;없는&nbsp;경우<br />
+&nbsp;&nbsp;IF&nbsp;GT_DATA[]&nbsp;IS&nbsp;INITIAL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CLEAR:&nbsp;GT_DATA[].<br />
+&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;C~INDI_CD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;차/대변&nbsp;구분자<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A~BUDAT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;전기일자<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUM(&nbsp;B~DMBTR&nbsp;)&nbsp;"&nbsp;통화금액&nbsp;합계<br />
+&nbsp;&nbsp;&nbsp;&nbsp;FROM&nbsp;ZEA_BKPF&nbsp;AS&nbsp;A<br />
+&nbsp;&nbsp;&nbsp;&nbsp;JOIN&nbsp;ZEA_BSEG&nbsp;AS&nbsp;B&nbsp;ON&nbsp;B~BUKRS&nbsp;EQ&nbsp;A~BUKRS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;B~BELNR&nbsp;EQ&nbsp;A~BELNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;JOIN&nbsp;ZEA_TBSL&nbsp;AS&nbsp;C&nbsp;ON&nbsp;C~BSCHL&nbsp;EQ&nbsp;B~BSCHL<br />
+&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;TABLE&nbsp;GT_DATA<br />
+&nbsp;&nbsp;&nbsp;WHERE&nbsp;B~SAKNR&nbsp;IN&nbsp;SO_SAKNR&nbsp;&nbsp;"&nbsp;G/L코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;A~BUKRS&nbsp;EQ&nbsp;PA_BUKRS&nbsp;&nbsp;"&nbsp;회사코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;A~GJAHR&nbsp;EQ&nbsp;PA_GJAHR&nbsp;&nbsp;"&nbsp;회계연도<br />
+&nbsp;&nbsp;&nbsp;GROUP&nbsp;BY&nbsp;C~INDI_CD&nbsp;A~BUDAT&nbsp;B~BPCODE&nbsp;"&nbsp;&lt;==&nbsp;GROUP&nbsp;BY는&nbsp;위&nbsp;SELECT&nbsp;LIST&nbsp;순서대로&nbsp;적어줘야함.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ORDER&nbsp;BY&nbsp;A~BUDAT.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;SELECT&nbsp;*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;FROM&nbsp;ZEA_BKPF&nbsp;AS&nbsp;A<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;JOIN&nbsp;ZEA_BSEG&nbsp;AS&nbsp;B&nbsp;ON&nbsp;B~BUKRS&nbsp;EQ&nbsp;A~BUKRS<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;B~BELNR&nbsp;EQ&nbsp;A~BELNR<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;JOIN&nbsp;ZEA_TBSL&nbsp;AS&nbsp;C&nbsp;ON&nbsp;C~BSCHL&nbsp;EQ&nbsp;B~BSCHL<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;JOIN&nbsp;ZEA_SKB1&nbsp;AS&nbsp;D&nbsp;ON&nbsp;D~BUKRS&nbsp;EQ&nbsp;A~BUKRS<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;D~SAKNR&nbsp;EQ&nbsp;B~SAKNR<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;GT_ALL<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;B~SAKNR&nbsp;&nbsp;IN&nbsp;SO_SAKNR&nbsp;&nbsp;"&nbsp;G/L코드<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;A~BUKRS&nbsp;&nbsp;&nbsp;EQ&nbsp;PA_BUKRS&nbsp;&nbsp;"&nbsp;회사코드<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;A~GJAHR&nbsp;&nbsp;&nbsp;EQ&nbsp;PA_GJAHR&nbsp;&nbsp;"&nbsp;회계연도<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;A~BUDAT&nbsp;&nbsp;&nbsp;LIKE&nbsp;LV_COND&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;'202403%'<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;C~INDI_CD&nbsp;EQ&nbsp;LV_INDI&nbsp;&nbsp;"&nbsp;차변/대변&nbsp;(S/H)<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;D~BPCODE&nbsp;&nbsp;EQ&nbsp;B~BPCODE.<br />
+<br />
+<br />
+   </div>
+   <div class="code">
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;MODIFY_DISPLAY_DATA<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM MODIFY_DISPLAY_DATA .<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;차/대변&nbsp;합계&nbsp;및&nbsp;합계&nbsp;차액&nbsp;구하기<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;REFRESH&nbsp;GT_DISP.<br />
+<br />
+&nbsp;&nbsp;DO&nbsp;12&nbsp;TIMES.&nbsp;"&nbsp;월&nbsp;데이터&nbsp;넣음<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;GS_DISP.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GS_DISP-MONTH&nbsp;=&nbsp;SY-INDEX.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_DISP&nbsp;TO&nbsp;GT_DISP.<br />
+&nbsp;&nbsp;ENDDO.<br />
+<br />
+<br />
+&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_DATA&nbsp;INTO&nbsp;GS_DATA.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;GS_DISP.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GS_DISP-MONTH&nbsp;=&nbsp;GS_DATA-BUDAT+4(2).<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;GS_DATA-INDI_CD.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'S'.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DISP-DMBTR_S&nbsp;=&nbsp;(&nbsp;GS_DATA-DMBTR&nbsp;)&nbsp;*&nbsp;100.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DISP-DMBTR_S&nbsp;=&nbsp;GS_DATA-DMBTR&nbsp;.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'H'.<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DISP-DMBTR_H&nbsp;=&nbsp;(&nbsp;GS_DATA-DMBTR&nbsp;)&nbsp;*&nbsp;100.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DISP-DMBTR_H&nbsp;=&nbsp;&nbsp;GS_DATA-DMBTR&nbsp;.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;COLLECT&nbsp;GS_DISP&nbsp;INTO&nbsp;GT_DISP.<br />
+&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_DISP&nbsp;INTO&nbsp;GS_DISP.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GS_DISP-DMBTR_DIF&nbsp;=&nbsp;GS_DISP-DMBTR_S&nbsp;-&nbsp;GS_DISP-DMBTR_H.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;GT_DISP&nbsp;FROM&nbsp;GS_DISP.<br />
+&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+**<br />
+**&nbsp;&nbsp;DATA:&nbsp;LT_STRINGS&nbsp;TYPE&nbsp;STANDARD&nbsp;TABLE&nbsp;OF&nbsp;STRING,<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LS_STRING&nbsp;&nbsp;TYPE&nbsp;STRING.<br />
+**<br />
+**&nbsp;&nbsp;APPEND&nbsp;'01'&nbsp;TO&nbsp;LT_STRINGS.<br />
+**&nbsp;&nbsp;APPEND&nbsp;'02'&nbsp;TO&nbsp;LT_STRINGS.<br />
+**&nbsp;&nbsp;APPEND&nbsp;'03'&nbsp;TO&nbsp;LT_STRINGS.<br />
+**&nbsp;&nbsp;APPEND&nbsp;'04'&nbsp;TO&nbsp;LT_STRINGS.<br />
+**&nbsp;&nbsp;APPEND&nbsp;'05'&nbsp;TO&nbsp;LT_STRINGS.<br />
+**&nbsp;&nbsp;APPEND&nbsp;'06'&nbsp;TO&nbsp;LT_STRINGS.<br />
+**&nbsp;&nbsp;APPEND&nbsp;'07'&nbsp;TO&nbsp;LT_STRINGS.<br />
+**&nbsp;&nbsp;APPEND&nbsp;'08'&nbsp;TO&nbsp;LT_STRINGS.<br />
+**&nbsp;&nbsp;APPEND&nbsp;'09'&nbsp;TO&nbsp;LT_STRINGS.<br />
+**&nbsp;&nbsp;APPEND&nbsp;'10'&nbsp;TO&nbsp;LT_STRINGS.<br />
+**&nbsp;&nbsp;APPEND&nbsp;'11'&nbsp;TO&nbsp;LT_STRINGS.<br />
+**&nbsp;&nbsp;APPEND&nbsp;'12'&nbsp;TO&nbsp;LT_STRINGS.<br />
+**<br />
+**<br />
+**&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;LT_STRINGS&nbsp;INTO&nbsp;LS_STRING.<br />
+**<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;CLEAR&nbsp;GS_DISP.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;GS_DISP-MONTH&nbsp;=&nbsp;LS_STRING.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_DATA&nbsp;INTO&nbsp;GS_DATA.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;GS_DATA-BUDAT+4(2).<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;LS_STRING.<br />
+**<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;GS_DATA-INDI_CD.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'S'.&nbsp;"&nbsp;차변<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ADD&nbsp;GS_DATA-DMBTR&nbsp;TO&nbsp;GS_DISP-DMBTR_S.<br />
+**<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'H'.&nbsp;"&nbsp;대변<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;차변&nbsp;-&nbsp;대변&nbsp;(&nbsp;+&nbsp;:&nbsp;차변&nbsp;,&nbsp;-&nbsp;:&nbsp;대변&nbsp;)<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DISP-DMBTR_H&nbsp;=&nbsp;GS_DISP-DMBTR_H&nbsp;+&nbsp;GS_DATA-DMBTR.<br />
+**<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;ENDLOOP.<br />
+**<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;차변&nbsp;-&nbsp;대변<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;GS_DISP-DMBTR_DIF&nbsp;=&nbsp;GS_DISP-DMBTR_S&nbsp;-&nbsp;GS_DISP-DMBTR_H.<br />
+**&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_DISP&nbsp;TO&nbsp;GT_DISP.<br />
+**<br />
+**&nbsp;&nbsp;ENDLOOP.<br />
+***<br />
+<br />
+   </div>
+   <div class="code">
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;DISPLAY_DATA<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM DISPLAY_DATA .<br />
+<br />
+<br />
+&nbsp;&nbsp;"&nbsp;[]&nbsp;는&nbsp;인터널&nbsp;테이블에&nbsp;담겨있는&nbsp;내용을&nbsp;의미,&nbsp;즉&nbsp;쌓여있는&nbsp;데이터<br />
+&nbsp;&nbsp;IF&nbsp;GT_DISP[]&nbsp;IS&nbsp;INITIAL.&nbsp;"&nbsp;=&gt;&nbsp;한&nbsp;줄도&nbsp;없는지&nbsp;검사<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;E013.&nbsp;"&nbsp;E013:&nbsp;해당&nbsp;조건의&nbsp;데이터가&nbsp;존재하지&nbsp;않습니다.<br />
+&nbsp;&nbsp;ELSE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CALL&nbsp;SCREEN&nbsp;0100.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;CREATE_OBJECT_0100<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM CREATE_OBJECT_0100 .<br />
+<br />
+&nbsp;&nbsp;CREATE&nbsp;OBJECT&nbsp;GO_CONTAINER<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CONTAINER_NAME&nbsp;=&nbsp;'CCON'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1.<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;CREATE&nbsp;OBJECT&nbsp;GO_SPLIT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PARENT&nbsp;&nbsp;=&nbsp;GO_CONTAINER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Parent&nbsp;Container<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ROWS&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Number&nbsp;of&nbsp;Rows&nbsp;to&nbsp;be&nbsp;displayed<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COLUMNS&nbsp;=&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Number&nbsp;of&nbsp;Columns&nbsp;to&nbsp;be&nbsp;Displayed<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;=&nbsp;1.<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;E120.&nbsp;"&nbsp;분리&nbsp;컨테이너&nbsp;생성에&nbsp;실패했습니다.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;CLASSIC&nbsp;한&nbsp;메소드&nbsp;호출방법&nbsp;(방법&nbsp;1)<br />
+&nbsp;&nbsp;"&nbsp;RECEIVING&nbsp;파라미터는&nbsp;항상&nbsp;CALL&nbsp;BY&nbsp;VALUE로만&nbsp;전달이&nbsp;가능하다.<br />
+&nbsp;&nbsp;"&nbsp;값은&nbsp;'='&nbsp;를&nbsp;이용해서&nbsp;한&nbsp;개만&nbsp;전달하기&nbsp;때문에.<br />
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GO_SPLIT-&gt;GET_CONTAINER<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ROW&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COLUMN&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1&nbsp;"&nbsp;1번째&nbsp;칸<br />
+&nbsp;&nbsp;&nbsp;&nbsp;RECEIVING&nbsp;"&nbsp;값을&nbsp;왼쪽으로&nbsp;전달<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CONTAINER&nbsp;=&nbsp;GO_CON_LEFT.<br />
+   </div>
+   <div class="codeComment">
+*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;"&nbsp;신문법&nbsp;중&nbsp;하나&nbsp;(방법&nbsp;2)<br />
+&nbsp;&nbsp;GO_CON_RIGHT&nbsp;=&nbsp;GO_SPLIT-&gt;GET_CONTAINER(&nbsp;ROW&nbsp;=&nbsp;1&nbsp;COLUMN&nbsp;=&nbsp;2&nbsp;).&nbsp;"&nbsp;2번째&nbsp;칸<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;ALV&nbsp;생성<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;"&nbsp;TOP&nbsp;에&nbsp;ALV&nbsp;생성<br />
+&nbsp;&nbsp;CREATE&nbsp;OBJECT&nbsp;GO_ALV_GRID_LEFT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_PARENT&nbsp;=&nbsp;GO_CON_LEFT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;=&nbsp;1.<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;E020.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GO_SPLIT-&gt;SET_COLUMN_WIDTH<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Column&nbsp;ID<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WIDTH&nbsp;=&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;NPlWidth<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RESULT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Result&nbsp;Code<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CNTL_ERROR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;See&nbsp;CL_GUI_CONTROL<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CNTL_SYSTEM_ERROR&nbsp;=&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;See&nbsp;CL_GUI_CONTROL<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;3<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;.<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;CREATE&nbsp;OBJECT&nbsp;GO_ALV_GRID_RIGHT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_PARENT&nbsp;=&nbsp;GO_CON_RIGHT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;=&nbsp;1.<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;E020.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SET_ALV_LAYOUT_0100<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SET_ALV_LAYOUT_0100 .<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_LAYOUT.<br />
+<br />
+&nbsp;&nbsp;GS_LAYOUT-ZEBRA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'X'.&nbsp;&nbsp;"&nbsp;얼룩처리<br />
+&nbsp;&nbsp;GS_LAYOUT-SEL_MODE&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'D'.&nbsp;&nbsp;"&nbsp;셀단위로&nbsp;선택<br />
+&nbsp;&nbsp;GS_LAYOUT-CWIDTH_OPT&nbsp;&nbsp;=&nbsp;'X'.&nbsp;&nbsp;"&nbsp;열넓이&nbsp;최적화<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;GS_LAYOUT-CWIDTH_OPT&nbsp;&nbsp;=&nbsp;'A'.&nbsp;&nbsp;"&nbsp;ALV가&nbsp;REFRESH&nbsp;될때마다&nbsp;열&nbsp;넓이를&nbsp;최적화<br />
+<br />
+   </div>
+   <div class="code">
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;DISPLAY_ALV_0100<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM DISPLAY_ALV_0100 .<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_VARIANT.<br />
+&nbsp;&nbsp;GS_VARIANT-REPORT&nbsp;=&nbsp;SY-REPID.&nbsp;"&nbsp;현재&nbsp;프로그램&nbsp;이름을&nbsp;전달.<br />
+&nbsp;&nbsp;GV_SAVE&nbsp;=&nbsp;'A'.&nbsp;"&nbsp;개인용/공용&nbsp;모두&nbsp;생성&nbsp;가능하도록&nbsp;설정<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GO_ALV_GRID_LEFT-&gt;SET_TABLE_FOR_FIRST_DISPLAY<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_STRUCTURE_NAME&nbsp;=&nbsp;'ZEA_BSEG'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Internal&nbsp;Output&nbsp;Table&nbsp;Structure&nbsp;Name<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IS_VARIANT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GS_VARIANT&nbsp;&nbsp;"&nbsp;Layout<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_SAVE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GV_SAVE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Save&nbsp;Layout<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IS_LAYOUT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GS_LAYOUT&nbsp;&nbsp;&nbsp;"&nbsp;Layout<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CHANGING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IT_OUTTAB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GT_DISP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Output&nbsp;Table<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IT_FIELDCATALOG&nbsp;=&nbsp;GT_FIELDCAT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Field&nbsp;Catalog<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1.<br />
+<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;E021.&nbsp;"&nbsp;ALV&nbsp;Grid&nbsp;생성&nbsp;중&nbsp;오류가&nbsp;발생했습니다.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;GS_VARIANT-HANDLE&nbsp;=&nbsp;'AVL2'.&nbsp;"&nbsp;동일한&nbsp;프로그램&nbsp;내에서&nbsp;Variant&nbsp;를&nbsp;구별하기&nbsp;위한&nbsp;값<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GO_ALV_GRID_RIGHT-&gt;SET_TABLE_FOR_FIRST_DISPLAY<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_STRUCTURE_NAME&nbsp;=&nbsp;'ZEA_BSEG'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Internal&nbsp;Output&nbsp;Table&nbsp;Structure&nbsp;Name<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IS_VARIANT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GS_VARIANT&nbsp;&nbsp;"&nbsp;Layout<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_SAVE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GV_SAVE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Save&nbsp;Layout<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IS_LAYOUT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GS_LAYOUT&nbsp;&nbsp;&nbsp;"&nbsp;Layout<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CHANGING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IT_OUTTAB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GT_ALL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Output&nbsp;Table<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IT_FIELDCATALOG&nbsp;&nbsp;=&nbsp;GT_FIELDCAT_ALL&nbsp;"&nbsp;Field&nbsp;Catalog<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1.<br />
+<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;E021.&nbsp;"&nbsp;ALV&nbsp;Grid&nbsp;생성&nbsp;중&nbsp;오류가&nbsp;발생했습니다.<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+<br />
+<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;HANDLE_DOUBLE_CLICK<br />
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;PS&nbsp;:&nbsp;Parameter&nbsp;Structure,&nbsp;전달되는&nbsp;변수의&nbsp;종류가&nbsp;스트럭처&nbsp;변수다.<br />
+*&&nbsp;PO&nbsp;:&nbsp;Parameter&nbsp;Object,&nbsp;전달되는&nbsp;변수의&nbsp;종류가&nbsp;참조변수&nbsp;다.<br />
+*&&nbsp;PV&nbsp;:&nbsp;Parameter&nbsp;Value,&nbsp;전달되는&nbsp;변수의&nbsp;값이&nbsp;문자,&nbsp;정수,&nbsp;실수,&nbsp;날짜,&nbsp;시간&nbsp;같은&nbsp;Elementary&nbsp;Type&nbsp;이다.<br />
+*&&nbsp;PT&nbsp;:&nbsp;Parameter&nbsp;Table,&nbsp;전달되는&nbsp;변수의&nbsp;종류가&nbsp;Internal&nbsp;Table이다.<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM HANDLE_DOUBLE_CLICK  USING    PS_COLUMN TYPE LVC_S_COL<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PS_ROW&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_S_ROW<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PO_SENDER&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_ALV_GRID.<br />
+<br />
+<br />
+&nbsp;&nbsp;CASE&nbsp;PO_SENDER.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;GO_ALV_GRID_LEFT.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;&nbsp;선택한&nbsp;행이&nbsp;인터널테이블에&nbsp;있는&nbsp;정상적인&nbsp;데이터인지&nbsp;체크<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;PS_ROW-ROWTYPE&nbsp;IS&nbsp;NOT&nbsp;INITIAL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;E121.&nbsp;"&nbsp;월&nbsp;별&nbsp;데이터를&nbsp;선택해주세요.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CHECK&nbsp;PS_ROW-ROWTYPE&nbsp;IS&nbsp;INITIAL.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DATA&nbsp;LV_COND&nbsp;TYPE&nbsp;STRING.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DATA&nbsp;LV_MON&nbsp;&nbsp;TYPE&nbsp;NUMC2.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DATA&nbsp;LV_INDI&nbsp;TYPE&nbsp;C.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;PS_ROW-INDEX&nbsp;=&nbsp;INDEX로&nbsp;월별을&nbsp;알&nbsp;수&nbsp;있다.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_DISP&nbsp;INTO&nbsp;GS_DISP&nbsp;INDEX&nbsp;PS_ROW-INDEX.<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LV_MON&nbsp;&nbsp;=&nbsp;PS_ROW-INDEX.&nbsp;"&nbsp;1&nbsp;=&gt;&nbsp;01&nbsp;2&nbsp;=&gt;&nbsp;02<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LV_COND&nbsp;=&nbsp;|{&nbsp;PA_GJAHR&nbsp;}{&nbsp;LV_MON&nbsp;}%|.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;202402%<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LV_COND&nbsp;=&nbsp;PA_GJAHR&nbsp;&&&nbsp;LV_MON&nbsp;&&&nbsp;'%'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CONCATENATE&nbsp;PA_GJAHR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LV_MON<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'%'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;LV_COND.<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CASE&nbsp;PS_COLUMN-FIELDNAME.&nbsp;"&nbsp;필드명으로&nbsp;차변/대변&nbsp;구분<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'DMBTR_S'.&nbsp;"&nbsp;차변이면,&nbsp;S만&nbsp;실행<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LV_INDI&nbsp;=&nbsp;'S'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'DMBTR_H'.&nbsp;"&nbsp;대변이면,&nbsp;H&nbsp;만&nbsp;실행<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LV_INDI&nbsp;=&nbsp;'H'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDCASE.<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;*<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FROM&nbsp;ZEA_BKPF&nbsp;AS&nbsp;A<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JOIN&nbsp;ZEA_BSEG&nbsp;AS&nbsp;B&nbsp;ON&nbsp;B~BUKRS&nbsp;EQ&nbsp;A~BUKRS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;B~BELNR&nbsp;EQ&nbsp;A~BELNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JOIN&nbsp;ZEA_TBSL&nbsp;AS&nbsp;C&nbsp;ON&nbsp;C~BSCHL&nbsp;EQ&nbsp;B~BSCHL<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JOIN&nbsp;ZEA_SKB1&nbsp;AS&nbsp;D&nbsp;ON&nbsp;D~BUKRS&nbsp;EQ&nbsp;A~BUKRS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;D~SAKNR&nbsp;EQ&nbsp;B~SAKNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;GT_ALL<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;B~SAKNR&nbsp;&nbsp;IN&nbsp;SO_SAKNR&nbsp;&nbsp;"&nbsp;G/L코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;A~BUKRS&nbsp;&nbsp;&nbsp;EQ&nbsp;PA_BUKRS&nbsp;&nbsp;"&nbsp;회사코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;A~GJAHR&nbsp;&nbsp;&nbsp;EQ&nbsp;PA_GJAHR&nbsp;&nbsp;"&nbsp;회계연도<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;A~BUDAT&nbsp;&nbsp;&nbsp;LIKE&nbsp;LV_COND&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;'202403%'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;C~INDI_CD&nbsp;EQ&nbsp;LV_INDI&nbsp;&nbsp;"&nbsp;차변/대변&nbsp;(S/H)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;D~BPCODE&nbsp;&nbsp;EQ&nbsp;B~BPCODE.<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;GT_ALL[]&nbsp;IS&nbsp;INITIAL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;*<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FROM&nbsp;ZEA_BKPF&nbsp;AS&nbsp;A<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JOIN&nbsp;ZEA_BSEG&nbsp;AS&nbsp;B&nbsp;ON&nbsp;B~BUKRS&nbsp;EQ&nbsp;A~BUKRS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;B~BELNR&nbsp;EQ&nbsp;A~BELNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;JOIN&nbsp;ZEA_TBSL&nbsp;AS&nbsp;C&nbsp;ON&nbsp;C~BSCHL&nbsp;EQ&nbsp;B~BSCHL<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;GT_ALL<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;B~SAKNR&nbsp;&nbsp;IN&nbsp;SO_SAKNR&nbsp;&nbsp;"&nbsp;G/L코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;A~BUKRS&nbsp;&nbsp;&nbsp;EQ&nbsp;PA_BUKRS&nbsp;&nbsp;"&nbsp;회사코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;A~GJAHR&nbsp;&nbsp;&nbsp;EQ&nbsp;PA_GJAHR&nbsp;&nbsp;"&nbsp;회계연도<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;A~BUDAT&nbsp;&nbsp;&nbsp;LIKE&nbsp;LV_COND&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;'202403%'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AND&nbsp;C~INDI_CD&nbsp;EQ&nbsp;LV_INDI.&nbsp;&nbsp;"&nbsp;차변/대변&nbsp;(S/H)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DESCRIBE&nbsp;TABLE&nbsp;GT_ALL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;S006&nbsp;WITH&nbsp;SY-TFILL.&nbsp;"&nbsp;&&nbsp;건의&nbsp;데이터가&nbsp;검색되었습니다.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;REFRESH_ALV_0100.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;GO_ALV_GRID_RIGHT.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CLEAR:&nbsp;GS_ALL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;READ&nbsp;TABLE&nbsp;GT_ALL&nbsp;INTO&nbsp;GS_ALL&nbsp;INDEX&nbsp;PS_ROW-INDEX.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SET&nbsp;PARAMETER&nbsp;ID&nbsp;'ZEA_BELNR'&nbsp;FIELD&nbsp;GS_ALL-BELNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CALL&nbsp;TRANSACTION&nbsp;'ZEA_FI020'.<br />
+&nbsp;&nbsp;ENDCASE.<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SET_ALV_EVENT_0100<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SET_ALV_EVENT_0100 .<br />
+<br />
+&nbsp;&nbsp;IF&nbsp;GO_HANDLER&nbsp;IS&nbsp;INITIAL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;CREATE&nbsp;OBJECT&nbsp;GO_HANDLER.<br />
+&nbsp;&nbsp;ENDIF.<br />
+&nbsp;&nbsp;SET&nbsp;HANDLER:<br />
+&nbsp;&nbsp;"&nbsp;더블클릭&nbsp;이벤트&nbsp;구현<br />
+&nbsp;&nbsp;GO_HANDLER-&gt;ON_DOUBLE_CLICK&nbsp;FOR&nbsp;GO_ALV_GRID_LEFT,&nbsp;"&nbsp;LEFT&nbsp;ALV<br />
+&nbsp;&nbsp;GO_HANDLER-&gt;ON_HOTSPOT_CLICK&nbsp;FOR&nbsp;GO_ALV_GRID_LEFT,"&nbsp;LEFT&nbsp;ALV<br />
+&nbsp;&nbsp;GO_HANDLER-&gt;ON_DOUBLE_CLICK&nbsp;FOR&nbsp;GO_ALV_GRID_RIGHT,"&nbsp;LEFT&nbsp;ALV<br />
+&nbsp;&nbsp;GO_HANDLER-&gt;ON_HOTSPOT_CLICK&nbsp;FOR&nbsp;GO_ALV_GRID_RIGHT.&nbsp;"&nbsp;Right&nbsp;ALV<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SET_AVL_FIELDCAT_0100<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SET_AVL_FIELDCAT_0100 .<br />
+<br />
+<br />
+&nbsp;&nbsp;REFRESH&nbsp;GT_FIELDCAT.<br />
+&nbsp;&nbsp;REFRESH&nbsp;GT_FIELDCAT_ALL.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;ALV1&nbsp;:&nbsp;DISP<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CLEAR&nbsp;GS_FIELDCAT.<br />
+&nbsp;&nbsp;GS_FIELDCAT-FIELDNAME&nbsp;=&nbsp;'MONTH'.&nbsp;"&nbsp;월별<br />
+&nbsp;&nbsp;GS_FIELDCAT-COL_POS&nbsp;&nbsp;&nbsp;=&nbsp;1.<br />
+&nbsp;&nbsp;GS_FIELDCAT-COLTEXT&nbsp;&nbsp;&nbsp;=&nbsp;'기간'.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT&nbsp;TO&nbsp;GT_FIELDCAT.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_FIELDCAT.<br />
+&nbsp;&nbsp;GS_FIELDCAT-FIELDNAME&nbsp;=&nbsp;'DMBTR_S'.&nbsp;"&nbsp;월별&nbsp;차변&nbsp;합계금액<br />
+&nbsp;&nbsp;GS_FIELDCAT-COL_POS&nbsp;&nbsp;&nbsp;=&nbsp;2.<br />
+&nbsp;&nbsp;GS_FIELDCAT-COLTEXT&nbsp;&nbsp;&nbsp;=&nbsp;'차변'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-REF_TABLE&nbsp;=&nbsp;'ZEA_BSEG'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-REF_FIELD&nbsp;=&nbsp;'DMBTR'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-EMPHASIZE&nbsp;=&nbsp;'C300'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-CFIELDNAME&nbsp;=&nbsp;'DMBTR_S'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-CURRENCY&nbsp;&nbsp;=&nbsp;'KRW'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-HOTSPOT&nbsp;&nbsp;&nbsp;=&nbsp;ABAP_ON.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT&nbsp;TO&nbsp;GT_FIELDCAT.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_FIELDCAT.<br />
+&nbsp;&nbsp;GS_FIELDCAT-FIELDNAME&nbsp;=&nbsp;'DMBTR_H'.&nbsp;"&nbsp;월별&nbsp;대변&nbsp;합계금액<br />
+&nbsp;&nbsp;GS_FIELDCAT-COL_POS&nbsp;&nbsp;&nbsp;=&nbsp;3.<br />
+&nbsp;&nbsp;GS_FIELDCAT-COLTEXT&nbsp;&nbsp;&nbsp;=&nbsp;'대변'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-REF_TABLE&nbsp;=&nbsp;'ZEA_BSEG'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-REF_FIELD&nbsp;=&nbsp;'DMBTR'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-EMPHASIZE&nbsp;=&nbsp;'C500'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-CFIELDNAME&nbsp;=&nbsp;'DMBTR_H'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-CURRENCY&nbsp;&nbsp;=&nbsp;'KRW'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-HOTSPOT&nbsp;&nbsp;&nbsp;=&nbsp;ABAP_ON.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT&nbsp;TO&nbsp;GT_FIELDCAT.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_FIELDCAT.<br />
+&nbsp;&nbsp;GS_FIELDCAT-FIELDNAME&nbsp;=&nbsp;'DMBTR_DIF'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-COL_POS&nbsp;&nbsp;&nbsp;=&nbsp;4.<br />
+&nbsp;&nbsp;GS_FIELDCAT-COLTEXT&nbsp;&nbsp;&nbsp;=&nbsp;'잔액'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-REF_TABLE&nbsp;=&nbsp;'ZEA_BSEG'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-REF_FIELD&nbsp;=&nbsp;'DMBTR'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-EMPHASIZE&nbsp;=&nbsp;'C601'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-CFIELDNAME&nbsp;=&nbsp;'DMBTR_DIF'.<br />
+&nbsp;&nbsp;GS_FIELDCAT-CURRENCY&nbsp;&nbsp;=&nbsp;'KRW'.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT&nbsp;TO&nbsp;GT_FIELDCAT.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;ALV2&nbsp;에&nbsp;추가하는&nbsp;필드&nbsp;--<br />
+*&nbsp;&nbsp;CALL&nbsp;FUNCTION&nbsp;'LVC_FIELDCATALOG_MERGE'<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I_STRUCTURE_NAME&nbsp;=&nbsp;'ZEA_BSEG'<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;CHANGING<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CT_FIELDCAT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GT_FIELDCAT_ALL&nbsp;&nbsp;"&nbsp;Field&nbsp;Catalog&nbsp;with&nbsp;Field&nbsp;Descriptions<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1.<br />
+*&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;&lt;&gt;&nbsp;0.<br />
+*<br />
+*&nbsp;&nbsp;ENDIF.<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CLEAR&nbsp;GS_FIELDCAT_ALL.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-FIELDNAME&nbsp;=&nbsp;'BSCHL'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-COLTEXT&nbsp;&nbsp;&nbsp;=&nbsp;'DC'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-REF_TABLE&nbsp;=&nbsp;'ZEA_BSEG'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-REF_FIELD&nbsp;=&nbsp;'BSCHL'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-KEY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;ABAP_ON.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT_ALL&nbsp;TO&nbsp;GT_FIELDCAT_ALL.<br />
+<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_FIELDCAT_ALL.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-FIELDNAME&nbsp;=&nbsp;'BELNR'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-HOTSPOT&nbsp;&nbsp;&nbsp;=&nbsp;ABAP_ON.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-REF_TABLE&nbsp;=&nbsp;'ZEA_BSEG'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-REF_FIELD&nbsp;=&nbsp;'BELNR'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-KEY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;ABAP_ON.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT_ALL&nbsp;TO&nbsp;GT_FIELDCAT_ALL.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_FIELDCAT_ALL.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-FIELDNAME&nbsp;=&nbsp;'BLART'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-REF_TABLE&nbsp;=&nbsp;'ZEA_BKPF'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-REF_FIELD&nbsp;=&nbsp;'BLART'.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT_ALL&nbsp;TO&nbsp;GT_FIELDCAT_ALL.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_FIELDCAT_ALL.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-FIELDNAME&nbsp;=&nbsp;'BLDAT'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-REF_TABLE&nbsp;=&nbsp;'ZEA_BKPF'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-REF_FIELD&nbsp;=&nbsp;'BUDAT'.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT_ALL&nbsp;TO&nbsp;GT_FIELDCAT_ALL.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_FIELDCAT_ALL.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-FIELDNAME&nbsp;=&nbsp;'BUDAT'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-REF_TABLE&nbsp;=&nbsp;'ZEA_BKPF'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-REF_FIELD&nbsp;=&nbsp;'BUDAT'.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT_ALL&nbsp;TO&nbsp;GT_FIELDCAT_ALL.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_FIELDCAT_ALL.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-FIELDNAME&nbsp;=&nbsp;'BLTXT'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-REF_TABLE&nbsp;=&nbsp;'ZEA_BKPF'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-REF_FIELD&nbsp;=&nbsp;'BLTXT'.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT_ALL&nbsp;TO&nbsp;GT_FIELDCAT_ALL.<br />
+<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_FIELDCAT_ALL.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-FIELDNAME&nbsp;=&nbsp;'DMBTR'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-REF_TABLE&nbsp;=&nbsp;'ZEA_BSEG'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-REF_FIELD&nbsp;=&nbsp;'DMBTR'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-EMPHASIZE&nbsp;=&nbsp;'C311'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-CFIELDNAME&nbsp;=&nbsp;'DMBTR'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-CURRENCY&nbsp;&nbsp;=&nbsp;'KRW'.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT_ALL&nbsp;TO&nbsp;GT_FIELDCAT_ALL.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_FIELDCAT_ALL.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-FIELDNAME&nbsp;=&nbsp;'D_WAERS'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-REF_TABLE&nbsp;=&nbsp;'ZEA_BSEG'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-REF_FIELD&nbsp;=&nbsp;'D_WAERS'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-EMPHASIZE&nbsp;=&nbsp;'C311'.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT_ALL&nbsp;TO&nbsp;GT_FIELDCAT_ALL.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_FIELDCAT_ALL.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-FIELDNAME&nbsp;=&nbsp;'WRBTR'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-REF_TABLE&nbsp;=&nbsp;'ZEA_BSEG'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-REF_FIELD&nbsp;=&nbsp;'WRBTR'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-EMPHASIZE&nbsp;=&nbsp;'C311'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-CFIELDNAME&nbsp;=&nbsp;'WRBTR'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-CURRENCY&nbsp;&nbsp;=&nbsp;'KRW'.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT_ALL&nbsp;TO&nbsp;GT_FIELDCAT_ALL.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_FIELDCAT_ALL.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-FIELDNAME&nbsp;=&nbsp;'W_WAERS'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-REF_TABLE&nbsp;=&nbsp;'ZEA_BSEG'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-REF_FIELD&nbsp;=&nbsp;'W_WAERS'.<br />
+&nbsp;&nbsp;GS_FIELDCAT_ALL-EMPHASIZE&nbsp;=&nbsp;'C311'.<br />
+&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT_ALL&nbsp;TO&nbsp;GT_FIELDCAT_ALL.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;GS_FIELDCAT-FIELDNAME&nbsp;=&nbsp;'CARRID'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;필드&nbsp;이름<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;GS_FIELDCAT-COLTEXT&nbsp;&nbsp;&nbsp;=&nbsp;TEXT-F01.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;출력&nbsp;되는&nbsp;컬럼명<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;GS_FIELDCAT-HOTSPOT&nbsp;&nbsp;&nbsp;=&nbsp;ABAP_ON.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;HOTSPOT&nbsp;설정<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;GS_FIELDCAT-ICON&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;ABAP_ON.&nbsp;"&nbsp;'X'&nbsp;&nbsp;&nbsp;"&nbsp;아이콘&nbsp;필드<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;"&nbsp;컬럼을&nbsp;합산처리하도록&nbsp;옵션을&nbsp;켬<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;GS_FIELDCAT-DO_SUM&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;ABAP_ON.&nbsp;"&nbsp;'X'.<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;GS_FIELDCAT-NO_OUT&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;ABAP_ON.&nbsp;"'X'.&nbsp;&nbsp;&nbsp;"&nbsp;컬럼을&nbsp;숨김&nbsp;처리<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;GS_FIELDCAT-TECH&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;ABAP_ON.&nbsp;"'X'.&nbsp;&nbsp;&nbsp;"&nbsp;컬럼을&nbsp;삭제&nbsp;처리<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;"&nbsp;컬럼명&nbsp;위에&nbsp;마우스를&nbsp;올렸을&nbsp;때&nbsp;텍스트<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;GS_FIELDCAT-TOOLTIP&nbsp;&nbsp;&nbsp;=&nbsp;TEXT-F03.<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;"&nbsp;가운데&nbsp;정렬,&nbsp;'L':&nbsp;왼쪽&nbsp;정렬,&nbsp;'R':&nbsp;오른쪽&nbsp;정렬<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;GS_FIELDCAT-JUST&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'C'<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;GS_FIELDCAT-CFIELDNAME&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;CURRENCY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;통화&nbsp;단위&nbsp;참조<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;GS_FIELDCAT-CHECKBOX&nbsp;&nbsp;=&nbsp;ABAP_ON&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;체크박스<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;GS_FIELDCAT-INTTYPE&nbsp;&nbsp;&nbsp;=&nbsp;I.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;내부&nbsp;타입<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;GS_FIELDCAT-INTLEN&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;20.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;내부&nbsp;길이<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;GS_FIELDCAT-EMPHASIZE&nbsp;=&nbsp;'C500'.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;열&nbsp;색상<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;APPEND&nbsp;GS_FIELDCAT&nbsp;TO&nbsp;GT_FIELDCAT.<br />
+<br />
+<br />
+<br />
+<br />
+   </div>
+   <div class="code">
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SUM_DATA<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SUM_DATA .<br />
+&nbsp;&nbsp;CASE&nbsp;GS_DATA-INDI_CD.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'S'.&nbsp;"&nbsp;차변<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ADD&nbsp;GS_DATA-DMBTR&nbsp;TO&nbsp;GS_DISP-DMBTR_S.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'H'.&nbsp;"&nbsp;대변<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DISP-DMBTR_H&nbsp;=&nbsp;GS_DISP-DMBTR_H&nbsp;+&nbsp;GS_DATA-DMBTR.<br />
+&nbsp;&nbsp;ENDCASE.<br />
+ENDFORM.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;REFRESH_ALV_0100<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM REFRESH_ALV_0100 .<br />
+<br />
+&nbsp;&nbsp;GS_STABLE&nbsp;=&nbsp;VALUE&nbsp;#(&nbsp;COL&nbsp;=&nbsp;ABAP_TRUE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ROW&nbsp;=&nbsp;ABAP_TRUE&nbsp;).<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GO_ALV_GRID_RIGHT-&gt;REFRESH_TABLE_DISPLAY<br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IS_STABLE&nbsp;=&nbsp;GS_STABLE.<br />
+<br />
+ENDFORM.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>LZEA_FI_KATOP</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: LZEA_FI_KATOP</h2>
+<h3> Description: [FI] MM모듈 KA 자동함수 생성</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="code">
+FUNCTION-POOL ZEA_FI_KA.                    "MESSAGE-ID ..<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;INCLUDE&nbsp;LZEA_FI_KAD...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;Local&nbsp;class&nbsp;definition<br />
+<br />
+   </div>
+   <div class="code">
+TABLES: ZEA_BKPF, ZEA_BSEG. " FI 헤더/아이템<br />
+TABLES: ZEA_TVZBT. " 지급조건<br />
+TABLES: ZEA_TCURR. " 환율<br />
+<br />
+" FI 전표 헤더 테이블<br />
+DATA: GT_BKPF TYPE TABLE OF ZEA_BKPF,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BKPF&nbsp;TYPE&nbsp;ZEA_BKPF.<br />
+<br />
+" FI 전표 아이템 테이블<br />
+DATA: GT_BSEG TYPE TABLE OF ZEA_BSEG,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG&nbsp;TYPE&nbsp;ZEA_BSEG.<br />
+<br />
+" FI 환율 테이블<br />
+DATA: GS_TCURR TYPE ZEA_TCURR,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_TCURR&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;ZEA_TCURR.<br />
+DATA: GV_COVT_AMOUNT TYPE ZEA_BSEG-WRBTR.<br />
+<br />
+" BP 코드 조회<br />
+DATA: GV_RECON TYPE ZEA_SKB1-SAKNR,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LV_SAKNR&nbsp;TYPE&nbsp;ZEA_SKB1-SAKNR.<br />
+<br />
+DATA: LV_TOTCOST TYPE ZEA_BSEG-WRBTR.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--FI&nbsp;전표번호&nbsp;채번<br />
+   </div>
+   <div class="code">
+DATA: GV_BELNR_NUMBER TYPE ZEA_BKPF-BELNR.      " 전표번호(key)<br />
+DATA: GV_ITNUM TYPE N.                          " Item 라인번호<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

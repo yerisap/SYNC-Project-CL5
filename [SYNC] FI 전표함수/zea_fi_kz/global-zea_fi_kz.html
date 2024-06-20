@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>LZEA_FI_KZTOP</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: LZEA_FI_KZTOP</h2>
+<h3> Description: [FI] MM 모듈 KZ 자동함수 생성</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="code">
+FUNCTION-POOL ZEA_FI_KZ.                    "MESSAGE-ID ..<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;TABLES<br />
+   </div>
+   <div class="code">
+TABLES: ZEA_BKPF, ZEA_BSEG, " FI 헤더/아이템<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_TVZBT,&nbsp;"&nbsp;지급조건<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_TCURR.&nbsp;"&nbsp;환율<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;WA,&nbsp;ITAB<br />
+   </div>
+   <div class="code">
+" FI 전표 헤더 테이블<br />
+DATA: GT_BKPF TYPE TABLE OF ZEA_BKPF,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BKPF&nbsp;TYPE&nbsp;ZEA_BKPF.<br />
+<br />
+" FI 전표 아이템 테이블<br />
+DATA: GT_BSEG TYPE TABLE OF ZEA_BSEG,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG&nbsp;TYPE&nbsp;ZEA_BSEG.<br />
+<br />
+" FI 환율 테이블<br />
+DATA: GS_TCURR       TYPE ZEA_TCURR,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_TCURR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;ZEA_TCURR,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_COVT_AMOUNT&nbsp;TYPE&nbsp;ZEA_BSEG-WRBTR,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C_RATIO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_TCURR-UKURS.&nbsp;&nbsp;"환율보관변수<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--FI&nbsp;벤더&nbsp;원장<br />
+   </div>
+   <div class="code">
+DATA: GT_FIT800 TYPE TABLE OF ZEA_FIT800,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_FIT800&nbsp;TYPE&nbsp;ZEA_FIT800.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;Variant<br />
+*&nbsp;--FI&nbsp;전표번호&nbsp;채번<br />
+   </div>
+   <div class="code">
+DATA: GV_BELNR_NUMBER TYPE ZEA_BKPF-BELNR.   " 전표번호(key)<br />
+DATA: GV_ITNUM TYPE N.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;Amount&nbsp;변수<br />
+   </div>
+   <div class="code">
+DATA : LV_AP_AMOUNT TYPE ZEA_BSEG-DMBTR,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LV_BK_AMOUNT&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CVT_S_AMT&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CVT_H_AMT&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CVT_DIS_AMT&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR.<br />
+<br />
+DATA : GV_KAAP_AMT TYPE ZEA_BSEG-DMBTR.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

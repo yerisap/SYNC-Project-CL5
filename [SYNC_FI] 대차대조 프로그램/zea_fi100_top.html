@@ -1,0 +1,311 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI100_TOP</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZEA_FI100_TOP</h2>
+<h3> Description: Include ZEA_TR_TEM_TOP</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Include&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_FI_BS_TOP<br />
+*&---------------------------------------------------------------------*<br />
+<br />
+   </div>
+   <div class="code">
+CLASS : LCL_EVENT_HANDLER DEFINITION DEFERRED.<br />
+DATA : GCL_HANDLER TYPE REF TO LCL_EVENT_HANDLER.<br />
+DATA : GCL_HANDLER_2 TYPE REF TO LCL_EVENT_HANDLER.<br />
+DATA : GCL_HANDLER_3 TYPE REF TO LCL_EVENT_HANDLER.<br />
+<br />
+   </div>
+   <div class="codeComment">
+**********************************************************************<br />
+*&nbsp;TABLES<br />
+**********************************************************************<br />
+   </div>
+   <div class="code">
+TABLES : ZEA_BKPF,   "[FI] 전표 Header 테이블<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_BSEG,&nbsp;&nbsp;&nbsp;"[FI]&nbsp;전표&nbsp;Item&nbsp;&nbsp;&nbsp;테이블<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_SKB1,&nbsp;&nbsp;&nbsp;"[FI]&nbsp;G/L&nbsp;마스터&nbsp;&nbsp;테이블<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MTREESNODE,&nbsp;"[TR]&nbsp;NODE&nbsp;테이블<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_TBSL,&nbsp;&nbsp;&nbsp;"[FI]&nbsp;전기키&nbsp;테이블<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_SKA1.&nbsp;&nbsp;&nbsp;"[FI]&nbsp;BP&nbsp;마스터&nbsp;테이블<br />
+<br />
+   </div>
+   <div class="codeComment">
+**********************************************************************<br />
+*&nbsp;Internal&nbsp;table&nbsp;and&nbsp;Work&nbsp;area<br />
+**********************************************************************<br />
+   </div>
+   <div class="code">
+TYPES : BEGIN OF TS_DATA.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;include&nbsp;structure&nbsp;<a&nbsp;href&nbsp;="zea_bseg/dictionary-zea_bseg.html">ZEA_BSEG</a>.&nbsp;"&nbsp;회계연도&nbsp;/&nbsp;G/L코드&nbsp;/&nbsp;GLTXT&nbsp;/&nbsp;금액/&nbsp;세금<br />
+TYPES :                               " BSCHL(전기키)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEVEL0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;SETID,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEVEL0_TEXT(50),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEVEL1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;SETID,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEVEL1_TEXT(50),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEVEL2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;SETID,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEVEL2_TEXT(50),<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NEW_SAKNR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-SAKNR,&nbsp;&nbsp;&nbsp;"&nbsp;계정&nbsp;코드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;S_AMOUNT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,&nbsp;&nbsp;&nbsp;"&nbsp;차변&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;H_AMOUNT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,&nbsp;&nbsp;&nbsp;"&nbsp;대변&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T_AMOUNT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,&nbsp;&nbsp;&nbsp;"&nbsp;토탈&nbsp;금액&nbsp;여부<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INDI_CD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_TBSL-INDI_CD,&nbsp;"&nbsp;차대변&nbsp;구분&nbsp;여부<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BPNAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_SKA1-BPNAME,<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;END&nbsp;OF&nbsp;TS_DATA.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*---For&nbsp;Select<br />
+*&nbsp;1.&nbsp;GT_DATA&nbsp;-&nbsp;자산&nbsp;테이블<br />
+   </div>
+   <div class="code">
+DATA : GT_DATA TYPE TABLE OF TS_DATA,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DATA&nbsp;TYPE&nbsp;TS_DATA.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;2.&nbsp;GT_DATA&nbsp;-&nbsp;부채/자본&nbsp;테이블<br />
+   </div>
+   <div class="code">
+DATA : GT_DATA2 TYPE TABLE OF TS_DATA,    "부채 담는 인터널 테이블<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DATA2&nbsp;TYPE&nbsp;TS_DATA,<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_DATA3&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;TS_DATA,&nbsp;&nbsp;&nbsp;&nbsp;"자본&nbsp;담는&nbsp;인터널&nbsp;테이블<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DATA3&nbsp;TYPE&nbsp;TS_DATA.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*---For&nbsp;Display<br />
+   </div>
+   <div class="code">
+TYPES : BEGIN OF TS_DISPLAY.<br />
+TYPES :<br />
+&nbsp;&nbsp;FLTXT2&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_SKB1-GLTXT,&nbsp;&nbsp;"계정과목&nbsp;폴더&nbsp;(상위)&nbsp;-&nbsp;자산/부채/자본&nbsp;-&nbsp;구분<br />
+&nbsp;&nbsp;FLTXT&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_SKB1-GLTXT,&nbsp;&nbsp;"계정과목&nbsp;폴더&nbsp;(하위)&nbsp;-&nbsp;유동/비유동&nbsp;구분<br />
+&nbsp;&nbsp;GLTXT&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_SKB1-GLTXT,&nbsp;&nbsp;"계정명<br />
+&nbsp;&nbsp;SAKNR&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_SKB1-SAKNR,&nbsp;&nbsp;"계정코드<br />
+<br />
+&nbsp;&nbsp;T_AMOUNT&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,&nbsp;&nbsp;"금액(=차대변&nbsp;차액)<br />
+&nbsp;&nbsp;H_AMOUNT&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,<br />
+&nbsp;&nbsp;S_AMOUNT&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,<br />
+<br />
+&nbsp;&nbsp;D_WAERS&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-D_WAERS,&nbsp;"&nbsp;통화코드<br />
+&nbsp;&nbsp;END&nbsp;OF&nbsp;TS_DISPLAY.<br />
+<br />
+DATA : GT_DISPLAY1 TYPE TABLE OF TS_DISPLAY,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DISPLAY1&nbsp;TYPE&nbsp;TS_DISPLAY,<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_DISPLAY2&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;TS_DISPLAY,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DISPLAY2&nbsp;TYPE&nbsp;TS_DISPLAY,<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_DISPLAY3&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;TS_DISPLAY,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DISPLAY3&nbsp;TYPE&nbsp;TS_DISPLAY.<br />
+<br />
+   </div>
+   <div class="codeComment">
+**********************************************************************<br />
+*&nbsp;Class&nbsp;instance<br />
+**********************************************************************<br />
+*&nbsp;Tree&nbsp;ALV&nbsp;&nbsp;(자산)<br />
+   </div>
+   <div class="code">
+DATA : GCL_CONTAINER TYPE REF TO CL_GUI_DOCKING_CONTAINER,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GCL_TREE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_ALV_TREE_SIMPLE,<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;Field&nbsp;Catalog<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_FCAT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_S_FCAT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_FCAT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_T_FCAT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_FCAT2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_T_FCAT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_FCAT3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_T_FCAT,<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;ALV&nbsp;Tree&nbsp;Sort<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_SORT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_S_SORT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_SORT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_T_SORT,<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_SORT2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_T_SORT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_SORT2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_s_SORT,<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_SORT3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_T_SORT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_SORT3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_s_SORT,<br />
+<br />
+   </div>
+   <div class="codeComment">
+*--&nbsp;ALV&nbsp;Layout<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_LAYOUT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_S_LAYO,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_LAYOUT2&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_S_LAYO,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_LAYOUT3&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_S_LAYO,<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_VARIANT&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;DISVARIANT.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;Tree&nbsp;ALV&nbsp;(부채/자본)----------------------------------------------*<br />
+   </div>
+   <div class="code">
+DATA :<br />
+&nbsp;&nbsp;GCL_CONTAINER_2&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_DOCKING_CONTAINER,&nbsp;&nbsp;&nbsp;"오른쪽&nbsp;Docking&nbsp;Container<br />
+&nbsp;&nbsp;GO_SPLIT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_SPLITTER_CONTAINER,&nbsp;&nbsp;"Split<br />
+&nbsp;&nbsp;GO_TOP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_CONTAINER,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Top&nbsp;&nbsp;&nbsp;&nbsp;(부채)<br />
+&nbsp;&nbsp;GO_BOT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_CONTAINER,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Bottom&nbsp;(자본)<br />
+<br />
+&nbsp;&nbsp;GCL_TREE_2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_ALV_TREE_SIMPLE,&nbsp;&nbsp;&nbsp;"부채&nbsp;트리<br />
+&nbsp;&nbsp;GCL_TREE_3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_ALV_TREE_SIMPLE.&nbsp;&nbsp;&nbsp;"자본&nbsp;트리<br />
+<br />
+   </div>
+   <div class="codeComment">
+**********************************************************************<br />
+*&nbsp;&nbsp;Aout&nbsp;Tree<br />
+**********************************************************************<br />
+*&nbsp;0.&nbsp;Tree&nbsp;테이블<br />
+*&nbsp;트리관련&nbsp;전역&nbsp;변수<br />
+   </div>
+   <div class="code">
+DATA: GO_GUI_SIMPLE_TREE TYPE REF TO CL_GUI_SIMPLE_TREE,    "SIMPLE TREE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GO_GUI_COLUMN_TREE&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_COLUMN_TREE,&nbsp;&nbsp;&nbsp;&nbsp;"COLUMN&nbsp;TREE<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GO_GUI_LIST_TREE&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_LIST_TREE.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"LIST&nbsp;TREE<br />
+<br />
+DATA: GT_NODES                 TYPE STANDARD TABLE OF MTREESNODE,   "트리에 표시할 노드<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_NODES&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;MTREESNODE,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_ITEMS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;STANDARD&nbsp;TABLE&nbsp;OF&nbsp;MTREEITM,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"트리&nbsp;노드의&nbsp;컬럼<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_HIERARCHY_HEADER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;TREEV_HHDR,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"트리의&nbsp;Hierarchy&nbsp;헤더<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_HIERARCHY_COLUMN_NAME&nbsp;TYPE&nbsp;TV_ITMNAME,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"트리의&nbsp;Hierarchy&nbsp;컬럼&nbsp;이름(CL_GUI_COLUMN_TREE에서&nbsp;사용)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_LIST_HEADER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;TREEV_LHDR,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"트리의&nbsp;List&nbsp;헤더(CL_GUI_LIST_TREE에서&nbsp;사용)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_ITEM_SELECTION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;C.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"트리의&nbsp;아이템(노드의&nbsp;컬럼)&nbsp;선택&nbsp;가능&nbsp;여부<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;Evnet&nbsp;관련&nbsp;변수<br />
+   </div>
+   <div class="code">
+DATA : GT_EVENT    TYPE CNTL_SIMPLE_EVENTS,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_EVENT&nbsp;&nbsp;&nbsp;&nbsp;LIKE&nbsp;LINE&nbsp;OF&nbsp;GT_EVENT,<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GCL_HANDLER&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;LCL_EVENT_HANDLER,<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_NODE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;I.<br />
+   </div>
+   <div class="codeComment">
+**********************************************************************<br />
+*&nbsp;Common&nbsp;variable<br />
+**********************************************************************<br />
+<br />
+   </div>
+   <div class="code">
+DATA :          OK_CODE TYPE SY-UCOMM.<br />
+<br />
+DATA :<br />
+&nbsp;&nbsp;GV_SCR_ON&nbsp;&nbsp;TYPE&nbsp;CHAR1,<br />
+&nbsp;&nbsp;GV_SAVE&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;C,<br />
+&nbsp;&nbsp;GV_LINES&nbsp;&nbsp;&nbsp;TYPE&nbsp;SY-TFILL,<br />
+&nbsp;&nbsp;GV_ANSWER&nbsp;&nbsp;TYPE&nbsp;CHAR1,<br />
+&nbsp;&nbsp;GV_CHANGED&nbsp;TYPE&nbsp;CHAR1.<br />
+<br />
+   </div>
+   <div class="codeComment">
+**********************************************************************<br />
+*&nbsp;범위값을&nbsp;가져오는&nbsp;&nbsp;Range&nbsp;변수<br />
+**********************************************************************<br />
+<br />
+   </div>
+   <div class="code">
+RANGES: R_SAKNR_1  FOR ZEA_SKB1-SAKNR. " GL계정 - 자산<br />
+RANGES: R_SAKNR_2  FOR ZEA_SKB1-SAKNR. " GL계정 - 자본<br />
+RANGES: R_SAKNR_3  FOR ZEA_SKB1-SAKNR. " GL계정 - 부채<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;"&nbsp;자산&nbsp;&nbsp;:&nbsp;1로&nbsp;시작<br />
+   </div>
+   <div class="code">
+R_SAKNR_1-SIGN   = 'I'.<br />
+R_SAKNR_1-OPTION = 'CP'.<br />
+R_SAKNR_1-LOW = '1*'.<br />
+APPEND R_SAKNR_1.<br />
+<br />
+" 부채     : 2로 시작<br />
+R_SAKNR_2-SIGN   = 'I'.<br />
+R_SAKNR_2-OPTION = 'CP'.<br />
+R_SAKNR_2-LOW = '2*'.<br />
+APPEND R_SAKNR_2.<br />
+<br />
+" 자본 : 3로 시작<br />
+R_SAKNR_3-SIGN   = 'I'.<br />
+R_SAKNR_3-OPTION = 'CP'.<br />
+R_SAKNR_3-LOW = '3*'.<br />
+APPEND R_SAKNR_3.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

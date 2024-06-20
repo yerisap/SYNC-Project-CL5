@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI050_TCURR_TOP</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZEA_FI050_TCURR_TOP</h2>
+<h3> Description: Include ZEA_FI050_TUCRR_TOP</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Include&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZEA_FI050_TUCRR_TOP<br />
+*&---------------------------------------------------------------------*<br />
+<br />
+   </div>
+   <div class="code">
+TABLES: ZEA_TCURR.<br />
+   </div>
+   <div class="codeComment">
+*DATA:&nbsp;GT_TCURR&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;ZEA_TCURR,<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_TCURR&nbsp;TYPE&nbsp;ZEA_TCURR.<br />
+<br />
+   </div>
+   <div class="code">
+DATA: BEGIN OF GS_TCURR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;include&nbsp;structure&nbsp;<a&nbsp;href&nbsp;="zea_tcurr/dictionary-zea_tcurr.html">ZEA_TCURR</a>.<br />
+DATA:   AVERAGE TYPE ZEA_TCURR-UKURS,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;END&nbsp;OF&nbsp;GS_TCURR,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_TCURR&nbsp;LIKE&nbsp;TABLE&nbsp;OF&nbsp;GS_TCURR.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;화면&nbsp;출력&nbsp;DATA&nbsp;:&nbsp;GT_DISPLAY<br />
+   </div>
+   <div class="code">
+DATA: BEGIN OF GS_DISPLAY.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;include&nbsp;structure&nbsp;<a&nbsp;href&nbsp;="zea_tcurr/dictionary-zea_tcurr.html">ZEA_TCURR</a>.<br />
+DATA:   AVERAGE TYPE ZEA_TCURR-UKURS,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;STATUS&nbsp;&nbsp;TYPE&nbsp;ICON-ID,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;END&nbsp;OF&nbsp;GS_DISPLAY,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_DISPLAY&nbsp;LIKE&nbsp;TABLE&nbsp;OF&nbsp;GS_DISPLAY.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*type&nbsp;pool&nbsp;declarations&nbsp;for&nbsp;graphical&nbsp;frame&nbsp;work<br />
+   </div>
+   <div class="code">
+TYPE-POOLS: GFW.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*OK&nbsp;code&nbsp;declaration<br />
+   </div>
+   <div class="code">
+DATA: OK_CODE TYPE SY-UCOMM.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*structure&nbsp;declaration&nbsp;for&nbsp;ALV&nbsp;Cont&nbsp;1&nbsp;values<br />
+   </div>
+   <div class="code">
+TYPES : BEGIN OF TY_GRVALWA1.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INCLUDE&nbsp;STRUCTURE&nbsp;GPRVAL.<br />
+TYPES : END OF TY_GRVALWA1.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*structure&nbsp;declaration&nbsp;for&nbsp;ALV&nbsp;Cont&nbsp;1&nbsp;column&nbsp;names<br />
+   </div>
+   <div class="code">
+TYPES : BEGIN OF TY_COL1_TEXTS.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INCLUDE&nbsp;STRUCTURE&nbsp;GPRTXT.<br />
+TYPES : END OF TY_COL1_TEXTS.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*data&nbsp;declarations&nbsp;for&nbsp;ALV&nbsp;Cont&nbsp;1<br />
+   </div>
+   <div class="code">
+DATA : GRVAL1     TYPE STANDARD TABLE OF TY_GRVALWA1,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GRVALWA1&nbsp;&nbsp;&nbsp;TYPE&nbsp;TY_GRVALWA1,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COL1_TEXTS&nbsp;TYPE&nbsp;STANDARD&nbsp;TABLE&nbsp;OF&nbsp;TY_COL1_TEXTS,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COL1_WA&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;TY_COL1_TEXTS.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*structure&nbsp;declaration&nbsp;for&nbsp;Graph&nbsp;Cont&nbsp;2&nbsp;values<br />
+   </div>
+   <div class="code">
+TYPES : BEGIN OF TY_GRVALWA2.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INCLUDE&nbsp;STRUCTURE&nbsp;GPRVAL.<br />
+TYPES : END OF TY_GRVALWA2.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*structure&nbsp;declaration&nbsp;for&nbsp;Graph&nbsp;Cont&nbsp;2&nbsp;column&nbsp;names<br />
+   </div>
+   <div class="code">
+TYPES : BEGIN OF TY_COL2_TEXTS.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INCLUDE&nbsp;STRUCTURE&nbsp;GPRTXT.<br />
+TYPES : END OF TY_COL2_TEXTS.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*data&nbsp;declarations&nbsp;for&nbsp;graph2<br />
+   </div>
+   <div class="code">
+DATA : GRVAL2     TYPE STANDARD TABLE OF TY_GRVALWA2,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GRVALWA2&nbsp;&nbsp;&nbsp;TYPE&nbsp;TY_GRVALWA2,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COL2_TEXTS&nbsp;TYPE&nbsp;STANDARD&nbsp;TABLE&nbsp;OF&nbsp;TY_COL2_TEXTS,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COL2_WA&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;TY_COL2_TEXTS.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*data&nbsp;declarations&nbsp;for&nbsp;containers,splitters,and&nbsp;custom&nbsp;container<br />
+   </div>
+   <div class="code">
+DATA :<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CUSTOM_CONTAINER&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_CUSTOM_CONTAINER,<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPLITTER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_SPLITTER_CONTAINER,<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CCON1&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_CUSTOM_CONTAINER,<br />
+&nbsp;&nbsp;CCON2&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_CUSTOM_CONTAINER.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;ALV&nbsp;&nbsp;display&nbsp;-&nbsp;Cont&nbsp;1<br />
+   </div>
+   <div class="code">
+DATA: GO_ALV_GRID      TYPE REF TO CL_GUI_ALV_GRID.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;ALV&nbsp;관련변수<br />
+   </div>
+   <div class="code">
+DATA: GS_LAYOUT   TYPE LVC_S_LAYO,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_FIELDCAT&nbsp;TYPE&nbsp;LVC_T_FCAT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_FIELDCAT&nbsp;TYPE&nbsp;LVC_S_FCAT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_SORT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_S_SORT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_SORT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_T_SORT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_VARIANT&nbsp;&nbsp;TYPE&nbsp;DISVARIANT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_SAVE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;C.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;150번&nbsp;화면변수&nbsp;--------------------<br />
+   </div>
+   <div class="code">
+DATA: BEGIN OF S0150.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INCLUDE&nbsp;STRUCTURE&nbsp;GS_TCURR.<br />
+DATA:<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;INPUT_USD&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OUTPUT_KRW&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OUTPUT_DIF&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;END&nbsp;OF&nbsp;S0150.<br />
+DATA: STATUS TYPE C LENGTH 132." Status Icon은 항상 길이가 문자 132<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

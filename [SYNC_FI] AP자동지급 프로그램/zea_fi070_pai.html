@@ -1,0 +1,362 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI070_PAI</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZEA_FI070_PAI</h2>
+<h3> Description: Include ZMEETROOMI01</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Include&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ZMEETROOMI01<br />
+*&---------------------------------------------------------------------*<br />
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;USER_COMMAND_0100&nbsp;&nbsp;INPUT<br />
+*&---------------------------------------------------------------------*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
+*----------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE USER_COMMAND_0100 INPUT.<br />
+<br />
+<br />
+&nbsp;&nbsp;CALL&nbsp;METHOD&nbsp;GO_ALV_GRID-&gt;CHECK_CHANGED_DATA.<br />
+&nbsp;&nbsp;CASE&nbsp;OK_CODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'BACK'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;TO&nbsp;SCREEN&nbsp;0.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;About&nbsp;A/P&nbsp;Pay<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'PAY_NOW'.&nbsp;&nbsp;&nbsp;"지급&nbsp;처리&nbsp;버튼&nbsp;선택&nbsp;시<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;PAY.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;Send&nbsp;To&nbsp;Vendor,&nbsp;Clearing&nbsp;Mail<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'SEND_MAIL'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;CHECK_LINE&nbsp;CHANGING&nbsp;VENCODE.&nbsp;"입력값&nbsp;확인<br />
+<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;Display&nbsp;Mail&nbsp;record<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'SOST'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;CALL_SOST.<br />
+<br />
+&nbsp;&nbsp;ENDCASE.<br />
+<br />
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;EXIT&nbsp;&nbsp;INPUT<br />
+*&---------------------------------------------------------------------*<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br />
+*----------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE EXIT INPUT.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;Back&nbsp;AND&nbsp;Cancel&nbsp;Button<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CASE&nbsp;OK_CODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'EXIT'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;PROGRAM.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'CANC'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;TO&nbsp;SCREEN&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;OTHERS.<br />
+&nbsp;&nbsp;ENDCASE.<br />
+<br />
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;EXIT_0200&nbsp;&nbsp;INPUT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE EXIT_0200 INPUT.<br />
+&nbsp;&nbsp;CASE&nbsp;OK_CODE.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'CANC'.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CALL&nbsp;FUNCTION&nbsp;'POPUP_TO_CONFIRM'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TITLEBAR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;'대금&nbsp;지급&nbsp;처리'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TEXT_QUESTION&nbsp;&nbsp;=&nbsp;'팝업창을&nbsp;닫으시겠습니까?&nbsp;'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TEXT_BUTTON_1&nbsp;&nbsp;=&nbsp;'yes'<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DISPLAY_CANCEL_BUTTON&nbsp;=&nbsp;'X'<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;START_COLUMN&nbsp;&nbsp;&nbsp;=&nbsp;25<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;START_ROW&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;6<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ANSWER&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;GV_ANSWER<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EXCEPTIONS<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TEXT_NOT_FOUND&nbsp;=&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OTHERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;GV_ANSWER&nbsp;EQ&nbsp;'1'.&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;-&nbsp;-&nbsp;-&nbsp;-&nbsp;NO<br />
+   </div>
+   <div class="codeComment">
+*----&nbsp;취소&nbsp;메세지<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;S000&nbsp;DISPLAY&nbsp;LIKE&nbsp;'W'&nbsp;WITH&nbsp;'팝업창을&nbsp;닫았습니다.'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;TO&nbsp;SCREEN&nbsp;0.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;ENDCASE.<br />
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Module&nbsp;&nbsp;USER_COMMAND_0200&nbsp;&nbsp;INPUT<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+MODULE USER_COMMAND_0200 INPUT.<br />
+<br />
+&nbsp;&nbsp;CASE&nbsp;OK_CODE.<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'SAVE'.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----&nbsp;1.&nbsp;지급&nbsp;처리&nbsp;진행<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;SELECT_BACK_SAVE&nbsp;CHANGING&nbsp;GV_KR_BELNR&nbsp;GV_EV_BELNR.<br />
+<br />
+   </div>
+   <div class="codeComment">
+**----&nbsp;2.&nbsp;STATUS&nbsp;변경<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IF&nbsp;GV_EV_BELNR&nbsp;IS&nbsp;NOT&nbsp;INITIAL.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_DATA&nbsp;INTO&nbsp;GS_DATA&nbsp;WHERE&nbsp;BELNR&nbsp;EQ&nbsp;&nbsp;GV_EV_BELNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DATA-STATUS&nbsp;=&nbsp;'3'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DATA-AUGDT&nbsp;=&nbsp;&nbsp;'X'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DATA-AUGBL&nbsp;=&nbsp;GV_KR_BELNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;GT_DATA&nbsp;&nbsp;FROM&nbsp;GS_DATA&nbsp;.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_DATA2&nbsp;INTO&nbsp;GS_DATA2&nbsp;WHERE&nbsp;BELNR&nbsp;EQ&nbsp;&nbsp;GV_EV_BELNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DATA2-STATUS&nbsp;=&nbsp;'3'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DATA2-AUGDT&nbsp;=&nbsp;&nbsp;'X'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;GT_DATA2&nbsp;&nbsp;FROM&nbsp;GS_DATA2&nbsp;.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*----&nbsp;3.&nbsp;ALV&nbsp;REFRESH<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;REFRESH_ALV2_0100.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;REFRESH_ALV_0100.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;TO&nbsp;SCREEN&nbsp;0.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"팝업창&nbsp;종료<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHEN&nbsp;'CACN'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LEAVE&nbsp;TO&nbsp;SCREEN&nbsp;0.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;REFRESH_ALV2_0100.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PERFORM&nbsp;REFRESH_ALV_0100.<br />
+<br />
+&nbsp;&nbsp;ENDCASE.<br />
+ENDMODULE.<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Form&nbsp;SELECT_BACK_SAVE<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+FORM SELECT_BACK_SAVE CHANGING   C_EV_BELNR TYPE ZEA_FIT800-BELNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C_KR_BELNR&nbsp;TYPE&nbsp;ZEA_FIT800-BELNR.<br />
+&nbsp;&nbsp;BREAK-POINT.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;FI&nbsp;전표&nbsp;아이템&nbsp;테이블<br />
+&nbsp;&nbsp;DATA:&nbsp;GT_BSEG&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;ZEA_BSEG,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG&nbsp;TYPE&nbsp;ZEA_BSEG.<br />
+<br />
+&nbsp;&nbsp;DATA&nbsp;:LV_S_SAKNR&nbsp;TYPE&nbsp;ZEA_FIT800-SAKNR,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LV_H_SAKNR&nbsp;TYPE&nbsp;ZEA_FIT800-SAKNR,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EV_BELNR&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_FIT800-BELNR,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LV_BANK&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_BKNA-ACCNT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LV_DATE&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_FIT800-BLDAT,&nbsp;&nbsp;&nbsp;&nbsp;"전기일<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USD_AMOUNT&nbsp;TYPE&nbsp;&nbsp;ZEA_FIT800-DMBTR,&nbsp;&nbsp;&nbsp;"USD&nbsp;-&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;USD_CURKY&nbsp;&nbsp;TYPE&nbsp;ZEA_FIT800-D_WAERS,&nbsp;&nbsp;"USD&nbsp;-&nbsp;CUKY<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KRW_AMOUNT&nbsp;TYPE&nbsp;ZEA_FIT800-WRBTR,&nbsp;&nbsp;&nbsp;&nbsp;"KRW&nbsp;-&nbsp;금액<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KRW_CURKY&nbsp;&nbsp;TYPE&nbsp;ZEA_FIT800-W_WAERS,&nbsp;&nbsp;"KRW&nbsp;-&nbsp;CUKY<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;KR_BELNR&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_XBLNR&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"KA&nbsp;전표&nbsp;번호<br />
+<br />
+   </div>
+   <div class="codeComment">
+**---&nbsp;1)&nbsp;A/P&nbsp;Recon&nbsp;계정&nbsp;찾기<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;SELECT&nbsp;SINGLE&nbsp;*&nbsp;FROM<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ZEA_SKB1&nbsp;INTO&nbsp;ZEA_SKB1&nbsp;WHERE&nbsp;BPCODE&nbsp;EQ&nbsp;VENCODE.&nbsp;"A/P계정&nbsp;찾음.<br />
+<br />
+&nbsp;&nbsp;LV_S_SAKNR&nbsp;=&nbsp;ZEA_SKB1-SAKNR.&nbsp;&nbsp;"Vendor&nbsp;의&nbsp;A/P계정<br />
+<br />
+&nbsp;&nbsp;LV_H_SAKNR&nbsp;=&nbsp;ZEA_BKNA-SAKNR.&nbsp;&nbsp;"Screen&nbsp;200의&nbsp;BP_Recon<br />
+<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;2)&nbsp;화면&nbsp;변수와&nbsp;소통(0200)<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;LV_BANK&nbsp;=&nbsp;ZEA_BKNA-ACCNT.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Bank&nbsp;Account<br />
+&nbsp;&nbsp;LV_DATE&nbsp;=&nbsp;POST_DATE.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Posting&nbsp;Date<br />
+<br />
+&nbsp;&nbsp;OPEN_AMOUNT2&nbsp;=&nbsp;GS_DATA2-DMBTR.<br />
+&nbsp;&nbsp;USD_AMOUNT&nbsp;=&nbsp;OPEN_AMOUNT2.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;총&nbsp;미결&nbsp;금액<br />
+&nbsp;&nbsp;USD_CURKY&nbsp;&nbsp;=&nbsp;ZEA_FIT800-D_WAERS.&nbsp;&nbsp;&nbsp;"&nbsp;전표&nbsp;통화키&nbsp;(USD또는KRW)<br />
+<br />
+<br />
+&nbsp;&nbsp;OPEN_AMOUNT&nbsp;=&nbsp;GS_FIT800-WRBTR.<br />
+&nbsp;&nbsp;KRW_AMOUNT&nbsp;=&nbsp;OPEN_AMOUNT.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;총&nbsp;미결&nbsp;금액<br />
+&nbsp;&nbsp;KRW_CURKY&nbsp;&nbsp;=&nbsp;ZEA_FIT800-W_WAERS.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;현지&nbsp;통화키&nbsp;(=무조건&nbsp;KRW)<br />
+<br />
+&nbsp;&nbsp;KR_BELNR&nbsp;=&nbsp;ZEA_FIT800-BELNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"KA&nbsp;유형&nbsp;전표번호<br />
+<br />
+&nbsp;&nbsp;LV_DATE&nbsp;=&nbsp;SY-DATUM.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"오늘날<br />
+<br />
+&nbsp;&nbsp;call&nbsp;function&nbsp;<a&nbsp;href&nbsp;="zea_fi_kz/zea_fi_kz.html">'ZEA_FI_KZ'</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;EXPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV_AP_RECON&nbsp;&nbsp;&nbsp;=&nbsp;LV_S_SAKNR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;&nbsp;G/L&nbsp;계정&nbsp;(Recon)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV_BUDAT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;LV_DATE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;전기일자<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV_PAY_AMOUNT&nbsp;=&nbsp;ZEA_FIT800-DMBTR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;전표&nbsp;내&nbsp;기록된&nbsp;매입채무&nbsp;총액(USD또는KRW)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV_D_WAERS&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;ZEA_FIT800-D_WAERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;전표&nbsp;기록&nbsp;통화코드&nbsp;(USD또는KRW)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV_KRW_AMOUNT&nbsp;=&nbsp;ZEA_FIT800-WRBTR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;통화금액(KRW)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV_WAERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;ZEA_FIT800-W_WAERS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;현지통화코드&nbsp;(KRW)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV_MBLNR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;KR_BELNR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;참조문서(KA전표번호)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IV_BANK_SAKNR&nbsp;=&nbsp;LV_H_SAKNR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;G/L&nbsp;계정&nbsp;(BANK&nbsp;Recon)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;IMPORTING<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EV_BELNR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;EV_BELNR.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;전표번호<br />
+<br />
+&nbsp;&nbsp;IF&nbsp;SY-SUBRC&nbsp;EQ&nbsp;0&nbsp;.<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;3)&nbsp;KZ전표&nbsp;생성&nbsp;후&nbsp;성공&nbsp;Message&nbsp;출력&nbsp;및&nbsp;KA전표에&nbsp;체크<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;MESSAGE&nbsp;'(전표번호&nbsp;:'&nbsp;&&&nbsp;EV_BELNR&nbsp;&&&nbsp;')'&nbsp;&&<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'지급&nbsp;처리가&nbsp;완료되었습니다.'&nbsp;TYPE&nbsp;'S'.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;BSEG&nbsp;(&nbsp;아이템&nbsp;테이블&nbsp;)<br />
+*&nbsp;KA유형&nbsp;전표&nbsp;-&nbsp;반제여부&nbsp;필드/반제번호&nbsp;필드&nbsp;채우기&nbsp;위해&nbsp;GT_BSEG에&nbsp;담기<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;*&nbsp;FROM&nbsp;ZEA_BSEG<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BELNR&nbsp;EQ&nbsp;@KR_BELNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;@GT_BSEG.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_BSEG&nbsp;INTO&nbsp;GS_BSEG.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGDT&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG-AUGBL&nbsp;=&nbsp;EV_BELNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;GT_BSEG&nbsp;FROM&nbsp;GS_BSEG.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDLOOP.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;&nbsp;ZEA_BSEG&nbsp;FROM&nbsp;TABLE&nbsp;GT_BSEG.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*---&nbsp;FIT800&nbsp;(&nbsp;벤더원장&nbsp;테이블&nbsp;)<br />
+<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;SELECT&nbsp;*&nbsp;FROM&nbsp;ZEA_FIT800<br />
+&nbsp;&nbsp;&nbsp;&nbsp;WHERE&nbsp;BELNR&nbsp;EQ&nbsp;@KR_BELNR<br />
+&nbsp;&nbsp;&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;@GT_FIT800.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_FIT800&nbsp;INTO&nbsp;GS_FIT800.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_FIT800-AUGDT&nbsp;=&nbsp;'X'.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_FIT800-AUGBL&nbsp;=&nbsp;EV_BELNR.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;GT_FIT800&nbsp;FROM&nbsp;GS_FIT800.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;MODIFY&nbsp;&nbsp;ZEA_FIT800&nbsp;FROM&nbsp;TABLE&nbsp;GT_FIT800.<br />
+<br />
+&nbsp;&nbsp;ENDIF.<br />
+<br />
+&nbsp;&nbsp;C_EV_BELNR&nbsp;=&nbsp;EV_BELNR.<br />
+&nbsp;&nbsp;C_KR_BELNR&nbsp;=&nbsp;KR_BELNR.<br />
+<br />
+ENDFORM.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

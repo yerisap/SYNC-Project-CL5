@@ -1,0 +1,211 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI090_TOP</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZEA_FI090_TOP</h2>
+<h3> Description: Include YE08_EX001_TOP</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Include&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;YE08_EX001_TOP<br />
+*&---------------------------------------------------------------------*<br />
+<br />
+   </div>
+   <div class="code">
+TABLES: ZEA_BKPF, ZEA_BSEG, ZEA_SKB1. " G/L계정마스터<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;G/L&nbsp;계정에&nbsp;따른&nbsp;당기/전기&nbsp;데이터&nbsp;합계&nbsp;조회<br />
+*&nbsp;--&nbsp;ZEA_SKB1-XBILK&nbsp;EQ&nbsp;'X'.&nbsp;&lt;=&nbsp;재무제표(대차대조)에&nbsp;필요한&nbsp;데이터만&nbsp;조회<br />
+*&nbsp;--&nbsp;여기서&nbsp;필요한&nbsp;필드&nbsp;:&nbsp;계정명&nbsp;/&nbsp;금액합계&nbsp;(금액,&nbsp;부가세)<br />
+*&nbsp;--&nbsp;ZEA_BSEG,&nbsp;ZEA_SKB1.&nbsp;두&nbsp;테이블로&nbsp;구분&nbsp;가능함.<br />
+<br />
+   </div>
+   <div class="code">
+DATA: GS_BKPF TYPE ZEA_BKPF,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_BKPF&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;ZEA_BKPF,<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_BSEG&nbsp;TYPE&nbsp;ZEA_BSEG,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_BSEG&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;ZEA_BSEG,<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_SKB1&nbsp;TYPE&nbsp;ZEA_SKB1,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_SKB1&nbsp;TYPE&nbsp;TABLE&nbsp;OF&nbsp;ZEA_SKB1.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;SELECT&nbsp;*&nbsp;데이터<br />
+   </div>
+   <div class="code">
+DATA: BEGIN OF GS_DATA.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;include&nbsp;structure&nbsp;<a&nbsp;href&nbsp;="zea_bseg/dictionary-zea_bseg.html">ZEA_BSEG</a>.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;회사코드&nbsp;/&nbsp;회계연도&nbsp;/&nbsp;G/L코드&nbsp;/&nbsp;GLTXT&nbsp;/&nbsp;금액/&nbsp;세금<br />
+DATA:   BUDAT    TYPE ZEA_BKPF-BUDAT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XBILK&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_SKB1-XBILK,&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;G/L코드&nbsp;타입&nbsp;(NE&nbsp;'X')<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RECON_YN&nbsp;TYPE&nbsp;ZEA_SKB1-RECON_YN,&nbsp;"&nbsp;레콘계정&nbsp;여부<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;END&nbsp;OF&nbsp;GS_DATA,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_DATA&nbsp;LIKE&nbsp;TABLE&nbsp;OF&nbsp;GS_DATA.<br />
+<br />
+DATA: GS_DATA1 LIKE GS_DATA,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_DATA1&nbsp;LIKE&nbsp;TABLE&nbsp;OF&nbsp;GS_DATA,&nbsp;"&nbsp;1/4&nbsp;분기<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_DATA2&nbsp;LIKE&nbsp;GS_DATA,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_DATA2&nbsp;LIKE&nbsp;TABLE&nbsp;OF&nbsp;GS_DATA.&nbsp;"&nbsp;2/4&nbsp;분기<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;화면에&nbsp;보여줄&nbsp;데이터<br />
+   </div>
+   <div class="code">
+DATA: BEGIN OF GS_DISPLAY.<br />
+DATA:<br />
+&nbsp;&nbsp;COLOR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;C&nbsp;LENGTH&nbsp;4,<br />
+&nbsp;&nbsp;GLTXT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_SKB1-GLTXT,&nbsp;"&nbsp;계정명<br />
+&nbsp;&nbsp;BPCODE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-BPCODE,&nbsp;"&nbsp;계정명<br />
+&nbsp;&nbsp;DMBTR_A&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,&nbsp;"&nbsp;금액합계(2024-1분기)<br />
+&nbsp;&nbsp;DMBTR_B&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,&nbsp;"&nbsp;금액합계(2024-2분기)<br />
+&nbsp;&nbsp;DMBTR_C&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,&nbsp;"&nbsp;금액합계(2024-3분기)<br />
+&nbsp;&nbsp;DMBTR_D&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,&nbsp;"&nbsp;금액합계(2024-4분기)<br />
+&nbsp;&nbsp;DMBTR_YEAR&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,&nbsp;"&nbsp;금액합계(2024-당기실적)<br />
+&nbsp;&nbsp;DMBTR_PER&nbsp;&nbsp;TYPE&nbsp;ZEA_BSEG-DMBTR,&nbsp;"&nbsp;금액합계(2024-합계)<br />
+&nbsp;&nbsp;END&nbsp;OF&nbsp;GS_DISPLAY,<br />
+&nbsp;&nbsp;GT_DISPLAY&nbsp;LIKE&nbsp;TABLE&nbsp;OF&nbsp;GS_DISPLAY.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;PDF&nbsp;변환<br />
+   </div>
+   <div class="code">
+DATA:I_T001    TYPE ZEA_FIT000 OCCURS 0,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PDF&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LIKE&nbsp;TLINE&nbsp;OCCURS&nbsp;0,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;G_SPOOL&nbsp;&nbsp;&nbsp;TYPE&nbsp;TSP01-RQIDENT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;G_PROGRAM&nbsp;TYPE&nbsp;SY-REPID&nbsp;VALUE&nbsp;SY-REPID.<br />
+TYPE-POOLS:SLIS.<br />
+DATA: W_PRINT      TYPE SLIS_PRINT_ALV,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;W_PRINT_CTRL&nbsp;TYPE&nbsp;ALV_S_PCTL.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;100번&nbsp;화면&nbsp;변수<br />
+*DATA:&nbsp;GO_CONTAINER&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_CUSTOM_CONTAINER,<br />
+*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GO_ALV_GRID&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_ALV_GRID.<br />
+<br />
+   </div>
+   <div class="code">
+DATA : GO_CONTAINER        TYPE REF TO CL_GUI_DOCKING_CONTAINER,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GO_ALV_GRID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_ALV_GRID,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GO_BOTTOM_CONTAINER&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_DOCKING_CONTAINER,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GO_DYNDOC_ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_DD_DOCUMENT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GO_HTML_CNTRL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;REF&nbsp;TO&nbsp;CL_GUI_HTML_VIEWER.<br />
+<br />
+<br />
+DATA: OK_CODE TYPE SY-UCOMM.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;ALV&nbsp;관련변수<br />
+   </div>
+   <div class="code">
+DATA: GS_LAYOUT   TYPE LVC_S_LAYO,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_FIELDCAT&nbsp;TYPE&nbsp;LVC_T_FCAT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_FIELDCAT&nbsp;TYPE&nbsp;LVC_S_FCAT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_SORT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_S_SORT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GT_SORT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;LVC_T_SORT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GS_VARIANT&nbsp;&nbsp;TYPE&nbsp;DISVARIANT,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GV_SAVE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;C.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;범위값을&nbsp;가져오는&nbsp;&nbsp;Range&nbsp;변수<br />
+   </div>
+   <div class="code">
+RANGES: R_SAKNR_4  FOR ZEA_SKB1-SAKNR. " GL계정<br />
+RANGES: R_SAKNR_5  FOR ZEA_SKB1-SAKNR. " GL계정<br />
+RANGES: R_SAKNR_6  FOR ZEA_SKB1-SAKNR. " GL계정<br />
+RANGES: R_SAKNR_7P FOR ZEA_SKB1-SAKNR. " GL계정<br />
+RANGES: R_SAKNR_7L FOR ZEA_SKB1-SAKNR. " GL계정<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--&nbsp;1분기/&nbsp;2분기&nbsp;날짜를&nbsp;범위로&nbsp;받음.<br />
+   </div>
+   <div class="code">
+RANGES: R_1 FOR ZEA_BKPF-BUDAT. " 전기일자<br />
+RANGES: R_2 FOR ZEA_BKPF-BUDAT. " 전기일자<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&nbsp;--<br />
+   </div>
+   <div class="code">
+DATA: BEGIN OF ITAB_DATA OCCURS 0,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DATANAME(15),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QUANTITY1&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;I,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QUANTITY2&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;I,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QUANTITY3&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;I,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;QUANTITY4&nbsp;&nbsp;&nbsp;&nbsp;TYPE&nbsp;I,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;END&nbsp;OF&nbsp;ITAB_DATA,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BEGIN&nbsp;OF&nbsp;ITAB_OPTIONS&nbsp;OCCURS&nbsp;0,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OPTION(20),<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;END&nbsp;OF&nbsp;ITAB_OPTIONS.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

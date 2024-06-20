@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_FI050_TCURR</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for: ZEA_FI050_TCURR</h2>
+<h3> Description: [FI] 환율 조회 및 환차 손익 산출 프로그램</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;Report&nbsp;ZEA_FI050_TUCRR<br />
+*&---------------------------------------------------------------------*<br />
+*&&nbsp;[FI]&nbsp;환율&nbsp;Reporting<br />
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+REPORT ZEA_FI050_TCURR MESSAGE-ID ZEA_MSG.<br />
+<br />
+include <a href ="zea_fi050_tcurr_top.html">ZEA_FI050_TCURR_TOP</a>.<br />
+include <a href ="zea_fi050_tcurr_scr.html">ZEA_FI050_TCURR_SCR</a>.<br />
+include <a href ="zea_fi050_tcurr_cls.html">ZEA_FI050_TCURR_CLS</a>.<br />
+<br />
+include <a href ="zea_fi050_tcurr_pbo.html">ZEA_FI050_TCURR_PBO</a>.<br />
+include <a href ="zea_fi050_tcurr_pai.html">ZEA_FI050_TCURR_PAI</a>.<br />
+include <a href ="zea_fi050_tcurr_f01.html">ZEA_FI050_TCURR_F01</a>.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*&---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+INITIALIZATION.<br />
+<br />
+AT SELECTION-SCREEN OUTPUT.<br />
+<br />
+AT SELECTION-SCREEN.<br />
+&nbsp;&nbsp;PERFORM&nbsp;INPUT_CHECK.<br />
+<br />
+START-OF-SELECTION.<br />
+&nbsp;&nbsp;PERFORM&nbsp;SELECT_DATA.<br />
+&nbsp;&nbsp;PERFORM&nbsp;MAKE_DISPLAY_DATA.<br />
+&nbsp;&nbsp;PERFORM&nbsp;DISPLAY_DATA.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*GUI&nbsp;Texts<br />
+*----------------------------------------------------------<br />
+*&nbsp;T0100&nbsp;--&gt;&nbsp;[FI]&nbsp;환율&nbsp;레포트<br />
+*&nbsp;T0150&nbsp;--&gt;&nbsp;환율&nbsp;계산<br />
+<br />
+*Text&nbsp;elements<br />
+*----------------------------------------------------------<br />
+*&nbsp;F01&nbsp;평균대비<br />
+*&nbsp;F02&nbsp;기준통화<br />
+*&nbsp;F03&nbsp;변경통화<br />
+*&nbsp;F04&nbsp;효력시작일<br />
+*&nbsp;F05&nbsp;환율<br />
+*&nbsp;F06&nbsp;평균환율<br />
+*&nbsp;T01&nbsp;검색&nbsp;조건<br />
+*&nbsp;T02&nbsp;조회&nbsp;기간<br />
+<br />
+<br />
+*Selection&nbsp;texts<br />
+*----------------------------------------------------------<br />
+*&nbsp;PA_TCURR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;조회&nbsp;통화<br />
+*&nbsp;RA_1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7일&nbsp;이내<br />
+*&nbsp;RA_2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;15일&nbsp;이내<br />
+*&nbsp;RA_3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;30일&nbsp;이내<br />
+*&nbsp;RA_4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;전체기간&nbsp;조회<br />
+*&nbsp;SO_GDATU&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;조회&nbsp;기간<br />
+<br />
+<br />
+*Messages<br />
+*----------------------------------------------------------<br />
+*<br />
+*&nbsp;Message&nbsp;class:&nbsp;ZEA_MSG<br />
+*006&nbsp;&nbsp;&nbsp;&&nbsp;건의&nbsp;데이터가&nbsp;검색되었습니다.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>

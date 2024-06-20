@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<title>ZEA_NI</title>
+<style type="text/css">
+.code{ font-family:"Courier New", Courier, monospace; color:#000; font-size:14px; background-color:#F2F4F7 }
+  .codeComment {font-family:"Courier New", Courier, monospace; color:#0000F0; font-size:14px; background-color:#F2F4F7 }
+  .normalBold{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; font-weight:800 }
+  .normalBoldLarge{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+</style>
+<style type="text/css">
+  .normal{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px }
+  .footer{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:12px; text-align: center }
+  h2{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:16px; font-weight:800 }
+  h3{ font-family:Arial, Helvetica, sans-serif; color:#000; font-size:14px; font-weight:800 }
+  .outerTable{
+   background-color:#E0E7ED;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-right-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+  .innerTable{
+   background-color:#F2F4F7;
+   width:100%;
+   border-top-width: thin;
+   border-right-width: thin;
+   border-bottom-width: thin;
+   border-left-width: thin;
+   border-top-style: solid;
+   border-right-style: solid;
+   border-bottom-style: solid;
+   border-left-style: solid;
+  }
+</style>
+</head>
+<body>
+<table class="outerTable">
+  <tr class="normalBoldLarge">
+     <td><h2>Code listing for function ZEA_NI</h2>
+<h3> Description: 당기순이익 Exporting을 위한 함수</h3></td>
+   </tr>
+  <tr>
+     <td>
+     <table class="innerTable">
+       <tr>
+          <td>
+   <div class="code">
+FUNCTION ZEA_NI.<br />
+   </div>
+   <div class="codeComment">
+*"----------------------------------------------------------------------<br />
+*"*"Local Interface:<br />
+*"  EXPORTING<br />
+*"     REFERENCE(EV_INCOME) TYPE  ZEA_BSEG-DMBTR<br />
+*"---------------------------------------------------------------------*<br />
+*  Range 변수<br />
+*"---------------------------------------------------------------------*<br />
+*  " 매출 : 4로 시작<br />
+
+<div class="codeComment">*       <a href ="global-zea_ni.html">Global data declarations</a></div><br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;R_SAKNR_4-SIGN&nbsp;&nbsp;&nbsp;=&nbsp;'I'.<br />
+&nbsp;&nbsp;R_SAKNR_4-OPTION&nbsp;=&nbsp;'CP'.<br />
+&nbsp;&nbsp;R_SAKNR_4-LOW&nbsp;=&nbsp;'4*'.<br />
+&nbsp;&nbsp;APPEND&nbsp;R_SAKNR_4.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;매출원가:&nbsp;5로&nbsp;시작<br />
+&nbsp;&nbsp;R_SAKNR_5-SIGN&nbsp;&nbsp;&nbsp;=&nbsp;'I'.<br />
+&nbsp;&nbsp;R_SAKNR_5-OPTION&nbsp;=&nbsp;'CP'.<br />
+&nbsp;&nbsp;R_SAKNR_5-LOW&nbsp;=&nbsp;'5*'.<br />
+&nbsp;&nbsp;APPEND&nbsp;R_SAKNR_5.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;판관비&nbsp;:&nbsp;6로&nbsp;시작<br />
+&nbsp;&nbsp;R_SAKNR_6-SIGN&nbsp;&nbsp;&nbsp;=&nbsp;'I'.<br />
+&nbsp;&nbsp;R_SAKNR_6-OPTION&nbsp;=&nbsp;'CP'.<br />
+&nbsp;&nbsp;R_SAKNR_6-LOW&nbsp;=&nbsp;'6*'.<br />
+&nbsp;&nbsp;APPEND&nbsp;R_SAKNR_6.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;영업외수익&nbsp;:&nbsp;71로&nbsp;시작,&nbsp;73으로&nbsp;시작,&nbsp;75로&nbsp;시작<br />
+&nbsp;&nbsp;R_SAKNR_7P-SIGN&nbsp;&nbsp;&nbsp;=&nbsp;'I'.<br />
+&nbsp;&nbsp;R_SAKNR_7P-OPTION&nbsp;=&nbsp;'CP'.<br />
+&nbsp;&nbsp;R_SAKNR_7P-LOW&nbsp;=&nbsp;'71*'.<br />
+&nbsp;&nbsp;R_SAKNR_7P-HIGH&nbsp;=&nbsp;'73*'.<br />
+&nbsp;&nbsp;APPEND&nbsp;R_SAKNR_7P.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;영업외비용&nbsp;:&nbsp;72,&nbsp;74,&nbsp;79로&nbsp;시작<br />
+&nbsp;&nbsp;R_SAKNR_7L-SIGN&nbsp;&nbsp;&nbsp;=&nbsp;'I'.<br />
+&nbsp;&nbsp;R_SAKNR_7L-OPTION&nbsp;=&nbsp;'CP'.<br />
+&nbsp;&nbsp;R_SAKNR_7L-LOW&nbsp;=&nbsp;'74*'.<br />
+&nbsp;&nbsp;R_SAKNR_7L-HIGH&nbsp;=&nbsp;'79*'.<br />
+&nbsp;&nbsp;APPEND&nbsp;R_SAKNR_7L.<br />
+<br />
+   </div>
+   <div class="codeComment">
+*"---------------------------------------------------------------------*<br />
+* 손익계정 ( ALL)<br />
+*"---------------------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;SELECT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;A~BUDAT<br />
+&nbsp;&nbsp;&nbsp;&nbsp;B~GJAHR&nbsp;&nbsp;&nbsp;"&nbsp;회계연도<br />
+&nbsp;&nbsp;&nbsp;&nbsp;B~SAKNR&nbsp;&nbsp;&nbsp;"&nbsp;G/L계정&nbsp;(Recon)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;SUM(&nbsp;B~DMBTR&nbsp;)&nbsp;AS&nbsp;DMBTR&nbsp;"&nbsp;&nbsp;통화금액&nbsp;합계<br />
+&nbsp;&nbsp;INTO&nbsp;CORRESPONDING&nbsp;FIELDS&nbsp;OF&nbsp;TABLE&nbsp;GT_DATA<br />
+&nbsp;&nbsp;FROM&nbsp;ZEA_BKPF&nbsp;AS&nbsp;A&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;A:&nbsp;전표&nbsp;헤더<br />
+&nbsp;INNER&nbsp;JOIN&nbsp;ZEA_BSEG&nbsp;AS&nbsp;B&nbsp;&nbsp;&nbsp;"&nbsp;B:&nbsp;전표&nbsp;아이템<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ON&nbsp;A~BUKRS&nbsp;EQ&nbsp;B~BUKRS<br />
+&nbsp;&nbsp;&nbsp;AND&nbsp;A~BELNR&nbsp;EQ&nbsp;B~BELNR<br />
+&nbsp;&nbsp;&nbsp;AND&nbsp;A~GJAHR&nbsp;EQ&nbsp;B~GJAHR<br />
+&nbsp;INNER&nbsp;JOIN&nbsp;ZEA_SKB1&nbsp;AS&nbsp;C&nbsp;&nbsp;&nbsp;"&nbsp;C:&nbsp;G/L계정마스터<br />
+&nbsp;&nbsp;&nbsp;&nbsp;ON&nbsp;C~BUKRS&nbsp;EQ&nbsp;A~BUKRS<br />
+&nbsp;&nbsp;&nbsp;AND&nbsp;C~SAKNR&nbsp;EQ&nbsp;B~SAKNR<br />
+&nbsp;&nbsp;&nbsp;AND&nbsp;C~GLTXT&nbsp;EQ&nbsp;C~GLTXT<br />
+&nbsp;&nbsp;&nbsp;AND&nbsp;C~XBILK&nbsp;NE&nbsp;'X'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"&nbsp;G/L코드&nbsp;Type&nbsp;-&nbsp;'X':&nbsp;대차대조&nbsp;/&nbsp;''&nbsp;:&nbsp;손익계산<br />
+&nbsp;&nbsp;&nbsp;&nbsp;GROUP&nbsp;BY&nbsp;A~BUDAT&nbsp;B~GJAHR&nbsp;B~SAKNR.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*"---------------------------------------------------------------------*<br />
+* 계산<br />
+* -- 1. 매출/ 매출원가 ------------------------------------------------*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CLEAR:&nbsp;GS_DATA.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;매출&nbsp;계정&nbsp;(4*)<br />
+&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_DATA&nbsp;INTO&nbsp;GS_DATA&nbsp;WHERE&nbsp;SAKNR&nbsp;IN&nbsp;R_SAKNR_4.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;DMBTR_4&nbsp;=&nbsp;DMBTR_4&nbsp;+&nbsp;GS_DATA-DMBTR.&nbsp;"&nbsp;계정별&nbsp;누적합<br />
+&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+&nbsp;&nbsp;"&nbsp;매출원가&nbsp;계정&nbsp;(5*)<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_DATA.<br />
+&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_DATA&nbsp;INTO&nbsp;GS_DATA&nbsp;WHERE&nbsp;SAKNR&nbsp;IN&nbsp;R_SAKNR_5.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;DMBTR_5&nbsp;=&nbsp;DMBTR_5&nbsp;+&nbsp;GS_DATA-DMBTR.&nbsp;"&nbsp;계정별&nbsp;누적합<br />
+&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 2. 매출총이익 = 매출 - 매출원가 ----------------------------------*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;DMBTR_A&nbsp;=&nbsp;DMBTR_4&nbsp;-&nbsp;DMBTR_5.<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 3. 판관비 --------------------------------------------------------*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CLEAR&nbsp;GS_DATA.<br />
+&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_DATA&nbsp;INTO&nbsp;GS_DATA&nbsp;WHERE&nbsp;SAKNR&nbsp;IN&nbsp;R_SAKNR_6.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;DMBTR_6&nbsp;=&nbsp;DMBTR_6&nbsp;+&nbsp;GS_DATA-DMBTR.&nbsp;"&nbsp;계정별&nbsp;누적합<br />
+&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 4. 영업이익 = 매출총이익 - 판관비 --------------------------------*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;DMBTR_B&nbsp;=&nbsp;DMBTR_A&nbsp;-&nbsp;DMBTR_6.<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 5. 영업외이익 / 손실 ---------------------------------------------*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;CLEAR&nbsp;GS_DATA.<br />
+&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_DATA&nbsp;INTO&nbsp;GS_DATA&nbsp;WHERE&nbsp;SAKNR&nbsp;IN&nbsp;R_SAKNR_7P.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;DMBTR_7P&nbsp;=&nbsp;DMBTR_7P&nbsp;+&nbsp;GS_DATA-DMBTR.&nbsp;"&nbsp;계정별&nbsp;누적합<br />
+&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+&nbsp;&nbsp;CLEAR&nbsp;GS_DATA.<br />
+&nbsp;&nbsp;LOOP&nbsp;AT&nbsp;GT_DATA&nbsp;INTO&nbsp;GS_DATA&nbsp;WHERE&nbsp;SAKNR&nbsp;IN&nbsp;R_SAKNR_7L.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;DMBTR_7L&nbsp;=&nbsp;DMBTR_7L&nbsp;+&nbsp;GS_DATA-DMBTR.&nbsp;"&nbsp;계정별&nbsp;누적합<br />
+&nbsp;&nbsp;ENDLOOP.<br />
+<br />
+   </div>
+   <div class="codeComment">
+* -- 6. 당기순이익 = 영업이익 + 영업외이익 - 영업외비용 ---------------*<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;DMBTR_C&nbsp;=&nbsp;DMBTR_B&nbsp;+&nbsp;DMBTR_7P&nbsp;-&nbsp;DMBTR_7L.<br />
+<br />
+<br />
+   </div>
+   <div class="codeComment">
+*"----------------------------------------------------------------------<br />
+*                        당기순이익 Exporting<br />
+*"----------------------------------------------------------------------<br />
+   </div>
+   <div class="code">
+&nbsp;&nbsp;EV_INCOME&nbsp;=&nbsp;DMBTR_C.<br />
+<br />
+ENDFUNCTION.<br />
+            </div>
+          </td>
+        </tr>
+      </table>
+      </td>
+      </tr>
+   <tr>
+<td class="footer">Extracted by Mass Download version 1.5.5 - E.G.Mellodew. 1998-2024. Sap Release 754</td>
+   </tr>
+</table>
+</body>
+</html>
